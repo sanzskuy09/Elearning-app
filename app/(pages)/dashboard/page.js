@@ -60,47 +60,12 @@ const DashboardPage = () => {
               data={dataUpcomingClass}
               showHead={true}
             />
-            {/* <table className="w-full bg-transparent">
-              <thead>
-                <tr className="bg-transparent text-left">
-                  {columnsClass.map((column) => (
-                    <th key={column.key} className=" py-2">
-                      {column.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataUpcomingClass.map((item) => (
-                  <tr key={item.key} className="bg-transparent">
-                    {columnsClass.map((column) => (
-                      <td key={column.key} className="py-2">
-                        {item[column.dataIndex]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table> */}
           </div>
 
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
             <h1 className="mb-4">Relawan Ter-aktif</h1>
 
             <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
-            {/* <table className="w-full bg-transparent">
-              <tbody>
-                {filterDataRelawan.map((item) => (
-                  <tr key={item.key} className="bg-transparent">
-                    {columnsRelawan.map((column) => (
-                      <td key={column.key} className="py-1">
-                        {item[column.dataIndex]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table> */}
 
             {dataRelawan.length > 5 && (
               <div className="absolute bottom-0 right-0 mb-4 mr-8">
@@ -121,46 +86,17 @@ const DashboardPage = () => {
           <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
             <h1 className="mb-4">Rata-rata Nilai</h1>
 
-            <table className="w-full bg-transparent mb-10">
-              <thead>
-                <tr className="bg-transparent text-left">
-                  {columnsClass.map((column) => (
-                    <th key={column.key} className=" py-2">
-                      {column.title}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody>
-                {dataUpcomingClass.map((item) => (
-                  <tr key={item.key} className="bg-transparent">
-                    {columnsClass.map((column) => (
-                      <td key={column.key} className="py-2">
-                        {item[column.dataIndex]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TableDashboard
+              columns={columnsClass}
+              data={dataUpcomingClass}
+              showHead={true}
+            />
           </div>
 
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
             <h1 className="mb-4">Murid dengan presensi &lt; 70%</h1>
 
-            <table className="w-full bg-transparent mb-10">
-              <tbody>
-                {filterDataRelawan.map((item) => (
-                  <tr key={item.key} className="bg-transparent">
-                    {columnsRelawan.map((column) => (
-                      <td key={column.key} className="py-1">
-                        {item[column.dataIndex]}
-                      </td>
-                    ))}
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+            <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
 
             {dataRelawan.length > 5 && (
               <div className="absolute bottom-0 right-0 mb-4 mr-8">

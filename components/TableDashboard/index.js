@@ -3,7 +3,7 @@ import React from "react";
 const TableDashboard = ({ columns, data, showHead }) => {
   return (
     <div>
-      <table className="w-full bg-transparent mb-4">
+      <table className="w-full bg-transparent mb-8">
         {showHead && (
           <thead>
             <tr className="bg-transparent text-left">
