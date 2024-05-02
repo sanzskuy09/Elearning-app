@@ -13,20 +13,20 @@ export const dataUpcomingClass = [
     kelas: "SMP",
     mapel: "Matematika",
   },
-  // {
-  //   key: "3",
-  //   hari: "Senin",
-  //   jam: "15.00 - 15.45",
-  //   kelas: "SMP",
-  //   mapel: "Matematika",
-  // },
-  // {
-  //   key: "4",
-  //   hari: "Senin",
-  //   jam: "15.00 - 15.45",
-  //   kelas: "SMP",
-  //   mapel: "Matematika",
-  // },
+  {
+    key: "3",
+    hari: "Senin",
+    jam: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
+  },
+  {
+    key: "4",
+    hari: "Senin",
+    jam: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
+  },
 ];
 
 export const dataRelawan = [
@@ -64,5 +64,36 @@ export const dataRelawan = [
     key: "7",
     name: "Nanda Subakti",
     point: "10",
+  },
+];
+
+export const dataKelas = [
+  {
+    key: "1",
+    pic: "Megawati",
+    jam_pelajaran: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
+  },
+  {
+    key: "2",
+    pic: "Megawati",
+    jam_pelajaran: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
+  },
+  {
+    key: "3",
+    pic: "Megawati",
+    jam_pelajaran: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
+  },
+  {
+    key: "4",
+    pic: "Megawati",
+    jam_pelajaran: "15.00 - 15.45",
+    kelas: "SMP",
+    mapel: "Matematika",
   },
 ];
