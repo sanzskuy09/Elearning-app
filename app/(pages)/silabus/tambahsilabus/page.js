@@ -33,6 +33,7 @@ const TambahSilabusPage = () => {
         <h1>Kelola Silabus</h1>
         <h1>Hallo, Kak Nanda</h1>
       </div>
+
       <div className="py-6 px-10 flex flex-col gap-4 h-full">
         <div className="bg-white shadow-md col-span-2 rounded-lg min-h-max h-full">
           <h1 className="mb-0 font-bold text-2xl bg-[#D9D9D9] py-4 px-6 overflow-hidden rounded-t-lg">

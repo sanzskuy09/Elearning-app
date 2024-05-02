@@ -13,7 +13,7 @@ const LayoutPage = ({ children }) => {
     <div className="flex overflow-auto max-h-screen">
       <Sidebar />
 
-      <div className="w-full h-screen rounded-lg overflow-auto bg-slate-100">
+      <div className="w-full min-h-screen rounded-lg overflow-auto bg-slate-100 pb-10">
         {children}
       </div>
     </div>
