@@ -14,6 +14,8 @@ const DetailRaporPage = () => {
   const id = searchParams.get("id");
   const update = searchParams.get("update");
 
+  const disableForm = update === "true" ? false : true;
+
   // console.log(id);
   // console.log(update);
   return (
@@ -42,6 +44,7 @@ const DetailRaporPage = () => {
                       Pre-Test <span className="text-red-600">*</span>
                     </label>
                     <Input
+                      disabled={disableForm}
                       placeholder=""
                       className="w-full border border-gray-300 rounded-md px-3 py-2"
                       allowClear
@@ -54,6 +57,7 @@ const DetailRaporPage = () => {
                       Post-test <span className="text-red-600">*</span>
                     </label>
                     <Input
+                      disabled={disableForm}
                       placeholder=""
                       className="w-full border border-gray-300 rounded-md px-3 py-2"
                       allowClear
@@ -179,6 +183,7 @@ const DetailRaporPage = () => {
                     Semester
                   </label>
                   <Select
+                    disabled={disableForm}
                     placeholder="Pilih tingkat pendidikan"
                     defaultValue="1"
                     // onChange={(value) =>
@@ -204,10 +209,11 @@ const DetailRaporPage = () => {
                   </h1>
 
                   <TextArea
+                    disabled={disableForm}
                     rows={4}
                     placeholder="catatan wali kelas.."
                     allowClear
-                    onChange={(e) => setValue(e.target.value)}
+                    // onChange={(e) => setValue(e.target.value)}
                   />
                 </div>
 

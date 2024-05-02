@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Select, Input } from "antd";
 const { Option } = Select;
 import { SearchOutlined } from "@ant-design/icons";
+import ButtonAdd from "../Button/ButtonAdd";
 
 const SearchBar = ({
   filters,
@@ -12,6 +13,9 @@ const SearchBar = ({
   handleSearch,
   value,
   setValue,
+  text,
+  onButtonClick,
+  showButton,
 }) => {
   const handleChange = (name, value) => {
     setFilters((prevFilters) => ({
@@ -62,7 +66,7 @@ const SearchBar = ({
 
       <hr className="my-2 border-gray-400" />
 
-      <div className="py-4 px-6">
+      <div className="py-4 px-6 flex justify-between">
         <div className="flex gap-2 items-center">
           <label htmlFor="">Search :</label>
           <Input
@@ -73,6 +77,12 @@ const SearchBar = ({
             onChange={handleSearch}
           />
         </div>
+
+        {showButton && (
+          <div>
+            <ButtonAdd text={text} onChange={onButtonClick} />
+          </div>
+        )}
       </div>
     </div>
   );
