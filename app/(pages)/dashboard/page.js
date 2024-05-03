@@ -1,8 +1,15 @@
 "use client";
 
 import React from "react";
+import Link from "next/link";
 
 import { Table } from "antd";
+import { dataUpcomingClass, dataRelawan } from "./data";
+import TableDashboard from "@/components/TableDashboard";
+
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+ChartJS.register(ArcElement, Tooltip, Legend);
+import { Pie } from "react-chartjs-2";
 
 const columnsClass = [
   {
@@ -34,36 +41,29 @@ const columnsRelawan = [
   },
 ];
 
-import { dataUpcomingClass, dataRelawan } from "./data";
-import TableDashboard from "@/components/TableDashboard";
+const data = {
+  labels: [
+    "Matematika : 62",
+    "Pend. Karakter : 90",
+    "Bhs. Inggris : 30",
+    "Kreasi: 50",
+  ],
+  datasets: [
+    {
+      label: "# Nilai :",
+      data: [62, 90, 30, 50],
+      backgroundColor: ["#b6c154", "#fae477", "#fca034", "#d0671c"],
+      borderColor: ["#b6c154", "#fae477", "#fca034", "green"],
+      borderWidth: 1,
+    },
+  ],
+};
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-ChartJS.register(ArcElement, Tooltip, Legend);
-import { Pie } from "react-chartjs-2";
+const options = {
+  // Add options here
+};
 
 const DashboardPage = () => {
-  const data = {
-    labels: [
-      "Matematika : 62",
-      "Pend. Karakter : 90",
-      "Bhs. Inggris : 30",
-      "Kreasi: 50",
-    ],
-    datasets: [
-      {
-        label: "# Nilai :",
-        data: [62, 90, 30, 50],
-        backgroundColor: ["#b6c154", "#fae477", "#fca034", "#d0671c"],
-        borderColor: ["#b6c154", "#fae477", "#fca034", "green"],
-        borderWidth: 1,
-      },
-    ],
-  };
-
-  const options = {
-    // Add options here
-  };
-
   // filter data relawan
   const filterDataRelawan = dataRelawan
     .sort((a, b) => b.point - a.point)
@@ -105,9 +105,11 @@ const DashboardPage = () => {
           </div>
         </div>
 
-        <div className="rounded-xl bg-tersier py-3 text-center shadow-xl text-white">
-          <h1>Mulai Mengajar Hari ini</h1>
-        </div>
+        <Link href={"/kelashariini"}>
+          <div className="rounded-xl bg-tersier py-3 text-center shadow-xl text-white">
+            <h1>Mulai Mengajar Hari ini</h1>
+          </div>
+        </Link>
 
         {/* rata-rata nilai & absensi */}
         <div className="grid grid-cols-3 gap-4">
