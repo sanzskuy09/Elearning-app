@@ -10,7 +10,17 @@ import {
   UsersIcon,
 } from "@heroicons/react/outline";
 
+import IconAbsensi from "../../public/Icons/ic_absensi.svg";
+import IconDashboard from "../../public/Icons//ic_dashboard.svg";
+import IconJadwal from "../../public/Icons/ic_jadwal.svg";
+import IconKelas from "../../public/Icons/ic_kelas.svg";
+import IconRapor from "../../public/Icons/ic_rapor.svg";
+import IconReport from "../../public/Icons/ic_report.svg";
+import IconSilabus from "../../public/Icons/ic_silabus.svg";
+import IconUser from "../../public/Icons/ic_user.svg";
+
 import Link from "next/link";
+import Image from "next/image";
 
 export default function ListMenu({ sidebar }) {
   const [active, setActive] = useState(false);
@@ -65,37 +75,37 @@ const list = [
   },
   {
     title: "Kelas Hari Ini",
-    icon: "program",
+    icon: "kelas",
     link: "/kelashariini",
   },
   {
     title: "Jadwal Kelas",
-    icon: "class",
+    icon: "jadwal",
     link: "/jadwalkelas",
   },
   {
-    title: "Silabus",
-    icon: "member",
+    title: "Silabus Pembelajaran",
+    icon: "silabus",
     link: "/silabus",
   },
   {
     title: "Data Abesnsi",
-    icon: "membership",
+    icon: "absensi",
     link: "/dataabsensi",
   },
   {
     title: "Kelola Relawan",
-    icon: "staff",
+    icon: "relawan",
     link: "/kelolarelawan",
   },
   {
     title: "Kelola Murid",
-    icon: "staff",
+    icon: "murid",
     link: "/kelolamurid",
   },
   {
     title: "Rapor",
-    icon: "report",
+    icon: "rapor",
     link: "/rapor",
   },
   {
@@ -108,15 +118,17 @@ const list = [
 const iconList = (e) => {
   return (
     <>
-      {e == "dashboard" && <HomeIcon className="h-6 w-6 text-white" />}
-      {e == "program" && <ClipboardListIcon className="h-6 w-6 text-white" />}
-      {e == "class" && <LibraryIcon className="h-6 w-6 text-white" />}
-      {e == "member" && <UsersIcon className="h-6 w-6 text-white" />}
-      {e == "membership" && (
-        <IdentificationIcon className="h-6 w-6 text-white" />
+      {e == "dashboard" && (
+        <Image src={IconDashboard} alt="" className="h-6 w-6" />
       )}
-      {e == "staff" && <UserGroupIcon className="h-6 w-6 text-white" />}
-      {e == "report" && <DocumentReportIcon className="h-6 w-6 text-white" />}
+      {e == "kelas" && <Image src={IconKelas} alt="" className="h-6 w-6" />}
+      {e == "jadwal" && <Image src={IconJadwal} alt="" className="h-6 w-6" />}
+      {e == "silabus" && <Image src={IconSilabus} alt="" className="h-6 w-6" />}
+      {e == "absensi" && <Image src={IconAbsensi} alt="" className="h-6 w-6" />}
+      {e == "relawan" && <Image src={IconUser} alt="" className="h-6 w-6" />}
+      {e == "murid" && <Image src={IconUser} alt="" className="h-6 w-6" />}
+      {e == "rapor" && <Image src={IconRapor} alt="" className="h-6 w-6" />}
+      {e == "report" && <Image src={IconReport} alt="" className="h-6 w-6" />}
     </>
   );
 };
