@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 
 import { Table } from "antd";
@@ -35,7 +37,33 @@ const columnsRelawan = [
 import { dataUpcomingClass, dataRelawan } from "./data";
 import TableDashboard from "@/components/TableDashboard";
 
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+ChartJS.register(ArcElement, Tooltip, Legend);
+import { Pie } from "react-chartjs-2";
+
 const DashboardPage = () => {
+  const data = {
+    labels: [
+      "Matematika : 62",
+      "Pend. Karakter : 90",
+      "Bhs. Inggris : 30",
+      "Kreasi: 50",
+    ],
+    datasets: [
+      {
+        label: "# Nilai :",
+        data: [62, 90, 30, 50],
+        backgroundColor: ["#b6c154", "#fae477", "#fca034", "#d0671c"],
+        borderColor: ["#b6c154", "#fae477", "#fca034", "green"],
+        borderWidth: 1,
+      },
+    ],
+  };
+
+  const options = {
+    // Add options here
+  };
+
   // filter data relawan
   const filterDataRelawan = dataRelawan
     .sort((a, b) => b.point - a.point)
@@ -86,11 +114,12 @@ const DashboardPage = () => {
           <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
             <h1 className="mb-4">Rata-rata Nilai</h1>
 
-            <TableDashboard
-              columns={columnsClass}
-              data={dataUpcomingClass}
-              showHead={true}
-            />
+            {/* Chart */}
+            <div className="flex justify-center">
+              <div className="w-[50%] flex justify-center">
+                <Pie options={options} data={data} />
+              </div>
+            </div>
           </div>
 
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">

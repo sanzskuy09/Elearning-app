@@ -1,12 +1,17 @@
 "use client";
 import React from "react";
 
-import { Input, Select } from "antd";
+import { Input, Select, DatePicker } from "antd";
 const { Option } = Select;
 
 import ButtonAdd from "@/components/Button/ButtonAdd";
 
 const TambahRelawanPage = () => {
+  const dateFormat = "DD/MM/YY";
+  const onChangeDate = (date, dateString) => {
+    console.log(date, dateString);
+  };
+
   return (
     <div className="flex flex-col h-full">
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
@@ -73,12 +78,11 @@ const TambahRelawanPage = () => {
                   <label htmlFor="tgllahir" className="block text-sm mb-1">
                     Tanggal Lahir <span className="text-red-600">*</span>
                   </label>
-                  <Input
+                  <DatePicker
                     required
-                    placeholder=""
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    allowClear
-                    // onChange={(e) => setValue(e.target.value)}
+                    onChange={onChangeDate}
+                    format={dateFormat}
+                    className="my-2 w-full"
                   />
                 </div>
 

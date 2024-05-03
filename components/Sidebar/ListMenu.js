@@ -21,23 +21,31 @@ import IconUser from "../../public/Icons/ic_user.svg";
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 
 export default function ListMenu({ sidebar }) {
   const [active, setActive] = useState(false);
+  const pathname = usePathname();
 
   const { expanded } = useContext(sidebar);
 
   return (
     <div>
       {list.map((item, index) => (
-        <Link href={item.link} key={index}>
+        <Link
+          href={item.link}
+          key={index}
+          className={`${
+            pathname === item.link ? "bg-secondary" : "bg-red-500"
+          }`}
+        >
           {index == 2 && <hr className="my-4 border-gray-200" />}
           <li
             className={`relative flex items-center justify-center py-2 px-3 my-4
           font-medium rounded-md cursor-pointer transition-colors group
           ${
-            active
-              ? "bg-gradient-to-tr from-indigo-200 to-indigo-100  text-indigo-800"
+            active || pathname.includes(item.link)
+              ? "bg-secondary  text-white"
               : "hover:bg-secondary text-white"
           }`}
           >

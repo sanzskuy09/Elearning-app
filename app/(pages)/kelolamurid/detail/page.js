@@ -2,7 +2,7 @@
 import React from "react";
 import { useSearchParams } from "next/navigation";
 
-import { Input, Select } from "antd";
+import { Input, Select, DatePicker } from "antd";
 const { Option } = Select;
 
 import ButtonAdd from "@/components/Button/ButtonAdd";
@@ -14,6 +14,11 @@ const DetailMuridPage = () => {
   const update = searchParams.get("update");
 
   const disableForm = update === "true" ? false : true;
+
+  const dateFormat = "DD/MM/YY";
+  const onChangeDate = (date, dateString) => {
+    console.log(date, dateString);
+  };
 
   return (
     <div className="flex flex-col h-full">
@@ -85,13 +90,12 @@ const DetailMuridPage = () => {
                   <label htmlFor="tgllahir" className="block text-sm mb-1">
                     Tanggal Lahir <span className="text-red-600">*</span>
                   </label>
-                  <Input
+                  <DatePicker
                     disabled={disableForm}
                     required
-                    placeholder=""
-                    className="w-full border border-gray-300 rounded-md px-3 py-2"
-                    allowClear
-                    // onChange={(e) => setValue(e.target.value)}
+                    onChange={onChangeDate}
+                    format={dateFormat}
+                    className="my-2 w-full"
                   />
                 </div>
 
