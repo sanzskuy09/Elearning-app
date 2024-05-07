@@ -10,6 +10,7 @@ import IconDelete from "@/public/Icons/icon-delete.svg";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { API, URL } from "@/config/api";
 
 const options = [
   {
@@ -34,29 +35,70 @@ const options = [
 
 const columns = [
   {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
+    title: "No.",
+    key: "index",
+    render: (value, item, index) => index + 1,
+    width: 70,
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
+    title: "Nama Lengkap",
+    dataIndex: "nama_lengkap",
+    key: "nama_lengkap",
+    width: 150,
   },
   {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
+    title: "NIK",
+    dataIndex: "nik",
+    key: "nik",
+    width: 170,
   },
   {
-    title: "Column 2",
-    dataIndex: "address",
-    key: "2",
+    title: "Jenis Kelamin",
+    dataIndex: "jkelamin",
+    key: "jkelamin",
+    width: 150,
   },
   {
-    title: "Column 3",
-    dataIndex: "address",
-    key: "3",
+    title: "Jenis Kelamin",
+    dataIndex: "jkelamin",
+    key: "jkelamin",
+    width: 150,
+  },
+  {
+    title: "Nama Orang Tua",
+    dataIndex: "nama_ortu",
+    key: "nama_ortu",
+    width: 150,
+  },
+  {
+    title: "No. Handphone Wali",
+    dataIndex: "no_hp_ortu",
+    key: "no_hp_ortu",
+    width: 150,
+  },
+  {
+    title: "Kelas",
+    dataIndex: "kelas",
+    key: "kelas",
+    render: (_, record) => <p>{record.kelas.name}</p>,
+    width: 150,
+  },
+  {
+    title: "Kategori",
+    dataIndex: "kategori",
+    key: "kategori",
+    render: (_, record) => <p>{record.kategori.name}</p>,
+    width: 150,
+  },
+  {
+    title: "Alamat",
+    render: (_, record) => (
+      <p>
+        {record.alamat} Kel.{record.kelurahan} Kec.{record.kecamatan} kota.
+        {record.kota} Prov.{record.provinsi}
+      </p>
+    ),
+    width: 250,
   },
 
   {
@@ -66,15 +108,15 @@ const columns = [
     width: 150,
     render: (_, record) => (
       <Space size="middle">
-        <Link href={`/kelolamurid/detail?id=${record.id_murid}`}>
+        <Link href={`/kelolamurid/detail?id=${record.id}`}>
           <Image src={IconDetail} alt="" />
         </Link>
 
-        <Link href={`/kelolamurid/detail?id=${record.id_murid}&update=true`}>
+        <Link href={`/kelolamurid/detail?id=${record.id}&update=true`}>
           <Image src={IconEdit} alt="" />
         </Link>
 
-        <button onClick={() => handleDelete(record.id_jadwalkelas)}>
+        <button onClick={() => handleDelete(record.id)}>
           <Image src={IconDelete} alt="" />
         </button>
       </Space>
@@ -82,83 +124,9 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-];
-
 const KelolaMuridPage = () => {
   const router = useRouter();
+  const [data, setData] = useState("");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -191,6 +159,30 @@ const KelolaMuridPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/murid`, {
+        method: "GET",
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="flex flex-col h-full">

@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { API, URL } from "@/config/api";
 
 const initialState = {
   loading: false,
@@ -10,9 +11,9 @@ const initialState = {
 
 export const loginUserAsync = createAsyncThunk(
   "auth/loginUser",
-  async ({ email, password }) => {
+  async ({ username, password }) => {
     try {
-      const response = await axios.post("/api/login", { email, password }); // Your login API endpoint
+      const response = await API.post(URL.AUTH_LOGIN, { username, password }); // Your login API endpoint
       return response.data;
     } catch (error) {
       throw error;
@@ -52,7 +53,9 @@ const authSlice = createSlice({
       })
       .addCase(loginUserAsync.rejected, (state, action) => {
         state.loading = false;
+        state.isLogin = false;
         state.error = action.error.message;
+        // state.error = action.payload.message;
       })
       .addCase(getUserAsync.pending, (state) => {
         state.loading = true;

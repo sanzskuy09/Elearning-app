@@ -9,3 +9,10 @@ export const API = axios.create({
     "Content-Type": "application/json",
   },
 });
+
+export const URL = {
+  AUTH_LOGIN: "/auth/login",
+
+  // MURID
+  GET_MURID: "/murid",
+};
