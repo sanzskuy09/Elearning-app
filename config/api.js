@@ -15,4 +15,9 @@ export const URL = {
 
   // MURID
   GET_MURID: "/murid",
+  ADD_MURID: "/murid/add",
+
+  // RELAWAN
+  GET_RELAWAN: "/relawan",
+  ADD_RELAWAN: "/relawan/add",
 };

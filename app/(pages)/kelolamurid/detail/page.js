@@ -9,6 +9,7 @@ import ButtonAdd from "@/components/Button/ButtonAdd";
 
 // hook form
 import { Formik } from "formik";
+import dayjs from "dayjs";
 import * as Yup from "yup";
 import { API, URL } from "@/config/api";
 
@@ -223,12 +224,26 @@ const DetailMuridPage = () => {
                       <label htmlFor="tgllahir" className="block text-sm mb-1">
                         Tanggal Lahir <span className="text-red-600">*</span>
                       </label>
-                      <DatePicker
+                      {/* <DatePicker
                         readOnly={disableForm}
                         required
                         onChange={onChangeDate}
                         format={dateFormat}
                         className="my-2 w-full"
+                      /> */}
+                      <DatePicker
+                        disabled
+                        required
+                        onChange={(e) => formik.setFieldValue("tgl_lahir", e)}
+                        value={
+                          formik.values.tgl_lahir
+                            ? dayjs(formik.values.tgl_lahir)
+                            : ""
+                        }
+                        format={dateFormat}
+                        className="my-2 w-full"
+                        // onChange={onChangeDate}
+                        // {...formik.getFieldProps("tgl_lahir")}
                       />
                     </div>
 
@@ -412,12 +427,7 @@ const DetailMuridPage = () => {
 
                   {!disableForm && (
                     <div className="flex justify-center col-span-2">
-                      <ButtonAdd
-                        type="submit"
-                        text="Simpan"
-                        // onChange={(e) => console.log("klik", e)}
-                      />
-                      {/* <button type="submit">Submit</button> */}
+                      <ButtonAdd type="submit" text="Simpan" />
                     </div>
                   )}
                 </form>

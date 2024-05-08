@@ -16,6 +16,7 @@ const SearchBar = ({
   text,
   onButtonClick,
   showButton,
+  widthSelect,
 }) => {
   const handleChange = (name, value) => {
     setFilters((prevFilters) => ({
@@ -41,7 +42,7 @@ const SearchBar = ({
             <Select
               value={filters[option.name]}
               onChange={(value) => handleChange(option.name, value)}
-              style={{ width: 150 }}
+              style={{ width: widthSelect ? widthSelect : 150 }}
             >
               {option.values.map((value) => (
                 <Option key={value.value} value={value.value}>

@@ -1,25 +1,33 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import SearchBar from "@/components/SearchBar";
-import { ConfigProvider, Pagination, Space, Table } from "antd";
+import Link from "next/link";
+import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import { ConfigProvider, Pagination, Space, Table, Modal } from "antd";
+const { confirm } = Modal;
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import IconDetail from "@/public/Icons/icon_detail.svg";
 import IconEdit from "@/public/Icons/icon_edit.svg";
 import IconDelete from "@/public/Icons/icon-delete.svg";
 
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { API, URL } from "@/config/api";
+
+import SearchBar from "@/components/SearchBar";
+
+import { toastSuccess } from "@/utils/toastify";
 
 const options = [
   {
     name: "kelas",
-    label: "Peminatan Kelas",
+    label: "Kelas",
     values: [
       { value: "", label: "Semua" },
-      { value: "SD", label: "SD" },
-      { value: "SMP", label: "SMP" },
-      { value: "SMA", label: "SMA" },
+      { value: "1 & 2 SD", label: "1 & 2 SD" },
+      { value: "3 & 4 SD", label: "3 & 4 SD" },
+      { value: "5 SD", label: "5 SD" },
+      { value: "6 SD", label: "6 SD" },
     ],
   },
   {
@@ -27,141 +35,131 @@ const options = [
     label: "Mata Pelajaran",
     values: [
       { value: "", label: "Semua" },
-      { value: "IPA", label: "IPA" },
-      { value: "IPS", label: "IPS" },
+      { value: "Baca Tulis", label: "Baca Tulis" },
+      { value: "Matematika", label: "Matematika" },
+      { value: "Bahasa Inggris", label: "Bahasa Inggris" },
+      { value: "Pendidikan Karakter", label: "Pendidikan Karakter" },
+      { value: "Kreasi", label: "Kreasi" },
     ],
   },
 ];
 
-const columns = [
-  {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
-  },
-  {
-    title: "Column 2",
-    dataIndex: "address",
-    key: "2",
-  },
-  {
-    title: "Column 3",
-    dataIndex: "address",
-    key: "3",
-  },
-
-  {
-    title: "Action",
-    fixed: "right",
-    align: "center",
-    width: 150,
-    render: (_, record) => (
-      <Space size="middle">
-        <Link href={`/kelolarelawan/detail?id=${record.id_relawan}`}>
-          <Image src={IconDetail} alt="" />
-        </Link>
-
-        <Link
-          href={`/kelolarelawan/detail?id=${record.id_relawan}&update=true`}
-        >
-          <Image src={IconEdit} alt="" />
-        </Link>
-
-        <button onClick={() => handleDelete(record.id_jadwalkelas)}>
-          <Image src={IconDelete} alt="" />
-        </button>
-      </Space>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-];
-
 const KelolaRelawanPage = () => {
+  const columns = [
+    {
+      title: "No.",
+      key: "index",
+      render: (value, item, index) => index + 1,
+      width: 70,
+    },
+    {
+      title: "Nama Lengkap",
+      dataIndex: "nama_lengkap",
+      key: "nama_lengkap",
+      width: 150,
+    },
+    {
+      title: "Nama Panggilan",
+      dataIndex: "nama_panggilan",
+      key: "nama_panggilan",
+      width: 150,
+    },
+    {
+      title: "Username",
+      dataIndex: "username",
+      key: "username",
+      width: 150,
+    },
+    {
+      title: "NIK",
+      dataIndex: "nik",
+      key: "nik",
+      width: 170,
+    },
+    {
+      title: "Jenis Kelamin",
+      dataIndex: "jkelamin",
+      key: "jkelamin",
+      width: 150,
+    },
+    {
+      title: "No. Handphone",
+      dataIndex: "no_hp",
+      key: "no_hp",
+      width: 150,
+    },
+    {
+      title: "Kelas",
+      dataIndex: "kelas",
+      key: "kelas",
+      render: (_, record) => (
+        <ul className="flex gap-2 flex-wrap">
+          {record.kelas.split(",").map((item, index) => (
+            <li
+              key={index}
+              className="bg-red-400 w-fit px-2 py-1 rounded-lg text-white font-medium whitespace-nowrap"
+            >
+              {item.trim()}
+            </li>
+          ))}
+        </ul>
+      ),
+      width: 200,
+    },
+    {
+      title: "Mata Pelajaran",
+      dataIndex: "mapel",
+      key: "mapel",
+      render: (_, record) => (
+        <ul className="flex gap-2 flex-wrap">
+          {record.mapel.split(",").map((item, index) => (
+            <li
+              key={index}
+              className="bg-blue-400 w-max px-2 py-1 rounded-lg text-white font-medium"
+            >
+              {item.trim()}
+            </li>
+          ))}
+        </ul>
+      ),
+      width: 150,
+    },
+    {
+      title: "Alamat",
+      render: (_, record) => (
+        <p>
+          {record.alamat} Kel.{record.kelurahan} Kec.{record.kecamatan} kota.
+          {record.kota} Prov.{record.provinsi}
+        </p>
+      ),
+      width: 250,
+    },
+
+    {
+      title: "Action",
+      fixed: "right",
+      align: "center",
+      width: 150,
+      render: (_, record) => (
+        <Space size="middle">
+          <Link href={`/kelolarelawan/detail?id=${record.id}`}>
+            <Image src={IconDetail} alt="" />
+          </Link>
+
+          <Link href={`/kelolarelawan/detail?id=${record.id}&update=true`}>
+            <Image src={IconEdit} alt="" />
+          </Link>
+
+          <button onClick={() => handleDelete(record.id)}>
+            <Image src={IconDelete} alt="" />
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
   const router = useRouter();
+  const [data, setData] = useState("");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -179,12 +177,60 @@ const KelolaRelawanPage = () => {
     setValue(e.target.value);
   };
 
-  const handleLoadingChange = (enable) => {
-    setLoading(enable);
-  };
-
   const handleChangePage = (page) => {
     setCurrentPage(page);
+  };
+
+  const handleDelete = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin menghapus data ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          setLoading(true);
+          await API.delete(`${URL.GET_RELAWAN}/${e}`);
+          await getData();
+
+          toastSuccess(`Relawan Berhasil dihapus`);
+
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/relawan?mapel=${filters?.mapel}&kelas=${filters?.kelas}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -194,6 +240,10 @@ const KelolaRelawanPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -214,7 +264,7 @@ const KelolaRelawanPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={() => console.log(filters)}
+            onSearch={getData}
             handleSearch={handleSearchChange}
             showButton={true}
             text={"Tambah Relawan"}
@@ -246,14 +296,14 @@ const KelolaRelawanPage = () => {
                 <Table
                   loading={loading}
                   columns={columns}
-                  dataSource={data.slice(start, end)}
+                  dataSource={data?.slice(start, end)}
                   pagination={false}
                   scroll={{
                     x: 1300,
                   }}
                 />
                 <Pagination
-                  total={data.length}
+                  total={data?.length}
                   current={currentPage}
                   pageSize={pageSize}
                   showTotal={(total, range) =>
