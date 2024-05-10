@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { Suspense } from "react";
 import { useSearchParams } from "next/navigation";
 
 import ButtonAdd from "@/components/Button/ButtonAdd";
@@ -229,4 +229,13 @@ const DetailRaporPage = () => {
   );
 };
 
-export default DetailRaporPage;
+const Page = () => {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <DetailRaporPage />
+    </Suspense>
+  );
+};
+
+export default Page;

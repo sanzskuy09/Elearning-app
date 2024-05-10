@@ -225,6 +225,8 @@ const KelolaRelawanPage = () => {
 
       const data = await res.json();
 
+      console.log(data.data);
+
       setData(data.data);
       setLoading(false);
     } catch (error) {

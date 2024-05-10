@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
 import { Input, Select, DatePicker } from "antd";
@@ -482,4 +482,13 @@ const DetailKaryawanPage = () => {
   );
 };
 
-export default DetailKaryawanPage;
+const Page = () => {
+  return (
+    // You could have a loading skeleton as the `fallback` too
+    <Suspense>
+      <DetailKaryawanPage />
+    </Suspense>
+  );
+};
+
+export default Page;

@@ -1,8 +1,8 @@
 import { API, URL } from "@/config/api";
 
 export async function GET(request) {
+  const searchParams = request.nextUrl.searchParams;
   try {
-    const searchParams = request.nextUrl.searchParams;
     const id = searchParams.get("id");
     const res = await API.get(URL.GET_MURID + "/" + id);
 
