@@ -8,6 +8,7 @@ import { Button, Form, Select, Input, Checkbox, ConfigProvider } from "antd";
 const { Search } = Input;
 
 import { SearchOutlined } from "@ant-design/icons";
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import ButtonAdd from "@/components/Button/ButtonAdd";
 import SearchBar from "@/components/SearchBar";
@@ -23,24 +24,31 @@ const options = [
     label: "Kelas",
     values: [
       { value: "", label: "Pilih Kelas" },
-      { value: "SD", label: "SD" },
-      { value: "SMP", label: "SMP" },
-      { value: "SMA", label: "SMA" },
+      { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
+      { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
+      { value: "5 SD", label: "5 SD", id: "3" },
+      { value: "6 SD", label: "6 SD", id: "4" },
     ],
   },
   {
     name: "mapel",
     label: "Mata Pelajaran",
     values: [
-      { value: "", label: "Pilih Mapel" },
-      { value: "IPA", label: "IPA" },
-      { value: "IPS", label: "IPS" },
+      { value: "", label: "Pilih Mata Pelajaran" },
+      { value: "Baca Tulis", label: "Baca Tulis", id: "1" },
+      { value: "Matematika", label: "Matematika", id: "2" },
+      { value: "Bahasa Inggris", label: "Bahasa Inggris", id: "3" },
+      { value: "Pendidikan Karakter", label: "Pendidikan Karakter", id: "4" },
+      { value: "Kreasi", label: "Kreasi", id: "5" },
     ],
   },
 ];
 
 const SilabusPage = () => {
   const router = useRouter();
+
+  const [data, setData] = useState("");
+
   const [checked, setChecked] = useState(true);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -52,8 +60,10 @@ const SilabusPage = () => {
   const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, ""]))
+    Object.fromEntries(options.map((option) => [option.name, [""]]))
   );
+
+  // console.log(filters.kelas[0]);
 
   const handleSearchChange = (e) => {
     setValue(e.target.value);
@@ -76,6 +86,60 @@ const SilabusPage = () => {
     setChecked(e.target.checked);
   };
 
+  const handleDelete = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin menghapus data ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          setLoading(true);
+          await API.delete(`${URL.GET_RELAWAN}/${e}`);
+          await getData();
+
+          toastSuccess(`Relawan Berhasil dihapus`);
+
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/relawan?mapel=${filters?.mapel}&kelas=${filters?.kelas}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+
+      // console.log(data.data);
+
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -83,6 +147,10 @@ const SilabusPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getData();
+  }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -103,19 +171,21 @@ const SilabusPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            // onSearch={() => console.log(filters)}
+            // onSearch={handleGetId}
             handleSearch={handleSearchChange}
           />
 
           <div className="py-4 px-6">
-            {filters.kelas == "" || filters.mapel == "" ? (
+            {filters.kelas[0] == "" || filters.mapel[0] == "" ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
               </p>
             ) : (
               <>
-                <h1 className="font-bold text-2xl">Matematika - SMP</h1>
+                <h1 className="font-bold text-2xl">
+                  {filters.mapel[0]} - {filters.kelas[0]}
+                </h1>
 
                 {/* silabus list */}
                 <div className="mt-4 flex flex-col gap-4">
@@ -193,7 +263,17 @@ const SilabusPage = () => {
                 <div className="flex gap-4 w-full justify-end mt-8">
                   <ButtonAdd
                     text="Tambah Silabus"
-                    onChange={() => router.push("/silabus/tambahsilabus")}
+                    onChange={
+                      () =>
+                        router.push(
+                          `/silabus/tambahsilabus?kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`
+                        )
+                      // router.push(
+                      //   `/silabus/tambahsilabus?kelas=${encodeURIComponent(
+                      //     filters.kelas
+                      //   )}&mapel=${encodeURIComponent(filters.mapel)}`
+                      // )
+                    }
                   />
                 </div>
               </>

@@ -19,9 +19,12 @@ const SearchBar = ({
   widthSelect,
 }) => {
   const handleChange = (name, value) => {
+    const selectedOption = options
+      .find((option) => option.name === name)
+      ?.values.find((item) => item.value === value);
     setFilters((prevFilters) => ({
       ...prevFilters,
-      [name]: value,
+      [name]: [value, selectedOption ? selectedOption.id : ""],
     }));
   };
 

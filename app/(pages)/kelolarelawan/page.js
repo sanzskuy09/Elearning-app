@@ -159,6 +159,7 @@ const KelolaRelawanPage = () => {
   ];
 
   const router = useRouter();
+
   const [data, setData] = useState("");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -225,7 +226,7 @@ const KelolaRelawanPage = () => {
 
       const data = await res.json();
 
-      console.log(data.data);
+      // console.log(data.data);
 
       setData(data.data);
       setLoading(false);
