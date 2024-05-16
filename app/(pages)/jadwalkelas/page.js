@@ -16,143 +16,75 @@ const options = [
     name: "kelas",
     label: "Kelas",
     values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "SD", label: "SD" },
-      { value: "SMP", label: "SMP" },
-      { value: "SMA", label: "SMA" },
+      { value: "", label: "Semua" },
+      { value: "1 & 2 SD", label: "1 & 2 SD" },
+      { value: "3 & 4 SD", label: "3 & 4 SD" },
+      { value: "5 SD", label: "5 SD" },
+      { value: "6 SD", label: "6 SD" },
     ],
   },
 ];
 
-const columns = [
-  {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
-  },
-  {
-    title: "Column 2",
-    dataIndex: "address",
-    key: "2",
-  },
-  {
-    title: "Column 3",
-    dataIndex: "address",
-    key: "3",
-  },
-
-  {
-    title: "Action",
-    fixed: "right",
-    align: "center",
-    width: 150,
-    render: (_, record) => (
-      <Space size="middle">
-        <Link href={`/jadwalkelas/detail?id=${record.id_jadwalkelas}`}>
-          <Image src={IconDetail} alt="" />
-        </Link>
-
-        <Link
-          href={`/jadwalkelas/detail?id=${record.id_jadwalkelas}&update=true`}
-        >
-          <Image src={IconEdit} alt="" />
-        </Link>
-
-        <button onClick={() => handleDelete(record.id_jadwalkelas)}>
-          <Image src={IconDelete} alt="" />
-        </button>
-      </Space>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-];
-
 const JadwalKelasPage = () => {
+  const columns = [
+    {
+      title: "No.",
+      key: "index",
+      render: (value, item, index) => index + 1,
+      width: 70,
+    },
+    {
+      title: "Mata Pelajaran",
+      dataIndex: "mapel",
+      key: "mapel",
+    },
+    {
+      title: "Kelas",
+      dataIndex: "kelas",
+      key: "kelas",
+    },
+    {
+      title: "Hari",
+      dataIndex: "hari",
+      key: "hari",
+    },
+    {
+      title: "Jam Pelajaran",
+      dataIndex: "jam_pelajaran",
+      key: "jam_pelajaran",
+    },
+    {
+      title: "Relawan",
+      dataIndex: "relawan",
+      key: "relawan",
+    },
+    {
+      title: "Action",
+      fixed: "right",
+      align: "center",
+      width: 150,
+      render: (_, record) => (
+        <Space size="middle">
+          <Link href={`/jadwalkelas/detail?id=${record.id_jadwalkelas}`}>
+            <Image src={IconDetail} alt="" />
+          </Link>
+
+          <Link
+            href={`/jadwalkelas/detail?id=${record.id_jadwalkelas}&update=true`}
+          >
+            <Image src={IconEdit} alt="" />
+          </Link>
+
+          <button onClick={() => handleDelete(record.id_jadwalkelas)}>
+            <Image src={IconDelete} alt="" />
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
   const router = useRouter();
+  const [data, setdata] = useState("");
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
