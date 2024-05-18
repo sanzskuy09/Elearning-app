@@ -16,20 +16,6 @@ import { API, URL } from "@/config/api";
 
 import { toastFailed, toastSuccess } from "@/utils/toastify";
 
-const kelasOption = [
-  // { value: "", label: "Pilih Kelas" },
-  { value: "SD", label: "SD" },
-  { value: "SMP", label: "SMP" },
-  { value: "SMA", label: "SMA" },
-];
-
-const mapelOption = [
-  // { value: "", label: "Pilih Mata Pelajaran" },
-  { value: "IPA", label: "IPA" },
-  { value: "IPS", label: "IPS" },
-  { value: "Bahasa", label: "Bahasa" },
-];
-
 const hariOption = [
   // { value: "", label: "Pilih Hari" },
   { value: "Senin", label: "Senin" },
@@ -39,13 +25,6 @@ const hariOption = [
   { value: "Jumat", label: "Jumat" },
   { value: "Sabtu", label: "Sabtu" },
   { value: "Minggu", label: "Minggu" },
-];
-
-const jamMapelOption = [
-  // { value: "", label: "Pilih Jam Pelajaran" },
-  { value: "09.00 - 10.00", label: "09.00 - 10.00" },
-  { value: "10.00 - 11.00", label: "10.00 - 11.00" },
-  { value: "11.00 - 12.00", label: "11.00 - 12.00" },
 ];
 
 const relawanOption = [
@@ -59,16 +38,17 @@ const TambahJadwalKelasPage = () => {
   const router = useRouter();
 
   const [kelas, setKelas] = useState([]);
-  const [kategori, setKategori] = useState([]);
+  const [mapel, setMapel] = useState([]);
   const [jamMapel, setJamMapel] = useState([]);
 
   // hook form
   const initialValues = {
     pic: "",
-    hari: "",
-    id_kelas: kelas.length > 0 ? kelas[0].id : [],
-    id_kategori: kategori.length > 0 ? kategori[0].id : [],
-    id_jam_mapel: jamMapel.length > 0 ? jamMapel[0].id : [],
+    hari: "Senin",
+    // id_kelas: kelas?.length > 0 ? kelas[0].id : "",
+    id_kelas: kelas[0]?.id,
+    id_mapel: mapel[0]?.id,
+    id_jam_mapel: jamMapel[0]?.id,
   };
 
   const handleChange = (value) => {
@@ -85,54 +65,66 @@ const TambahJadwalKelasPage = () => {
     }
   };
 
-  const getDataKategori = async () => {
+  const getDataMapel = async () => {
     try {
-      const res = await API.get(`/kategori`);
+      const res = await API.get(`/mapel`);
 
-      setKategori(res.data.data);
+      setMapel(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataJamMapel = async () => {
+    try {
+      const res = await API.get(`/jam-pelajaran`);
+
+      setJamMapel(res.data.data);
     } catch (error) {
       console.error(error);
     }
   };
 
   useEffect(() => {
-    getDataKategori();
+    getDataMapel();
     getDataKelas();
+    getDataJamMapel();
   }, []);
 
   return (
     <Formik
       initialValues={initialValues}
       // enableReinitialize={true}
-      // validationSchema={Yup.object({
-      //   nama_lengkap: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("Required"),
-      //   jkelamin: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("Required"),
-      //   id_kategori: Yup.string().required("Required"),
-      //   id_kelas: Yup.string().required("Required"),
-      // })}
+      validationSchema={Yup.object({
+        pic: Yup.string()
+          .min(3, "Must be 3 characters or then")
+          .required("PIC is Required"),
+        hari: Yup.string()
+          .min(3, "Must be 3 characters or then")
+          .required("Hari is Required"),
+        id_mapel: Yup.string().required("Mata Pelajaran is Required"),
+        id_kelas: Yup.string().required("Kelas is Required"),
+        id_jam_mapel: Yup.string().required("Jam Pelajaran is Required"),
+      })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          const response = await fetch(`/api/murid`, {
-            method: "POST",
-            body: JSON.stringify(values),
-          });
+          // const response = await fetch(`/api/murid`, {
+          //   method: "POST",
+          //   body: JSON.stringify(values),
+          // });
 
-          if (!response.ok) {
-            throw new Error("Failed to Tambah Murid Gagal");
-          }
+          // if (!response.ok) {
+          //   throw new Error("Failed to Tambah Jadwal Gagal");
+          // }
 
           setTimeout(() => {
             setSubmitting(false);
             resetForm();
-            toastSuccess("Tambah Murid Berhasil");
-            router.push("/kelolamurid");
+            toastSuccess("Tambah Jadwal Berhasil");
+            // router.push("/kelolamurid");
           }, 400);
         } catch (error) {
-          toastFailed("Tambah Murid Gagal");
+          toastFailed("Tambah Jadwal Gagal");
           // console.log(error);
         }
       }}
@@ -151,18 +143,18 @@ const TambahJadwalKelasPage = () => {
               </h1>
 
               <div className="py-8 px-12 max-w-[50%]">
-                <form action="">
+                <form onSubmit={formik.handleSubmit}>
                   <h1 className="mb-2 text-xl font-semibold">
                     Kelompok Jadwal
                   </h1>
 
                   <div className="mb-4">
                     <label htmlFor="kelas" className="block text-sm mb-1">
-                      Kelas
+                      Kelas <span className="text-red-600">*</span>
                     </label>
                     <Select
+                      required
                       placeholder="Pilih Kelas"
-                      // defaultValue={formik.values.id_kelas}
                       name="kelas"
                       value={formik.values.id_kelas}
                       onChange={(value) =>
@@ -177,23 +169,39 @@ const TambahJadwalKelasPage = () => {
                         </Option>
                       ))}
                     </Select>
+                    {formik.touched.id_kelas && formik.errors.id_kelas && (
+                      <p className="text-red-600 text-sm">
+                        {formik.errors.id_kelas}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mb-4">
                     <label htmlFor="mapel" className="block text-sm mb-1">
-                      Mata Pelajaran
+                      Mata Pelajaran <span className="text-red-600">*</span>
                     </label>
                     <Select
-                      placeholder="Pilih mata pelajaran"
-                      allowClear
+                      required
+                      placeholder="Pilih Mata Pelajaran"
+                      name="mapel"
+                      value={formik.values.id_mapel}
+                      onChange={(value) =>
+                        formik.setFieldValue("id_mapel", value)
+                      }
+                      onBlur={formik.handleBlur("id_mapel")}
                       className="my-2 w-full"
                     >
-                      {mapelOption?.map((e) => (
-                        <Option value={e.value} key={e.value}>
-                          {e.label}
+                      {mapel?.map((item) => (
+                        <Option value={item.id} key={item.id}>
+                          {item.name}
                         </Option>
                       ))}
                     </Select>
+                    {formik.touched.id_mapel && formik.errors.id_mapel && (
+                      <p className="text-red-600 text-sm">
+                        {formik.errors.id_mapel}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mb-4">
@@ -202,22 +210,30 @@ const TambahJadwalKelasPage = () => {
                     </label>
                     <Input
                       required
-                      placeholder="masukan pic"
+                      placeholder="Masukan nama pic"
                       className="w-full border border-gray-300 rounded-md px-3 py-2"
                       {...formik.getFieldProps("pic")}
                     />
+                    {formik.touched.pic && formik.errors.pic && (
+                      <p className="text-red-600 text-sm">
+                        {formik.errors.pic}
+                      </p>
+                    )}
                   </div>
 
                   <h1 className="mb-2 text-xl font-semibold">Detail Jadwal</h1>
 
                   <div className="mb-4">
                     <label htmlFor="hari" className="block text-sm mb-1">
-                      Hari
+                      Hari <span className="text-red-600">*</span>
                     </label>
                     <Select
+                      required
                       placeholder="Pilih hari"
-                      allowClear
                       className="my-2 w-full"
+                      value={formik.values.hari}
+                      onChange={(value) => formik.setFieldValue("hari", value)}
+                      onBlur={formik.handleBlur("hari")}
                     >
                       {hariOption?.map((e) => (
                         <Option value={e.value} key={e.value}>
@@ -225,28 +241,45 @@ const TambahJadwalKelasPage = () => {
                         </Option>
                       ))}
                     </Select>
+                    {formik.touched.hari && formik.errors.hari && (
+                      <p className="text-red-600 text-sm">
+                        {formik.errors.hari}
+                      </p>
+                    )}
                   </div>
 
                   <div className="mb-4">
                     <label htmlFor="jammapel" className="block text-sm mb-1">
-                      Jam Pelajaran
+                      Jam Pelajaran <span className="text-red-600">*</span>
                     </label>
                     <Select
-                      placeholder="Pilih jam pelajaran"
-                      allowClear
+                      required
+                      placeholder="Pilih Jam Pelajaran"
+                      name="jamMapel"
+                      value={formik.values.id_jam_mapel}
+                      onChange={(value) =>
+                        formik.setFieldValue("id_jam_mapel", value)
+                      }
+                      onBlur={formik.handleBlur("id_jam_mapel")}
                       className="my-2 w-full"
                     >
-                      {jamMapelOption?.map((e) => (
-                        <Option value={e.value} key={e.value}>
-                          {e.label}
+                      {jamMapel?.map((item) => (
+                        <Option value={item.id} key={item.id}>
+                          {item.name}
                         </Option>
                       ))}
                     </Select>
+                    {formik.touched.id_jam_mapel &&
+                      formik.errors.id_jam_mapel && (
+                        <p className="text-red-600 text-sm">
+                          {formik.errors.id_jam_mapel}
+                        </p>
+                      )}
                   </div>
 
                   <div className="mb-4">
                     <label htmlFor="relawan" className="block text-sm mb-1">
-                      Pelawan Pengajar
+                      Pelawan Pengajar <span className="text-red-600">*</span>
                     </label>
                     <Select
                       mode="multiple"
@@ -260,7 +293,7 @@ const TambahJadwalKelasPage = () => {
                   </div>
 
                   <div className="flex justify-end mt-8">
-                    <ButtonAdd text="Simpan" />
+                    <ButtonAdd type="submit" text="Simpan" />
                   </div>
                 </form>
               </div>
