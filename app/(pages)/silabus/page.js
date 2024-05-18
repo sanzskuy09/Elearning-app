@@ -1,11 +1,21 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
-import { Button, Form, Select, Input, Checkbox, ConfigProvider } from "antd";
+import {
+  Button,
+  Form,
+  Select,
+  Input,
+  Checkbox,
+  ConfigProvider,
+  Modal,
+} from "antd";
 const { Search } = Input;
+const { confirm } = Modal;
 
 import { SearchOutlined } from "@ant-design/icons";
 import { ExclamationCircleFilled } from "@ant-design/icons";
@@ -16,7 +26,8 @@ import SearchBar from "@/components/SearchBar";
 import IconDetele from "@/public/Icons/icon-delete.svg";
 import IconEdit from "@/public/Icons/icon_edit.svg";
 import IconDownload from "@/public/Icons/icon-download.svg";
-import Link from "next/link";
+import { API, URL } from "@/config/api";
+import { toastFailed, toastSuccess } from "@/utils/toastify";
 
 const options = [
   {
@@ -48,7 +59,6 @@ const SilabusPage = () => {
   const router = useRouter();
 
   const [data, setData] = useState("");
-
   const [checked, setChecked] = useState(true);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -98,13 +108,15 @@ const SilabusPage = () => {
       async onOk() {
         try {
           setLoading(true);
-          await API.delete(`${URL.GET_RELAWAN}/${e}`);
+          await API.delete(`${URL.GET_SILABUS}/${e}`);
           await getData();
 
-          toastSuccess(`Relawan Berhasil dihapus`);
+          toastSuccess(`Silabus Berhasil dihapus`);
 
           setLoading(false);
         } catch (error) {
+          toastFailed(`Silabus Gagal dihapus`);
+
           setLoading(false);
         }
       },
@@ -114,11 +126,13 @@ const SilabusPage = () => {
     });
   };
 
+  // console.log(filters.kelas[0]);
+
   const getData = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/relawan?mapel=${filters?.mapel}&kelas=${filters?.kelas}`,
+        `/api/silabus?mapel=${filters?.mapel[1]}&kelas=${filters?.kelas[1]}`,
         {
           method: "GET",
         }
@@ -148,9 +162,9 @@ const SilabusPage = () => {
     return () => clearTimeout(bounceTimer);
   }, [value]);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   getData();
+  // }, []);
 
   return (
     <div className="flex flex-col h-full">
@@ -171,12 +185,12 @@ const SilabusPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            // onSearch={handleGetId}
+            onSearch={getData}
             handleSearch={handleSearchChange}
           />
 
           <div className="py-4 px-6">
-            {filters.kelas[0] == "" || filters.mapel[0] == "" ? (
+            {filters.kelas[0] == "" || filters.mapel[0] == "" || data == "" ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -189,75 +203,31 @@ const SilabusPage = () => {
 
                 {/* silabus list */}
                 <div className="mt-4 flex flex-col gap-4">
-                  <div className="flex gap-4 items-center">
-                    <Checkbox checked={checked} onChange={onChange} />
+                  {data?.map((item, i) => (
+                    <div className="flex gap-4 items-center" key={i}>
+                      <Checkbox checked={checked} onChange={onChange} />
 
-                    <div className="flex-1 px-4 py-1 border border-black rounded-md">
-                      <p className="text-sm">
-                        Menjelaskan dan menentukan urutan bilangan bulat
-                        (negatif - positif) dan pecahan
-                      </p>
+                      <div className="flex-1 px-4 py-1 border border-black rounded-md">
+                        <p className="text-sm">{item.name}</p>
+                      </div>
+
+                      <div className="flex gap-4 ml-8">
+                        <a
+                          href={item.file_url}
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          <Image src={IconDownload} alt="img" />
+                        </a>
+                        <Link href={`/silabus/editsilabus?id=${item.id}`}>
+                          <Image src={IconEdit} alt="img" />
+                        </Link>
+                        <button onClick={() => handleDelete(item.id)}>
+                          <Image src={IconDetele} alt="img" />
+                        </button>
+                      </div>
                     </div>
-
-                    <div className="flex gap-4 ml-8">
-                      <button>
-                        <Image src={IconDownload} alt="" />
-                      </button>
-                      <Link href={`/silabus/editsilabus?id=1`}>
-                        <Image src={IconEdit} alt="" />
-                      </Link>
-                      <button>
-                        <Image src={IconDetele} alt="" />
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* conoth stat */}
-                  <div className="flex gap-4 items-center">
-                    <Checkbox checked={checked} onChange={onChange} />
-
-                    <div className="flex-1 px-4 py-1 border border-black rounded-md">
-                      <p className="text-sm">
-                        Menjelaskan dan menentukan urutan bilangan bulat
-                        (negatif - positif) dan pecahan
-                      </p>
-                    </div>
-
-                    <div className="flex gap-4 ml-8">
-                      <button>
-                        <Image src={IconDownload} alt="" />
-                      </button>
-                      <Link href={`/silabus/editsilabus?id=1`}>
-                        <Image src={IconEdit} alt="" />
-                      </Link>
-                      <button>
-                        <Image src={IconDetele} alt="" />
-                      </button>
-                    </div>
-                  </div>
-                  <div className="flex gap-4 items-center">
-                    <Checkbox checked={checked} onChange={onChange} />
-
-                    <div className="flex-1 px-4 py-1 border border-black rounded-md">
-                      <p className="text-sm">
-                        Menjelaskan dan menentukan urutan bilangan bulat
-                        (negatif - positif) dan pecahan
-                      </p>
-                    </div>
-
-                    <div className="flex gap-4 ml-8">
-                      <button>
-                        <Image src={IconDownload} alt="" />
-                      </button>
-                      <Link href={`/silabus/editsilabus?id=1`}>
-                        <Image src={IconEdit} alt="" />
-                      </Link>
-                      <button>
-                        <Image src={IconDetele} alt="" />
-                      </button>
-                    </div>
-                  </div>
-                  {/* conoth end */}
+                  ))}
                 </div>
 
                 <div className="flex gap-4 w-full justify-end mt-8">
