@@ -20,4 +20,8 @@ export const URL = {
   // RELAWAN
   GET_RELAWAN: "/relawan",
   ADD_RELAWAN: "/relawan/add",
+
+  // Silabus
+  GET_SILABUS: "/silabus",
+  ADD_SILABUS: "/silabus/add",
 };

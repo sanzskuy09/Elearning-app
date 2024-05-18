@@ -14,7 +14,7 @@ import { toastFailed, toastSuccess } from "@/utils/toastify";
 // hook form
 import { Formik } from "formik";
 import * as Yup from "yup";
-import { API } from "@/config/api";
+import { API, URL } from "@/config/api";
 
 const TambahSilabusPage = () => {
   const router = useRouter();
@@ -32,28 +32,48 @@ const TambahSilabusPage = () => {
     name: "",
     id_kelas: Number(idKelas),
     id_mapel: Number(idMapel),
-    isChecker: false,
+    isChecked: false,
     file: "",
   };
 
   // handle file upload
   const props = {
     name: "file",
+    listType: "picture",
+    multiple: false,
     // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
     // headers: {
     //   authorization: 'authorization-text',
     // },
-    listType: "picture",
-    onChange(info) {
-      if (info.file.status !== "uploading") {
-        console.log(info.file, info.fileList);
-      }
-      if (info.file.status === "done") {
-        message.success(`${info.file.name} file uploaded successfully`);
-      } else if (info.file.status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    },
+    // onChange(info) {
+    //   // console.log(info.file.status, " info");
+
+    //   if (info.file.status !== "uploading") {
+    //     console.log(info.file);
+    //   }
+
+    //   if (info.file.status === "done") {
+    //     console.log(`${info.file.name} file uploaded successfully`);
+    //   } else if (info.file.status === "error") {
+    //     message.error(`${info.file.name} file upload failed.`);
+    //   }
+
+    //   // Call handleFileChange here if needed
+    //   // handleFileChange(info.event, formik);
+    // },
+  };
+
+  const handleFileChange = (e, formik) => {
+    // e.preventDefault();
+    let reader = new FileReader();
+    let file = e.fileList[0].originFileObj;
+    if (file) {
+      reader.onloadend = () => {
+        formik.setFieldValue("file", file);
+        formik.setFieldValue("filePreview", reader.result); // Set file preview
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
   const getDataKelas = async () => {
@@ -94,20 +114,28 @@ const TambahSilabusPage = () => {
       })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          // const response = await fetch("/api/login", {
-          //   method: "POST",
-          //   body: JSON.stringify(values),
-          // });
-          // if (!response.ok) {
-          //   throw new Error("Failed to log in");
-          // }
-          // const data = await response.json();
-          // setTimeout(() => {
-          //   setSubmitting(false);
-          //   resetForm();
-          // toastSuccess("Tambah Silabus Berhasil");
-          //   router.push("/silabus");
-          // }, 400);
+          const formData = new FormData();
+          formData.append("name", values.name);
+          formData.append("id_mapel", values.id_mapel);
+          formData.append("id_kelas", values.id_kelas);
+          formData.append("isChecked", values.isChecked);
+          formData.append("file", values.file);
+
+          const response = await fetch("/api/silabus", {
+            method: "POST",
+            body: formData,
+          });
+          if (!response.ok) {
+            throw new Error("Failed to add silabus");
+          }
+          await response.json();
+
+          setTimeout(() => {
+            setSubmitting(false);
+            resetForm();
+            toastSuccess("Tambah Silabus Berhasil");
+            router.push("/silabus");
+          }, 400);
         } catch (error) {
           toastFailed("Tambah Silabus Gagal");
           // console.log(error);
@@ -128,7 +156,7 @@ const TambahSilabusPage = () => {
               </h1>
 
               <div className="py-8 px-12 max-w-[50%]">
-                <form action="">
+                <form onSubmit={formik.handleSubmit}>
                   <h1 className="mb-2 text-xl font-semibold">
                     Kelompok Silabus
                   </h1>
@@ -189,7 +217,7 @@ const TambahSilabusPage = () => {
 
                   <div className="mb-4">
                     <label
-                      htmlFor="silabus"
+                      htmlFor="name"
                       className="block text-sm font-semibold mb-1"
                     >
                       Nama Silabus <span className="text-red-600">*</span>
@@ -198,7 +226,7 @@ const TambahSilabusPage = () => {
                       rows={4}
                       placeholder=""
                       allowClear
-                      onChange={(e) => setValue(e.target.value)}
+                      {...formik.getFieldProps("name")}
                     />
                   </div>
 
@@ -209,7 +237,12 @@ const TambahSilabusPage = () => {
                     >
                       Dokumen Pendukung
                     </label>
-                    <Upload {...props}>
+                    <Upload
+                      // name="file"
+                      accept=".pdf, image/*"
+                      onChange={(e) => handleFileChange(e, formik)}
+                      {...props}
+                    >
                       <Button
                         icon={<UploadOutlined />}
                         style={{
@@ -222,10 +255,19 @@ const TambahSilabusPage = () => {
                         Upload File
                       </Button>
                     </Upload>
+                    {/* <input
+                      type="file"
+                      name="image"
+                      accept=".pdf, image/*"
+                      // accept="application/pdf" // Change accept attribute to accept PDF files
+                      onChange={(e) => handleFileChange(e, formik)}
+                      className="my-2"
+                      required
+                    /> */}
                   </div>
 
                   <div className="flex justify-end mt-8">
-                    <ButtonAdd text="Simpan" />
+                    <ButtonAdd type="submit" text="Simpan" />
                   </div>
                 </form>
               </div>
