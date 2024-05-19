@@ -41,26 +41,6 @@ const TambahSilabusPage = () => {
     name: "file",
     listType: "picture",
     multiple: false,
-    // action: 'https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload',
-    // headers: {
-    //   authorization: 'authorization-text',
-    // },
-    // onChange(info) {
-    //   // console.log(info.file.status, " info");
-
-    //   if (info.file.status !== "uploading") {
-    //     console.log(info.file);
-    //   }
-
-    //   if (info.file.status === "done") {
-    //     console.log(`${info.file.name} file uploaded successfully`);
-    //   } else if (info.file.status === "error") {
-    //     message.error(`${info.file.name} file upload failed.`);
-    //   }
-
-    //   // Call handleFileChange here if needed
-    //   // handleFileChange(info.event, formik);
-    // },
   };
 
   const handleFileChange = (e, formik) => {
@@ -255,15 +235,6 @@ const TambahSilabusPage = () => {
                         Upload File
                       </Button>
                     </Upload>
-                    {/* <input
-                      type="file"
-                      name="image"
-                      accept=".pdf, image/*"
-                      // accept="application/pdf" // Change accept attribute to accept PDF files
-                      onChange={(e) => handleFileChange(e, formik)}
-                      className="my-2"
-                      required
-                    /> */}
                   </div>
 
                   <div className="flex justify-end mt-8">

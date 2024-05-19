@@ -58,16 +58,17 @@ const options = [
 const SilabusPage = () => {
   const router = useRouter();
 
-  const [data, setData] = useState("");
+  const [data, setData] = useState(null);
   const [checked, setChecked] = useState(true);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
+
+  // const [currentPage, setCurrentPage] = useState(1);
 
   // handle pagination
-  const pageSize = 10;
-  const start = (currentPage - 1) * pageSize;
-  const end = currentPage * pageSize;
+  // const pageSize = 10;
+  // const start = (currentPage - 1) * pageSize;
+  // const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
     Object.fromEntries(options.map((option) => [option.name, [""]]))
@@ -81,10 +82,6 @@ const SilabusPage = () => {
 
   const handleLoadingChange = (enable) => {
     setLoading(enable);
-  };
-
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
   };
 
   const toggleChecked = () => {
@@ -126,13 +123,11 @@ const SilabusPage = () => {
     });
   };
 
-  // console.log(filters.kelas[0]);
-
   const getData = async () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/silabus?mapel=${filters?.mapel[1]}&kelas=${filters?.kelas[1]}`,
+        `/api/silabus?mapel=${filters?.mapel[1]}&kelas=${filters?.kelas[1]}&id=`,
         {
           method: "GET",
         }
@@ -162,10 +157,6 @@ const SilabusPage = () => {
     return () => clearTimeout(bounceTimer);
   }, [value]);
 
-  // useEffect(() => {
-  //   getData();
-  // }, []);
-
   return (
     <div className="flex flex-col h-full">
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
@@ -190,7 +181,9 @@ const SilabusPage = () => {
           />
 
           <div className="py-4 px-6">
-            {filters.kelas[0] == "" || filters.mapel[0] == "" || data == "" ? (
+            {filters.kelas[0] == "" ||
+            filters.mapel[0] == "" ||
+            data == null ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -202,33 +195,46 @@ const SilabusPage = () => {
                 </h1>
 
                 {/* silabus list */}
-                <div className="mt-4 flex flex-col gap-4">
-                  {data?.map((item, i) => (
-                    <div className="flex gap-4 items-center" key={i}>
-                      <Checkbox checked={checked} onChange={onChange} />
+                {data.length > 0 ? (
+                  <div className="mt-4 flex flex-col gap-4">
+                    {data?.map((item, i) => (
+                      <div className="flex gap-4 items-center" key={i}>
+                        <Checkbox checked={checked} onChange={onChange} />
 
-                      <div className="flex-1 px-4 py-1 border border-black rounded-md">
-                        <p className="text-sm">{item.name}</p>
-                      </div>
+                        <div className="flex-1 px-4 py-1 border border-black rounded-md">
+                          <p className="text-sm">{item.name}</p>
+                        </div>
 
-                      <div className="flex gap-4 ml-8">
-                        <a
-                          href={item.file_url}
-                          target="_blank"
-                          rel="noreferrer"
-                        >
-                          <Image src={IconDownload} alt="img" />
-                        </a>
-                        <Link href={`/silabus/editsilabus?id=${item.id}`}>
-                          <Image src={IconEdit} alt="img" />
-                        </Link>
-                        <button onClick={() => handleDelete(item.id)}>
-                          <Image src={IconDetele} alt="img" />
-                        </button>
+                        <div className="flex gap-4 ml-8">
+                          <a
+                            href={item.file != "" && item.file_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className={
+                              item.file === "" &&
+                              `cursor-not-allowed opacity-50`
+                            }
+                          >
+                            <Image src={IconDownload} alt="img" />
+                          </a>
+                          <Link
+                            href={`/silabus/editsilabus?id=${item.id}&kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`}
+                          >
+                            <Image src={IconEdit} alt="img" />
+                          </Link>
+                          <button onClick={() => handleDelete(item.id)}>
+                            <Image src={IconDetele} alt="img" />
+                          </button>
+                        </div>
                       </div>
-                    </div>
-                  ))}
-                </div>
+                    ))}
+                  </div>
+                ) : (
+                  <p className="mt-4">
+                    Ups.. Belum ada <strong>Silabus</strong>. Harap tambah{" "}
+                    <strong>Silabus</strong> dahulu.
+                  </p>
+                )}
 
                 <div className="flex gap-4 w-full justify-end mt-8">
                   <ButtonAdd
