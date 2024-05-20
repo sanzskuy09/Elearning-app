@@ -56,41 +56,20 @@ const options = [
 ];
 
 const SilabusPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   const router = useRouter();
 
   const [data, setData] = useState(null);
-  const [checked, setChecked] = useState(true);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
-
-  // const [currentPage, setCurrentPage] = useState(1);
-
-  // handle pagination
-  // const pageSize = 10;
-  // const start = (currentPage - 1) * pageSize;
-  // const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
     Object.fromEntries(options.map((option) => [option.name, [""]]))
   );
 
-  // console.log(filters.kelas[0]);
-
   const handleSearchChange = (e) => {
     setValue(e.target.value);
-  };
-
-  const handleLoadingChange = (enable) => {
-    setLoading(enable);
-  };
-
-  const toggleChecked = () => {
-    setChecked(!checked);
-  };
-
-  const onChange = (e) => {
-    // console.log("checked = ", e.target.checked);
-    setChecked(e.target.checked);
   };
 
   const handleDelete = async (e) => {
@@ -105,6 +84,7 @@ const SilabusPage = () => {
       async onOk() {
         try {
           setLoading(true);
+
           await API.delete(`${URL.GET_SILABUS}/${e}`);
           await getData();
 
@@ -113,6 +93,48 @@ const SilabusPage = () => {
           setLoading(false);
         } catch (error) {
           toastFailed(`Silabus Gagal dihapus`);
+
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const handleChecked = async (e) => {
+    confirm({
+      title:
+        "Anda yakin ingin menyelesaikan proses pengajaran silabus kepada siswa?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          setLoading(true);
+
+          const formData = new FormData();
+          formData.append("name", e.name);
+          formData.append("isChecked", e.isChecked ? false : true);
+
+          const config = {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          };
+
+          await API.put(`${URL.GET_SILABUS}/${e.id}`, formData, config);
+          await getData();
+
+          toastSuccess(`Silabus Berhasil diselesaikan`);
+
+          setLoading(false);
+        } catch (error) {
+          toastFailed(`Silabus Gagal diselesaikan`);
 
           setLoading(false);
         }
@@ -161,7 +183,7 @@ const SilabusPage = () => {
     <div className="flex flex-col h-full">
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
         <h1>Kelola Silabus</h1>
-        <h1>Hallo, Kak Nanda</h1>
+        <h1>Hallo, Kak {nama}</h1>
       </div>
 
       <div className="py-6 px-10 flex flex-col gap-4 ">
@@ -199,7 +221,11 @@ const SilabusPage = () => {
                   <div className="mt-4 flex flex-col gap-4">
                     {data?.map((item, i) => (
                       <div className="flex gap-4 items-center" key={i}>
-                        <Checkbox checked={checked} onChange={onChange} />
+                        <Checkbox
+                          checked={item.isChecked}
+                          onChange={() => handleChecked(item)}
+                          disabled={item.isChecked}
+                        />
 
                         <div className="flex-1 px-4 py-1 border border-black rounded-md">
                           <p className="text-sm">{item.name}</p>

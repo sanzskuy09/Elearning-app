@@ -3,11 +3,13 @@ import Link from "next/link";
 import React from "react";
 
 const KelasDetailPage = ({ params: { kelas } }) => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   return (
     <div>
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
         <h1>Kelas Hari Ini / {kelas}</h1>
-        <h1>Hallo, Kak Nanda</h1>
+        <h1>Hallo, Kak {nama}</h1>
       </div>
 
       <div className="py-6 px-10 flex flex-col gap-4">

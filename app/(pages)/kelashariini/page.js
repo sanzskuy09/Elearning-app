@@ -11,6 +11,8 @@ import { ConfigProvider, Space, Table, Modal } from "antd";
 const { confirm } = Modal;
 
 const KelasHariIniPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   const router = useRouter();
 
   const columns = [
@@ -67,7 +69,7 @@ const KelasHariIniPage = () => {
     <div>
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
         <h1>Kelas Hari Ini</h1>
-        <h1>Hallo, Kak Nanda</h1>
+        <h1>Hallo, Kak {nama}</h1>
       </div>
 
       <div className="py-6 px-10 flex flex-col gap-4">
