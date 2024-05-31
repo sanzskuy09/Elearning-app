@@ -25,3 +25,18 @@ export async function POST(request) {
     console.error(error);
   }
 }
+
+export async function PUT(request) {
+  try {
+    const body = await request.json();
+
+    const searchParams = request.nextUrl.searchParams;
+    const id = searchParams.get("id");
+
+    const res = await API.put(`${URL.GET_JADWAL}/${id}`, body);
+
+    return new Response(JSON.stringify(res.data));
+  } catch (error) {
+    console.error(error);
+  }
+}
