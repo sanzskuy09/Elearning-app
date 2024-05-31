@@ -51,6 +51,9 @@ const LoginPage = () => {
           const data = await response.json();
           dispatch(loginUser(data.data));
 
+          localStorage.setItem("token", data.data.token);
+          localStorage.setItem("nama_panggilan", data.data.user.nama_panggilan);
+
           setTimeout(() => {
             setSubmitting(false);
             resetForm();

@@ -64,6 +64,7 @@ const options = {
 };
 
 const DashboardPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
   // filter data relawan
   const filterDataRelawan = dataRelawan
     .sort((a, b) => b.point - a.point)
@@ -73,7 +74,7 @@ const DashboardPage = () => {
     <div>
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
         <h1>Dashboard</h1>
-        <h1>Hallo, Kak Nanda</h1>
+        <h1>Hallo, Kak {nama}</h1>
       </div>
 
       {/* content */}

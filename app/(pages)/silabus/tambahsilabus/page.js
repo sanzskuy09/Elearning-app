@@ -17,6 +17,8 @@ import * as Yup from "yup";
 import { API, URL } from "@/config/api";
 
 const TambahSilabusPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -126,7 +128,7 @@ const TambahSilabusPage = () => {
         <div className="flex flex-col h-full">
           <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
             <h1>Kelola Silabus</h1>
-            <h1>Hallo, Kak Nanda</h1>
+            <h1>Hallo, Kak {nama}</h1>
           </div>
 
           <div className="py-6 px-10 flex flex-col gap-4 h-full">

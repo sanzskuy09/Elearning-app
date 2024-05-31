@@ -27,19 +27,15 @@ const hariOption = [
   { value: "Minggu", label: "Minggu" },
 ];
 
-const relawanOption = [
-  // { value: "", label: "Pilih Relawan" },
-  { value: "Ihsan", label: "Ihsan" },
-  { value: "Nanda", label: "Nanda" },
-  { value: "Raza", label: "Raza" },
-];
-
 const TambahJadwalKelasPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   const router = useRouter();
 
   const [kelas, setKelas] = useState([]);
   const [mapel, setMapel] = useState([]);
   const [jamMapel, setJamMapel] = useState([]);
+  const [listRelawan, setListRelawan] = useState([]);
 
   // hook form
   const initialValues = {
@@ -52,7 +48,7 @@ const TambahJadwalKelasPage = () => {
   };
 
   const handleChange = (value) => {
-    // console.log(`selected ${value}`);
+    console.log(`selected ${value}`);
   };
 
   const getDataKelas = async () => {
@@ -85,10 +81,21 @@ const TambahJadwalKelasPage = () => {
     }
   };
 
+  const getListRelawan = async () => {
+    try {
+      const res = await API.get(`/list-relawan`);
+
+      setListRelawan(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     getDataMapel();
     getDataKelas();
     getDataJamMapel();
+    getListRelawan();
   }, []);
 
   return (
@@ -108,20 +115,27 @@ const TambahJadwalKelasPage = () => {
       })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          // const response = await fetch(`/api/murid`, {
-          //   method: "POST",
-          //   body: JSON.stringify(values),
-          // });
+          const newValues = {
+            ...values,
+            jadwal: values.jadwal.map((id_relawan) => ({
+              id_relawan,
+            })),
+          };
 
-          // if (!response.ok) {
-          //   throw new Error("Failed to Tambah Jadwal Gagal");
-          // }
+          const response = await fetch(`/api/jadwal`, {
+            method: "POST",
+            body: JSON.stringify(newValues),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to Tambah Jadwal Gagal");
+          }
 
           setTimeout(() => {
             setSubmitting(false);
             resetForm();
             toastSuccess("Tambah Jadwal Berhasil");
-            // router.push("/kelolamurid");
+            router.push("/jadwalkelas");
           }, 400);
         } catch (error) {
           toastFailed("Tambah Jadwal Gagal");
@@ -133,7 +147,7 @@ const TambahJadwalKelasPage = () => {
         <div className="flex flex-col h-full">
           <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
             <h1>Kelola Jadwal</h1>
-            <h1>Hallo, Kak Nanda</h1>
+            <h1>Hallo, Kak {nama}</h1>
           </div>
 
           <div className="py-6 px-10 flex flex-col gap-4">
@@ -279,17 +293,26 @@ const TambahJadwalKelasPage = () => {
 
                   <div className="mb-4">
                     <label htmlFor="relawan" className="block text-sm mb-1">
-                      Pelawan Pengajar <span className="text-red-600">*</span>
+                      Relawan Pengajar <span className="text-red-600">*</span>
                     </label>
                     <Select
+                      // defaultValue={["a10", "c12"]}
+                      // onChange={handleChange}
                       mode="multiple"
                       allowClear
                       placeholder="Pilih relawan"
-                      // defaultValue={["a10", "c12"]}
                       className="my-2 w-full"
-                      onChange={handleChange}
-                      options={relawanOption}
-                    />
+                      onChange={(value) =>
+                        formik.setFieldValue("jadwal", value)
+                      }
+                      onBlur={formik.handleBlur("jadwal")}
+                    >
+                      {listRelawan?.map((item) => (
+                        <Option value={item.id} key={item.id}>
+                          {item.nama_lengkap}
+                        </Option>
+                      ))}
+                    </Select>
                   </div>
 
                   <div className="flex justify-end mt-8">

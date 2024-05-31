@@ -18,6 +18,8 @@ import * as Yup from "yup";
 import { API, URL } from "@/config/api";
 
 const EditSilabusPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -34,9 +36,6 @@ const EditSilabusPage = () => {
 
   const initialValues = {
     name: data ? data.name : "",
-    // id_kelas: Number(idKelas),
-    // id_mapel: Number(idMapel),
-    // isChecked: false,
     file: "",
   };
 
@@ -128,17 +127,12 @@ const EditSilabusPage = () => {
         name: Yup.string()
           .min(3, "Must be 3 characters or then")
           .required("Required"),
-        // id_mapel: Yup.string().required("Required"),
-        // id_kelas: Yup.string().required("Required"),
       })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
           console.log(values);
           const formData = new FormData();
           formData.append("name", values.name);
-          // formData.append("id_mapel", values.id_mapel);
-          // formData.append("id_kelas", values.id_kelas);
-          // formData.append("isChecked", values.isChecked);
           {
             values.file !== null && formData.append("file", values.file);
           }
@@ -168,7 +162,7 @@ const EditSilabusPage = () => {
         <div className="flex flex-col h-full">
           <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
             <h1>Kelola Silabus</h1>
-            <h1>Hallo, Kak Nanda</h1>
+            <h1>Hallo, Kak {nama}</h1>
           </div>
 
           <div className="py-6 px-10 flex flex-col gap-4 h-full">
