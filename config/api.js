@@ -24,4 +24,8 @@ export const URL = {
   // Silabus
   GET_SILABUS: "/silabus",
   ADD_SILABUS: "/silabus/add",
+
+  // jadwal
+  GET_JADWAL: "/jadwal",
+  ADD_JADWAL: "/jadwal/add",
 };

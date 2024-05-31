@@ -294,7 +294,7 @@ const KelolaMuridPage = () => {
                 <Table
                   loading={loading}
                   columns={columns}
-                  dataSource={data.slice(start, end)}
+                  dataSource={data?.slice(start, end)}
                   pagination={false}
                   scroll={{
                     x: 1300,
