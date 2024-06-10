@@ -23,6 +23,7 @@ export const URL = {
   GET_RELAWAN: "/relawan",
   ADD_RELAWAN: "/relawan/add",
   RELAWAN_TERAKTIF: "/point-relawan",
+  JADWAL_RELAWAN: "/jadwal-relawan",
 
   // Silabus
   GET_SILABUS: "/silabus",

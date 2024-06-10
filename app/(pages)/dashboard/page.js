@@ -58,10 +58,6 @@ const columnsRelawan = [
 
 const DashboardPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
-  // filter data relawan
-  const filterDataRelawan = dataRelawan
-    .sort((a, b) => b.point - a.point)
-    .slice(0, 5);
 
   const [totals, setTotals] = useState({ relawan: 0, murid: 0, mapel: 0 });
   const [pointRelawan, setPointRelawan] = useState([]);
@@ -114,8 +110,6 @@ const DashboardPage = () => {
       console.error("Error: ", error);
     }
   };
-
-  console.log(pointRelawan, " >> point realwan");
 
   useEffect(() => {
     getTotalData();
@@ -270,30 +264,6 @@ const DashboardPage = () => {
               </div>
             </div>
           </div>
-
-          {/* <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56">
-            <h1 className="mb-4">Rata-rata Nilai</h1>
-
-            <div className="flex justify-center">
-              <div className="w-[50%] flex justify-center">
-                <Pie options={options} data={data} />
-              </div>
-            </div>
-          </div> */}
-
-          {/* <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
-            <h1 className="mb-4">Murid dengan presensi &lt; 70%</h1>
-
-            <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
-
-            {dataRelawan.length > 5 && (
-              <div className="absolute bottom-0 right-0 mb-4 mr-8">
-                <button className=" text-title text-base font-light">
-                  Lihat Lainnya
-                </button>
-              </div>
-            )}
-          </div> */}
         </div>
 
         {/* jumlah mapel, murid, relawan */}

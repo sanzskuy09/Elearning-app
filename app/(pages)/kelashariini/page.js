@@ -2,16 +2,18 @@
 
 import TableDashboard from "@/components/TableDashboard";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { dataUpcomingClass, dataRelawan, dataKelas } from "../dashboard/data";
 
 import { ConfigProvider, Space, Table, Modal } from "antd";
+import { API, URL } from "@/config/api";
 const { confirm } = Modal;
 
 const KelasHariIniPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
+  const id_relawan = localStorage.getItem("id_relawan");
 
   const router = useRouter();
 
@@ -65,6 +67,25 @@ const KelasHariIniPage = () => {
     },
   ];
 
+  const [jadwal, setJadwal] = useState([]);
+
+  const getDataJadwal = async () => {
+    try {
+      const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
+
+      const data = res.data.data.slice(0, 5);
+      setJadwal(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(jadwal);
+
+  useEffect(() => {
+    getDataJadwal();
+  }, []);
+
   return (
     <div>
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
@@ -97,7 +118,7 @@ const KelasHariIniPage = () => {
                 },
               }}
             >
-              <Table columns={columns} dataSource={dataKelas} />
+              <Table columns={columns} dataSource={jadwal} />
             </ConfigProvider>
           </div>
         </div>

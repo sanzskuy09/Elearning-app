@@ -51,6 +51,7 @@ const LoginPage = () => {
           const data = await response.json();
           dispatch(loginUser(data.data));
 
+          localStorage.setItem("id_relawan", data.data.id);
           localStorage.setItem("token", data.data.token);
           localStorage.setItem("nama_panggilan", data.data.user.nama_panggilan);
           localStorage.setItem("email", data.data.user.email);
