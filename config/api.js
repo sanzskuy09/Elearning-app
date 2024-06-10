@@ -13,6 +13,8 @@ export const API = axios.create({
 export const URL = {
   AUTH_LOGIN: "/auth/login",
 
+  TOTAL: "/total",
+
   // MURID
   GET_MURID: "/murid",
   ADD_MURID: "/murid/add",

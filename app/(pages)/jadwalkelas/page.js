@@ -15,19 +15,20 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API, URL } from "@/config/api";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-      { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-      { value: "5 SD", label: "5 SD", id: "3" },
-      { value: "6 SD", label: "6 SD", id: "4" },
-    ],
-  },
-];
+// const options = [
+//   {
+//     name: "kelas",
+//     label: "Kelas",
+//     values: [
+//       { value: "", label: "Pilih Kelas" },
+//       { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
+//       { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
+//       { value: "5 SD", label: "5 SD", id: "3" },
+//       { value: "6 SD", label: "6 SD", id: "4" },
+//     ],
+//   },
+// ];
+const options = [];
 
 const JadwalKelasPage = () => {
   const columns = [
@@ -104,6 +105,7 @@ const JadwalKelasPage = () => {
 
   const router = useRouter();
   const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,13 +115,13 @@ const JadwalKelasPage = () => {
   const start = (currentPage - 1) * pageSize;
   const end = currentPage * pageSize;
 
-  const handleChangePage = (page) => {
-    setCurrentPage(page);
-  };
-
   const [filters, setFilters] = useState(
     Object.fromEntries(options.map((option) => [option.name, [""]]))
   );
+
+  const handleChangePage = (page) => {
+    setCurrentPage(page);
+  };
 
   // console.log(filters.kelas[0]);
 
@@ -175,6 +177,32 @@ const JadwalKelasPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length === 0) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // console.log(dataKelas, " >> data kelas");
+  // console.log(options, " >> option");
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -185,7 +213,11 @@ const JadwalKelasPage = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+    getDataKelas();
+  }, [filters]);
+
+  // console.log(options);
+  // console.log(filters);
 
   return (
     <div className="flex flex-col h-full">
@@ -206,9 +238,9 @@ const JadwalKelasPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={getData}
+            // onSearch={getData}
             // onSearch={() => console.log(filters)}
-            handleSearch={handleSearchChange}
+            // handleSearch={handleSearchChange}
             showButton={true}
             text={"Buat Jadwal"}
             onButtonClick={() => router.push("/jadwalkelas/tambahjadwal")}
