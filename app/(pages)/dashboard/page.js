@@ -48,7 +48,7 @@ const columnsClass = [
 const columnsRelawan = [
   {
     title: "Nama",
-    dataIndex: "name",
+    dataIndex: "nama_lengkap",
   },
   {
     title: "Point",
@@ -64,6 +64,7 @@ const DashboardPage = () => {
     .slice(0, 5);
 
   const [totals, setTotals] = useState({ relawan: 0, murid: 0, mapel: 0 });
+  const [pointRelawan, setPointRelawan] = useState([]);
   const [dataJadwal, setDataJadwal] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -103,13 +104,24 @@ const DashboardPage = () => {
     }
   };
 
+  const getRelawanTeraktif = async () => {
+    try {
+      const res = await API.get(URL.RELAWAN_TERAKTIF);
+
+      const data = res.data.data.slice(0, 5);
+      setPointRelawan(data);
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
+
+  console.log(pointRelawan, " >> point realwan");
+
   useEffect(() => {
     getTotalData();
+    getRelawanTeraktif();
     getJadwal();
   }, []);
-
-  // console.log(dataJadwal, " >> jadwal");
-  // console.log(totals);
 
   // Chart data
   const options = {
@@ -219,15 +231,15 @@ const DashboardPage = () => {
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
             <h1 className="mb-4">Relawan Ter-aktif</h1>
 
-            <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
+            <TableDashboard columns={columnsRelawan} data={pointRelawan} />
 
-            {dataRelawan.length > 5 && (
+            {/* {pointRelawan.length > 5 && (
               <div className="absolute bottom-0 right-0 mb-4 mr-8">
                 <button className=" text-title text-base font-light">
                   Lihat Lainnya
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
