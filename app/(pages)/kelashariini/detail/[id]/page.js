@@ -1,15 +1,40 @@
 "use client";
+import React, { useEffect, useState } from "react";
+
 import Image from "next/image";
 import Link from "next/link";
-import React from "react";
+import { API, URL } from "@/config/api";
 
-const KelasDetailPage = ({ params: { kelas } }) => {
+const KelasDetailPage = ({ params: { id } }) => {
   const nama = localStorage.getItem("nama_panggilan");
+
+  const colors = ["bg-red-300", "bg-blue-300", "bg-green-300"];
+
+  const [jadwal, setJadwal] = useState();
+
+  const getDataJadwal = async () => {
+    try {
+      const res = await API.get(`${URL.GET_JADWAL}/${id}`);
+
+      const data = res.data.data;
+      setJadwal(data);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  console.log(jadwal);
+
+  useEffect(() => {
+    getDataJadwal();
+  }, []);
 
   return (
     <div>
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
-        <h1>Kelas Hari Ini / {kelas}</h1>
+        <h1>
+          Kelas Hari Ini / {jadwal?.kelas} - {jadwal?.mapel}
+        </h1>
         <h1>Hallo, Kak {nama}</h1>
       </div>
 
@@ -40,15 +65,22 @@ const KelasDetailPage = ({ params: { kelas } }) => {
         <div className="flex justify-start items-center gap-24">
           <h4 className="">Pengajar Hari Ini</h4>
           <div className="flex gap-2 p-1 bg-white shadow-sm flex-1 w-full rounded-md">
-            <p className="p-1 px-3 bg-red-300 font-medium rounded-md">
-              Wawan Setiawan
-            </p>
-            <p className="p-1 px-3 bg-blue-300 font-medium rounded-md">
+            {jadwal?.relawan.map((item, i) => (
+              <p
+                className={`p-1 px-3 font-medium rounded-md ${
+                  colors[i % colors.length]
+                }`}
+                key={i}
+              >
+                {item.nama_lengkap}
+              </p>
+            ))}
+            {/* <p className="p-1 px-3 bg-blue-300 font-medium rounded-md">
               Wawan Setiawan
             </p>
             <p className="p-1 px-3 bg-green-300 font-medium rounded-md">
               Wawan Setiawan
-            </p>
+            </p> */}
           </div>
         </div>
 

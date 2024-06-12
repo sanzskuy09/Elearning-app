@@ -60,6 +60,9 @@ const DashboardPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
 
   const [totals, setTotals] = useState({ relawan: 0, murid: 0, mapel: 0 });
+  const [totalMurid, setTotalMurid] = useState([]);
+  const [totalMuridPerKategori, setTotalMuridPerKategori] = useState([]);
+
   const [pointRelawan, setPointRelawan] = useState([]);
   const [dataJadwal, setDataJadwal] = useState([]);
 
@@ -111,8 +114,37 @@ const DashboardPage = () => {
     }
   };
 
+  const getBanyakMuridPerKelas = async () => {
+    try {
+      const res = await API.get(URL.TOTAL_MURID);
+
+      const data = res.data.data;
+      const muridLenght = Object.values(data);
+
+      setTotalMurid(muridLenght);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+
+  const getBanyakMuridPerKategori = async () => {
+    try {
+      const res = await API.get(URL.TOTAL_KATEGORI);
+
+      const data = res.data.data;
+      const muridLenght = Object.values(data);
+
+      setTotalMuridPerKategori(muridLenght);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+  console.log(totalMuridPerKategori);
+
   useEffect(() => {
     getTotalData();
+    getBanyakMuridPerKelas();
+    getBanyakMuridPerKategori();
     getRelawanTeraktif();
     getJadwal();
   }, []);
@@ -132,7 +164,7 @@ const DashboardPage = () => {
     datasets: [
       {
         // label: "# Nilai :",
-        data: [62, 90, 30, 50, 44, 33],
+        data: totalMurid,
         backgroundColor: [
           "#b6c154",
           "#fae477",
@@ -188,7 +220,7 @@ const DashboardPage = () => {
     datasets: [
       {
         label: "Kategori :",
-        data: [62, 90, 30, 50, 44, 33, 22],
+        data: totalMuridPerKategori,
         backgroundColor: ["#3572EF", "#3ABEF9"],
         borderColor: ["#3572EF", "#3ABEF9"],
         borderWidth: 1,

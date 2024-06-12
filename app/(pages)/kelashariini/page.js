@@ -25,8 +25,8 @@ const KelasHariIniPage = () => {
     },
     {
       title: "Jam Pelajaran",
-      dataIndex: "jam_pelajaran",
-      key: "jam_pelajaran",
+      dataIndex: "jam_mapel",
+      key: "jam_mapel",
     },
     {
       title: "Kelas",
@@ -57,7 +57,9 @@ const KelasHariIniPage = () => {
 
           <button
             // onClick={() => navigate(`/kelashariini/detail/${record.kelas}`)}
-            onClick={() => router.push(`/kelashariini/detail/${record.kelas}`)}
+            onClick={() =>
+              router.push(`/kelashariini/detail/${record.id_jadwal}`)
+            }
             className="bg-blue-500 px-2 rounded-md font-medium text-white"
           >
             Mulai
@@ -73,14 +75,14 @@ const KelasHariIniPage = () => {
     try {
       const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
 
-      const data = res.data.data.slice(0, 5);
+      const data = res.data.data;
       setJadwal(data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(jadwal);
+  // console.log(jadwal);
 
   useEffect(() => {
     getDataJadwal();

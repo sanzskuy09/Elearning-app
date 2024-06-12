@@ -14,6 +14,8 @@ export const URL = {
   AUTH_LOGIN: "/auth/login",
 
   TOTAL: "/total",
+  TOTAL_MURID: "/total-murid",
+  TOTAL_KATEGORI: "/total-kategori",
 
   // MURID
   GET_MURID: "/murid",
@@ -23,7 +25,6 @@ export const URL = {
   GET_RELAWAN: "/relawan",
   ADD_RELAWAN: "/relawan/add",
   RELAWAN_TERAKTIF: "/point-relawan",
-  JADWAL_RELAWAN: "/jadwal-relawan",
 
   // Silabus
   GET_SILABUS: "/silabus",
@@ -32,4 +33,5 @@ export const URL = {
   // jadwal
   GET_JADWAL: "/jadwal",
   ADD_JADWAL: "/jadwal/add",
+  JADWAL_RELAWAN: "/jadwal-relawan",
 };
