@@ -26,34 +26,36 @@ import SearchBar from "@/components/SearchBar";
 import IconDetele from "@/public/Icons/icon-delete.svg";
 import IconEdit from "@/public/Icons/icon_edit.svg";
 import IconDownload from "@/public/Icons/icon-download.svg";
-import { API, URL } from "@/config/api";
-import { toastFailed, toastSuccess } from "@/utils/toastify";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-      { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-      { value: "5 SD", label: "5 SD", id: "3" },
-      { value: "6 SD", label: "6 SD", id: "4" },
-    ],
-  },
-  {
-    name: "mapel",
-    label: "Mata Pelajaran",
-    values: [
-      { value: "", label: "Pilih Mata Pelajaran" },
-      { value: "Baca Tulis", label: "Baca Tulis", id: "1" },
-      { value: "Matematika", label: "Matematika", id: "2" },
-      { value: "Bahasa Inggris", label: "Bahasa Inggris", id: "3" },
-      { value: "Pendidikan Karakter", label: "Pendidikan Karakter", id: "4" },
-      { value: "Kreasi", label: "Kreasi", id: "5" },
-    ],
-  },
-];
+import { toastFailed, toastSuccess } from "@/utils/toastify";
+import { API, URL } from "@/config/api";
+
+// const options = [
+//   {
+//     name: "kelas",
+//     label: "Kelas",
+//     values: [
+//       { value: "", label: "Pilih Kelas" },
+//       { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
+//       { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
+//       { value: "5 SD", label: "5 SD", id: "3" },
+//       { value: "6 SD", label: "6 SD", id: "4" },
+//     ],
+//   },
+//   {
+//     name: "mapel",
+//     label: "Mata Pelajaran",
+//     values: [
+//       { value: "", label: "Pilih Mata Pelajaran" },
+//       { value: "Baca Tulis", label: "Baca Tulis", id: "1" },
+//       { value: "Matematika", label: "Matematika", id: "2" },
+//       { value: "Bahasa Inggris", label: "Bahasa Inggris", id: "3" },
+//       { value: "Pendidikan Karakter", label: "Pendidikan Karakter", id: "4" },
+//       { value: "Kreasi", label: "Kreasi", id: "5" },
+//     ],
+//   },
+// ];
+const options = [];
 
 const SilabusPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
@@ -61,6 +63,8 @@ const SilabusPage = () => {
   const router = useRouter();
 
   const [data, setData] = useState(null);
+  const [dataKelas, setDataKelas] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
@@ -171,6 +175,55 @@ const SilabusPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataMapel = async () => {
+    try {
+      const res = await API.get(`/mapel`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "mapel",
+          label: "Mata Pelajaran",
+          values: [{ value: "", label: "Pilih Mata Pelajaran" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // console.log(options, " >> option");
+  // console.log(filters);
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -178,6 +231,11 @@ const SilabusPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getDataKelas();
+    getDataMapel();
+  }, [filters]);
 
   return (
     <div className="flex flex-col h-full">
@@ -203,8 +261,8 @@ const SilabusPage = () => {
           />
 
           <div className="py-4 px-6">
-            {filters.kelas[0] == "" ||
-            filters.mapel[0] == "" ||
+            {filters?.kelas[0] == "" ||
+            filters?.mapel[0] == "" ||
             data == null ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
@@ -213,11 +271,12 @@ const SilabusPage = () => {
             ) : (
               <>
                 <h1 className="font-bold text-2xl">
-                  {filters.mapel[0]} - {filters.kelas[0]}
+                  {/* {filters?.mapel[0]} - {filters?.kelas[0]} */}
+                  mapel - kelas
                 </h1>
 
                 {/* silabus list */}
-                {data.length > 0 ? (
+                {data?.length > 0 ? (
                   <div className="mt-4 flex flex-col gap-4">
                     {data?.map((item, i) => (
                       <div className="flex gap-4 items-center" key={i}>
