@@ -116,14 +116,14 @@ const JadwalKelasPage = () => {
   const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, [""]]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: [""] }
   );
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
-
-  // console.log(filters.kelas[0]);
 
   const handleSearchChange = (e) => {
     setValue(e.target.value);
@@ -201,7 +201,7 @@ const JadwalKelasPage = () => {
   };
 
   // console.log(dataKelas, " >> data kelas");
-  // console.log(options, " >> option");
+  console.log(filters, " >> filters");
 
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
