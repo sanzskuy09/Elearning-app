@@ -222,7 +222,7 @@ const SilabusPage = () => {
   };
 
   // console.log(options, " >> option");
-  // console.log(filters);
+  console.log(filters.kelas, " >> filters");
 
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
@@ -235,6 +235,10 @@ const SilabusPage = () => {
   useEffect(() => {
     getDataKelas();
     getDataMapel();
+  }, []);
+
+  useEffect(() => {
+    getData();
   }, [filters]);
 
   return (
@@ -256,14 +260,13 @@ const SilabusPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={getData}
+            // onSearch={getData}
             handleSearch={handleSearchChange}
           />
 
           <div className="py-4 px-6">
-            {filters?.kelas[0] == "" ||
-            filters?.mapel[0] == "" ||
-            data == null ? (
+            {/* {filters?.kelas == "" || filters?.mapel == "" || data == null */}
+            {!filters?.kelas || !filters?.mapel || data == null ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -271,8 +274,7 @@ const SilabusPage = () => {
             ) : (
               <>
                 <h1 className="font-bold text-2xl">
-                  {/* {filters?.mapel[0]} - {filters?.kelas[0]} */}
-                  mapel - kelas
+                  {filters?.mapel[0]} - {filters?.kelas[0]}
                 </h1>
 
                 {/* silabus list */}

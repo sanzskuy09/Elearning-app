@@ -10,54 +10,78 @@ import IconDownload from "@/public/Icons/icon-download.svg";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { API } from "@/config/api";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "SD", label: "SD" },
-      { value: "SMP", label: "SMP" },
-      { value: "SMA", label: "SMA" },
-    ],
-  },
-  // {
-  //   name: "mapel",
-  //   label: "Mata Pelajaran",
-  //   values: [
-  //     { value: "", label: "Pilih Mapel" },
-  //     { value: "IPA", label: "IPA" },
-  //     { value: "IPS", label: "IPS" },
-  //   ],
-  // },
-];
+const options = [];
 
 const columns = [
   {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
+    title: "No.",
+    key: "index",
+    render: (value, item, index) => index + 1,
+    width: 70,
   },
   {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
+    title: "Nama Lengkap",
+    dataIndex: "nama_lengkap",
+    key: "nama_lengkap",
+    width: 150,
   },
   {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
+    title: "NIK",
+    dataIndex: "nik",
+    key: "nik",
+    width: 170,
   },
   {
-    title: "Column 2",
-    dataIndex: "address",
-    key: "2",
+    title: "Jenis Kelamin",
+    dataIndex: "jkelamin",
+    key: "jkelamin",
+    width: 150,
   },
   {
-    title: "Column 3",
-    dataIndex: "address",
-    key: "3",
+    title: "Nama Orang Tua",
+    dataIndex: "nama_ortu",
+    key: "nama_ortu",
+    width: 150,
+  },
+  {
+    title: "No. Handphone Wali",
+    dataIndex: "no_hp_ortu",
+    key: "no_hp_ortu",
+    width: 150,
+  },
+  {
+    title: "Kelas",
+    dataIndex: "kelas",
+    key: "kelas",
+    render: (_, record) => (
+      <p className="bg-red-400 w-fit px-2 py-1 rounded-lg text-white font-medium">
+        {record.kelas.name}
+      </p>
+    ),
+    width: 150,
+  },
+  {
+    title: "Kategori",
+    dataIndex: "kategori",
+    key: "kategori",
+    render: (_, record) => (
+      <p className="bg-blue-400 w-fit px-2 py-1 rounded-lg text-white font-medium">
+        {record.kategori.name}
+      </p>
+    ),
+    width: 150,
+  },
+  {
+    title: "Alamat",
+    render: (_, record) => (
+      <p>
+        {record.alamat} Kel.{record.kelurahan} Kec.{record.kecamatan} kota.
+        {record.kota} Prov.{record.provinsi}
+      </p>
+    ),
+    width: 250,
   },
 
   {
@@ -67,11 +91,15 @@ const columns = [
     width: 150,
     render: (_, record) => (
       <Space size="middle">
-        <Link href={`/rapor/detail?id=${record.id_rapor}`}>
+        <Link
+          href={`/rapor/detail?id=${record.id}&id_kelas=${record.kelas.id}`}
+        >
           <Image src={IconDetail} alt="" />
         </Link>
 
-        <Link href={`/rapor/detail?id=${record.id_rapor}&update=true`}>
+        <Link
+          href={`/rapor/tambah?id=${record.id}&id_kelas=${record.kelas.id}&update=true`}
+        >
           <Image src={IconEdit} alt="" />
         </Link>
 
@@ -83,85 +111,13 @@ const columns = [
   },
 ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-];
-
 const RaporPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
 
   // const router = useRouter();
+  const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -187,6 +143,52 @@ const RaporPage = () => {
     setCurrentPage(page);
   };
 
+  const getData = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        `/api/murid?kategori=&kelas=${filters?.kelas[1]}`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length === 0) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -194,6 +196,16 @@ const RaporPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getDataKelas();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
+
+  // console.log(data, ">> data");
 
   return (
     <div className="flex flex-col h-full">
@@ -214,8 +226,8 @@ const RaporPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={() => console.log(filters)}
-            handleSearch={handleSearchChange}
+            // onSearch={() => console.log(filters)}
+            // handleSearch={handleSearchChange}
           />
 
           <div className="py-4 px-6">

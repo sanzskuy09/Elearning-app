@@ -28,50 +28,81 @@ const semesterOption = [
   { value: "7", label: " emester 7" },
 ];
 
-const DetailRaporPage = () => {
+const TambahRaporPage = () => {
   const [nama, setNama] = useState("");
+
   const searchParams = useSearchParams();
 
   const id = searchParams.get("id");
+  const id_kelas = searchParams.get("id_kelas");
   const update = searchParams.get("update");
   const disableForm = update === "true" ? false : true;
 
   const router = useRouter();
   const [data, setData] = useState([]);
   const [mapel, setMapel] = useState([]);
+  const [nilai, setNilai] = useState([]);
   const [loading, setLoading] = useState(false);
 
   // hook form
   const initialValues = {
     nama_lengkap: data?.nama_lengkap,
     nama_ortu: data?.nama_ortu,
-    semester: data?.semester,
-    catatan_wali_kelas: data?.catatan_wali_kelas,
+    semester: "",
+    catatan_wali_kelas: "",
   };
 
-  const getData = async () => {
+  // handle input change nilai
+  const handleChangeNilai = (id_mapel, field, value) => {
+    setNilai((prevState) =>
+      prevState.map((item) =>
+        item.id_mapel === id_mapel ? { ...item, [field]: value } : item
+      )
+    );
+  };
+
+  const resetNilai = () => {
+    setNilai(
+      mapel.map((item) => ({ id_mapel: item.id_mapel, uts: "", uas: "" }))
+    );
+  };
+
+  const getDataMurid = async () => {
     try {
       setLoading(true);
-      // get rapor
-      const res = await API.get(`${URL.GET_RAPOR_BY_ID_MURID}/${id}`);
-      const data = res.data.data;
-      setData(data);
+      const res = await fetch(`/api/murid/detail?id=${id}`, {
+        method: "GET",
+      });
 
-      // // get mapel
-      // const res1 = await API.get(`/jadwal-mapel?kelas=${data?.id_kelas}`);
-      // setMapel(res1.data.data);
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  const getDataMapel = async () => {
+    try {
+      setLoading(true);
+      const res = await API.get(`/jadwal-mapel?kelas=${id_kelas}`);
+      const mapel = res.data.data;
+
+      setMapel(mapel);
+
+      setNilai(
+        mapel.map((item) => ({ id_mapel: item.id_mapel, uts: "", uas: "" }))
+      );
 
       setLoading(false);
     } catch (error) {
-      console.log(error);
-      // if (update !== "true") {
-      //   toastFailed("Data Belum ada. Silahkan Buat Rapor Terlebih Dahulu");
-
-      //   setTimeout(() => {
-      //     router.push("/rapor");
-      //   }, 2000);
-      // }
       setLoading(false);
+      console.log(error);
     }
   };
 
@@ -82,56 +113,54 @@ const DetailRaporPage = () => {
         : false;
     setNama(nameData);
 
-    getData();
-    // getDataMapel();
+    getDataMurid();
+    getDataMapel();
   }, []);
-
-  // console.log(data, ">> data");
-  // console.log(mapel, ">> mapel");
 
   return (
     <Formik
       initialValues={initialValues}
       enableReinitialize={true}
-      // validationSchema={Yup.object({
-      //   pic: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("PIC is Required"),
-      //   hari: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("Hari is Required"),
-      //   id_mapel: Yup.string().required("Mata Pelajaran is Required"),
-      //   id_kelas: Yup.string().required("Kelas is Required"),
-      //   id_jam_mapel: Yup.string().required("Jam Pelajaran is Required"),
-      // })}
+      validationSchema={Yup.object({
+        nama_lengkap: Yup.string()
+          .min(3, "Must be 3 characters or then")
+          .required("Nama is Required"),
+        nama_ortu: Yup.string()
+          .min(3, "Must be 3 characters or then")
+          .required("Nama orang tua is Required"),
+        semester: Yup.string().required("Semester is Required"),
+      })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          console.log(values);
-          // const newValues = {
-          //   ...values,
-          //   jadwal: values.jadwal.map((id_relawan) => ({
-          //     id_relawan,
-          //   })),
-          // };
+          const newValues = {
+            id_murid: id,
+            semester: values.semester,
+            catatan_wali_kelas: values.catatan_wali_kelas,
+            nilai: nilai.map((item) => ({
+              id_mapel: item.id_mapel,
+              uts: item.uts,
+              uas: item.uas,
+            })),
+          };
+          const response = await fetch(`/api/rapor`, {
+            method: "POST",
+            body: JSON.stringify(newValues),
+          });
 
-          // const response = await fetch(`/api/jadwal`, {
-          //   method: "POST",
-          //   body: JSON.stringify(newValues),
-          // });
-
-          // if (!response.ok) {
-          //   throw new Error("Failed to Tambah Jadwal Gagal");
-          // }
+          if (!response.ok) {
+            throw new Error("Failed to Tambah Rapor Gagal");
+          }
 
           setTimeout(() => {
             setSubmitting(false);
             resetForm();
-            toastSuccess("Edit Rapor Berhasil");
-            // router.push("/jadwalkelas");
+            resetNilai();
+            toastSuccess("Tambah Rapor Berhasil");
+            router.push("/rapor");
           }, 400);
         } catch (error) {
-          toastFailed("Edit Rapor Gagal");
-          // console.log(error);
+          toastFailed("Tambah Rapor Gagal");
+          console.log(error);
         }
       }}
     >
@@ -145,7 +174,7 @@ const DetailRaporPage = () => {
           <div className="py-6 px-10 flex flex-col gap-4">
             <div className="bg-white shadow-md col-span-2 rounded-lg">
               <h1 className="mb-0 font-bold text-2xl bg-[#D9D9D9] py-4 px-6 overflow-hidden rounded-t-lg">
-                Detail Rapor Murid
+                Rapor Murid
               </h1>
 
               <div className="py-8 px-12">
@@ -159,7 +188,7 @@ const DetailRaporPage = () => {
                     </h1>
 
                     {/* mapel start */}
-                    {data?.rapor_detail?.map((item, i) => (
+                    {mapel.map((item, i) => (
                       <div className="mb-4 flex flex-col gap-2" key={i}>
                         <h1 className="text-xl font-semibold">{item.mapel}</h1>
                         <div>
@@ -167,12 +196,24 @@ const DetailRaporPage = () => {
                             UTS <span className="text-red-600">*</span>
                           </label>
                           <Input
-                            readOnly
-                            placeholder=""
+                            required
+                            disabled={disableForm}
                             className="w-full border border-gray-300 rounded-md px-3 py-2"
                             allowClear
-                            // onChange={(e) => setValue(e.target.value)}
-                            value={item.uts}
+                            type="number"
+                            max={100}
+                            min={0}
+                            onChange={(e) =>
+                              handleChangeNilai(
+                                item.id_mapel,
+                                "uts",
+                                e.target.value
+                              )
+                            }
+                            value={
+                              nilai.find((n) => n.id_mapel === item.id_mapel)
+                                ?.uts || ""
+                            }
                           />
                         </div>
 
@@ -181,11 +222,23 @@ const DetailRaporPage = () => {
                             UAS <span className="text-red-600">*</span>
                           </label>
                           <Input
-                            readOnly
-                            placeholder=""
+                            required
+                            disabled={disableForm}
                             className="w-full border border-gray-300 rounded-md px-3 py-2"
                             allowClear
-                            value={item.uts}
+                            max={100}
+                            min={0}
+                            onChange={(e) =>
+                              handleChangeNilai(
+                                item.id_mapel,
+                                "uas",
+                                e.target.value
+                              )
+                            }
+                            value={
+                              nilai.find((n) => n.id_mapel === item.id_mapel)
+                                ?.uas || ""
+                            }
                           />
                         </div>
                       </div>
@@ -203,7 +256,7 @@ const DetailRaporPage = () => {
                         Nama Murid <span className="text-red-600">*</span>
                       </label>
                       <Input
-                        readOnly
+                        disabled
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         allowClear
@@ -218,7 +271,7 @@ const DetailRaporPage = () => {
                       </label>
                       <Input
                         // defaultValue={"Ibu Nanda"}
-                        readOnly
+                        disabled
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         allowClear
@@ -247,6 +300,11 @@ const DetailRaporPage = () => {
                           </Option>
                         ))}
                       </Select>
+                      {formik.touched.semester && formik.errors.semester ? (
+                        <div className="text-red-600 text-sm">
+                          {formik.errors.semester}
+                        </div>
+                      ) : null}
                     </div>
 
                     <div className="mb-4">
@@ -263,9 +321,9 @@ const DetailRaporPage = () => {
                       />
                     </div>
 
-                    {/* <div className="flex justify-end mt-8">
-                      <ButtonAdd text="Simpan" />
-                    </div> */}
+                    <div className="flex justify-end mt-8">
+                      <ButtonAdd type="submit" text="Simpan" />
+                    </div>
                   </div>
                 </form>
               </div>
@@ -281,7 +339,7 @@ const Page = () => {
   return (
     // You could have a loading skeleton as the `fallback` too
     <Suspense>
-      <DetailRaporPage />
+      <TambahRaporPage />
     </Suspense>
   );
 };

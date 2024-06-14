@@ -212,8 +212,11 @@ const JadwalKelasPage = () => {
   }, [value]);
 
   useEffect(() => {
-    getData();
     getDataKelas();
+  }, []);
+
+  useEffect(() => {
+    getData();
   }, [filters]);
 
   // console.log(options);

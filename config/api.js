@@ -34,4 +34,9 @@ export const URL = {
   GET_JADWAL: "/jadwal",
   ADD_JADWAL: "/jadwal/add",
   JADWAL_RELAWAN: "/jadwal-relawan",
+
+  // RAPOR
+  GET_RAPOR: "/rapor",
+  GET_RAPOR_BY_ID_MURID: "/rapor/murid",
+  ADD_RAPOR: "/rapor/add",
 };
