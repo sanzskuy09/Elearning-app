@@ -58,6 +58,7 @@ const columnsRelawan = [
 
 const DashboardPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
+  const id_relawan = localStorage.getItem("id_relawan");
 
   const [totals, setTotals] = useState({ relawan: 0, murid: 0, mapel: 0 });
   const [totalMurid, setTotalMurid] = useState([]);
@@ -84,7 +85,8 @@ const DashboardPage = () => {
       const currentDay = new Date().getDay();
       const currentDayName = daysMap[currentDay];
 
-      const res = await API.get(`${URL.GET_JADWAL}?hari=${currentDayName}`);
+      // const res = await API.get(`${URL.GET_JADWAL}?hari=${currentDayName}`);
+      const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
 
       setDataJadwal(res.data.data);
       setLoading(false);

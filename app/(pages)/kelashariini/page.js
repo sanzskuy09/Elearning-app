@@ -13,7 +13,7 @@ const { confirm } = Modal;
 
 const KelasHariIniPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
-  const id_relawan = localStorage.getItem("id_relawan");
+  // const id_relawan = localStorage.getItem("id_relawan");
 
   const router = useRouter();
 
@@ -70,14 +70,32 @@ const KelasHariIniPage = () => {
   ];
 
   const [jadwal, setJadwal] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const getDataJadwal = async () => {
+    setLoading(true);
+
     try {
-      const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
+      const daysMap = {
+        0: "Minggu",
+        1: "Senin",
+        2: "Selasa",
+        3: "Rabu",
+        4: "Kamis",
+        5: "Jumat",
+        6: "Sabtu",
+      };
+
+      const currentDay = new Date().getDay();
+      const currentDayName = daysMap[currentDay];
+
+      const res = await API.get(`${URL.GET_JADWAL}?hari=${currentDayName}`);
 
       const data = res.data.data;
       setJadwal(data);
+      setLoading(false);
     } catch (error) {
+      setLoading(false);
       console.log(error);
     }
   };

@@ -15,19 +15,6 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API, URL } from "@/config/api";
 
-// const options = [
-//   {
-//     name: "kelas",
-//     label: "Kelas",
-//     values: [
-//       { value: "", label: "Pilih Kelas" },
-//       { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-//       { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-//       { value: "5 SD", label: "5 SD", id: "3" },
-//       { value: "6 SD", label: "6 SD", id: "4" },
-//     ],
-//   },
-// ];
 const options = [];
 
 const JadwalKelasPage = () => {

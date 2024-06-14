@@ -18,31 +18,33 @@ import SearchBar from "@/components/SearchBar";
 
 import { toastSuccess } from "@/utils/toastify";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Semua" },
-      { value: "1 & 2 SD", label: "1 & 2 SD" },
-      { value: "3 & 4 SD", label: "3 & 4 SD" },
-      { value: "5 SD", label: "5 SD" },
-      { value: "6 SD", label: "6 SD" },
-    ],
-  },
-  {
-    name: "mapel",
-    label: "Mata Pelajaran",
-    values: [
-      { value: "", label: "Semua" },
-      { value: "Baca Tulis", label: "Baca Tulis" },
-      { value: "Matematika", label: "Matematika" },
-      { value: "Bahasa Inggris", label: "Bahasa Inggris" },
-      { value: "Pendidikan Karakter", label: "Pendidikan Karakter" },
-      { value: "Kreasi", label: "Kreasi" },
-    ],
-  },
-];
+// const options = [
+//   {
+//     name: "kelas",
+//     label: "Kelas",
+//     values: [
+//       { value: "", label: "Semua" },
+//       { value: "1 & 2 SD", label: "1 & 2 SD" },
+//       { value: "3 & 4 SD", label: "3 & 4 SD" },
+//       { value: "5 SD", label: "5 SD" },
+//       { value: "6 SD", label: "6 SD" },
+//     ],
+//   },
+//   {
+//     name: "mapel",
+//     label: "Mata Pelajaran",
+//     values: [
+//       { value: "", label: "Semua" },
+//       { value: "Baca Tulis", label: "Baca Tulis" },
+//       { value: "Matematika", label: "Matematika" },
+//       { value: "Bahasa Inggris", label: "Bahasa Inggris" },
+//       { value: "Pendidikan Karakter", label: "Pendidikan Karakter" },
+//       { value: "Kreasi", label: "Kreasi" },
+//     ],
+//   },
+// ];
+
+const options = [];
 
 const KelolaRelawanPage = () => {
   const columns = [
@@ -163,6 +165,8 @@ const KelolaRelawanPage = () => {
   const router = useRouter();
 
   const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +177,9 @@ const KelolaRelawanPage = () => {
   const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, ""]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: ["", ""], mapel: ["", ""] }
   );
 
   const handleSearchChange = (e) => {
@@ -216,7 +222,7 @@ const KelolaRelawanPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/relawan?mapel=${filters?.mapel}&kelas=${filters?.kelas}`,
+        `/api/relawan?mapel=${filters?.mapel[1]}&kelas=${filters?.kelas[1]}`,
         {
           method: "GET",
         }
@@ -238,6 +244,52 @@ const KelolaRelawanPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataMapel = async () => {
+    try {
+      const res = await API.get(`/mapel`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "mapel",
+          label: "Mata Pelajaran",
+          values: [{ value: "", label: "Pilih Mata Pelajaran" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -247,8 +299,13 @@ const KelolaRelawanPage = () => {
   }, [value]);
 
   useEffect(() => {
-    getData();
+    getDataKelas();
+    getDataMapel();
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
 
   return (
     <div className="flex flex-col h-full">

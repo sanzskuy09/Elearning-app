@@ -69,7 +69,9 @@ const SilabusPage = () => {
   const [loading, setLoading] = useState(false);
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, [""]]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: [""], mapel: [""] }
   );
 
   const handleSearchChange = (e) => {
@@ -241,6 +243,8 @@ const SilabusPage = () => {
     getData();
   }, [filters]);
 
+  console.log(filters, ">> filter");
+
   return (
     <div className="flex flex-col h-full">
       <div className="py-6 px-10 text-xl flex justify-between border-b-2 border-black">
@@ -266,7 +270,7 @@ const SilabusPage = () => {
 
           <div className="py-4 px-6">
             {/* {filters?.kelas == "" || filters?.mapel == "" || data == null */}
-            {!filters?.kelas || !filters?.mapel || data == null ? (
+            {filters?.kelas == "" || filters?.mapel == "" || data == null ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -274,7 +278,9 @@ const SilabusPage = () => {
             ) : (
               <>
                 <h1 className="font-bold text-2xl">
-                  {filters?.mapel[0]} - {filters?.kelas[0]}
+                  {filters?.kelas[0] !== "" || filters?.mapel[0] !== ""
+                    ? `${filters?.mapel[0]} - ${filters?.kelas[0]}`
+                    : ""}
                 </h1>
 
                 {/* silabus list */}
