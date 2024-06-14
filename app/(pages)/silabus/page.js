@@ -270,7 +270,7 @@ const SilabusPage = () => {
 
           <div className="py-4 px-6">
             {/* {filters?.kelas == "" || filters?.mapel == "" || data == null */}
-            {filters?.kelas == "" || filters?.mapel == "" || data == null ? (
+            {filters?.kelas[0] == "" || filters?.mapel[0] == "" ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -278,7 +278,7 @@ const SilabusPage = () => {
             ) : (
               <>
                 <h1 className="font-bold text-2xl">
-                  {filters?.kelas[0] !== "" || filters?.mapel[0] !== ""
+                  {filters?.kelas[0] !== "" && filters?.mapel[0] !== ""
                     ? `${filters?.mapel[0]} - ${filters?.kelas[0]}`
                     : ""}
                 </h1>

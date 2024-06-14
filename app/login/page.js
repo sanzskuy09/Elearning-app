@@ -55,6 +55,10 @@ const LoginPage = () => {
           localStorage.setItem("token", data.data.token);
           localStorage.setItem("nama_panggilan", data.data.user.nama_panggilan);
           localStorage.setItem("email", data.data.user.email);
+          localStorage.setItem(
+            "role",
+            data.data.user.nama_panggilan === "Admin" ? "admin" : "relawan"
+          );
 
           setTimeout(() => {
             setSubmitting(false);

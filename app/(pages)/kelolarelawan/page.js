@@ -166,6 +166,7 @@ const KelolaRelawanPage = () => {
 
   const [data, setData] = useState("");
   const [dataKelas, setDataKelas] = useState([]);
+  const [dataMapel, setDataMapel] = useState([]);
 
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -222,7 +223,9 @@ const KelolaRelawanPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/relawan?mapel=${filters?.mapel[1]}&kelas=${filters?.kelas[1]}`,
+        `/api/relawan?mapel=${filters?.mapel[0]}&kelas=${
+          filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
+        }`,
         {
           method: "GET",
         }
@@ -270,7 +273,7 @@ const KelolaRelawanPage = () => {
   const getDataMapel = async () => {
     try {
       const res = await API.get(`/mapel`);
-      setDataKelas(res.data.data);
+      setDataMapel(res.data.data);
 
       const newOptions = res?.data?.data?.map((subject) => ({
         value: subject.name,

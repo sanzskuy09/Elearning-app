@@ -18,43 +18,43 @@ import SearchBar from "@/components/SearchBar";
 
 import { toastSuccess } from "@/utils/toastify";
 
-const options = [
-  {
-    name: "kategori",
-    label: "Kategori Kelompok Rentan",
-    values: [
-      { value: "", label: "Semua" },
-      { value: "Umum", label: "Umum" },
-      {
-        value: "Disabilitas (Fisik/Mental)",
-        label: "Disabilitas (Fisik/Mental)",
-      },
-      { value: "Anak-anak", label: "Anak-anak" },
-      { value: "Ibu Hamil/Menyusui", label: "Ibu Hamil/Menyusui" },
-      { value: "Manula", label: "Manula" },
-      { value: "Anak Yatim", label: "Anak Yatim" },
-      { value: "Kelompok Marginal", label: "Kelompok Marginal" },
-      { value: "Dhuafa", label: "Dhuafa" },
-      {
-        value: "Pengungsi/Penyintas Bencana",
-        label: "Pengungsi/Penyintas Bencana",
-      },
-    ],
-  },
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Semua" },
-      { value: "1 & 2 SD", label: "1 & 2 SD" },
-      { value: "3 & 4 SD", label: "3 & 4 SD" },
-      { value: "5 SD", label: "5 SD" },
-      { value: "6 SD", label: "6 SD" },
-    ],
-  },
-];
+// const options = [
+//   {
+//     name: "kategori",
+//     label: "Kategori Kelompok Rentan",
+//     values: [
+//       { value: "", label: "Semua" },
+//       { value: "Umum", label: "Umum" },
+//       {
+//         value: "Disabilitas (Fisik/Mental)",
+//         label: "Disabilitas (Fisik/Mental)",
+//       },
+//       { value: "Anak-anak", label: "Anak-anak" },
+//       { value: "Ibu Hamil/Menyusui", label: "Ibu Hamil/Menyusui" },
+//       { value: "Manula", label: "Manula" },
+//       { value: "Anak Yatim", label: "Anak Yatim" },
+//       { value: "Kelompok Marginal", label: "Kelompok Marginal" },
+//       { value: "Dhuafa", label: "Dhuafa" },
+//       {
+//         value: "Pengungsi/Penyintas Bencana",
+//         label: "Pengungsi/Penyintas Bencana",
+//       },
+//     ],
+//   },
+//   {
+//     name: "kelas",
+//     label: "Kelas",
+//     values: [
+//       { value: "", label: "Semua" },
+//       { value: "1 & 2 SD", label: "1 & 2 SD" },
+//       { value: "3 & 4 SD", label: "3 & 4 SD" },
+//       { value: "5 SD", label: "5 SD" },
+//       { value: "6 SD", label: "6 SD" },
+//     ],
+//   },
+// ];
 
-// const options = [];
+const options = [];
 
 const KelolaMuridPage = () => {
   const columns = [
@@ -154,6 +154,9 @@ const KelolaMuridPage = () => {
 
   const router = useRouter();
   const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
+  const [dataKategori, setDataKategori] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -173,7 +176,9 @@ const KelolaMuridPage = () => {
 
   // filter data
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, ""]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: ["", ""], kategori: ["", ""] }
   );
 
   const handleSearchChange = (e) => {
@@ -213,7 +218,9 @@ const KelolaMuridPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/murid?kategori=${filters?.kategori}&kelas=${filters?.kelas}`,
+        `/api/murid?kategori=${filters?.kategori[0]}&kelas=${
+          filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
+        }`,
         {
           method: "GET",
         }
@@ -232,6 +239,52 @@ const KelolaMuridPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Semua" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataKategori = async () => {
+    try {
+      const res = await API.get(`/kategori`);
+      setDataKategori(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kategori",
+          label: "Kategori Kelompok Rentan",
+          values: [{ value: "", label: "Semua" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -241,8 +294,13 @@ const KelolaMuridPage = () => {
   }, [value]);
 
   useEffect(() => {
-    getData();
+    getDataKelas();
+    getDataKategori();
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
 
   return (
     <div className="flex flex-col h-full">
@@ -263,7 +321,7 @@ const KelolaMuridPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={getData}
+            // onSearch={getData}
             handleSearch={handleSearchChange}
             showButton={true}
             text={"Tambah Murid"}
