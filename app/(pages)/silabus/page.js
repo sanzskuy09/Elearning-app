@@ -30,31 +30,6 @@ import IconDownload from "@/public/Icons/icon-download.svg";
 import { toastFailed, toastSuccess } from "@/utils/toastify";
 import { API, URL } from "@/config/api";
 
-// const options = [
-//   {
-//     name: "kelas",
-//     label: "Kelas",
-//     values: [
-//       { value: "", label: "Pilih Kelas" },
-//       { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-//       { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-//       { value: "5 SD", label: "5 SD", id: "3" },
-//       { value: "6 SD", label: "6 SD", id: "4" },
-//     ],
-//   },
-//   {
-//     name: "mapel",
-//     label: "Mata Pelajaran",
-//     values: [
-//       { value: "", label: "Pilih Mata Pelajaran" },
-//       { value: "Baca Tulis", label: "Baca Tulis", id: "1" },
-//       { value: "Matematika", label: "Matematika", id: "2" },
-//       { value: "Bahasa Inggris", label: "Bahasa Inggris", id: "3" },
-//       { value: "Pendidikan Karakter", label: "Pendidikan Karakter", id: "4" },
-//       { value: "Kreasi", label: "Kreasi", id: "5" },
-//     ],
-//   },
-// ];
 const options = [];
 
 const SilabusPage = () => {
@@ -223,9 +198,6 @@ const SilabusPage = () => {
     }
   };
 
-  // console.log(options, " >> option");
-  console.log(filters.kelas, " >> filters");
-
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -242,8 +214,6 @@ const SilabusPage = () => {
   useEffect(() => {
     getData();
   }, [filters]);
-
-  console.log(filters, ">> filter");
 
   return (
     <div className="flex flex-col h-full">
