@@ -33,6 +33,7 @@ const TambahRaporPage = () => {
   const disableForm = update === "true" ? false : true;
 
   const router = useRouter();
+  const [formPage, setFormPage] = useState(1);
   const [data, setData] = useState([]);
   const [mapel, setMapel] = useState([]);
   const [nilai, setNilai] = useState([]);
@@ -113,6 +114,8 @@ const TambahRaporPage = () => {
     getDataMapel();
   }, []);
 
+  console.log(formPage, "page");
+
   return (
     <Formik
       initialValues={initialValues}
@@ -177,181 +180,192 @@ const TambahRaporPage = () => {
 
               <div className="py-8 px-12">
                 <form onSubmit={formik.handleSubmit}>
-                  <div className="mb-8 w-[80%]">
-                    <h1 className="mb-2 text-xl font-semibold">
-                      Biodata Murid
-                    </h1>
-
-                    <div className="mb-4">
-                      <label htmlFor="nama" className="block text-sm mb-1">
-                        Nama Murid <span className="text-red-600">*</span>
-                      </label>
-                      <Input
-                        disabled
-                        placeholder=""
-                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                        allowClear
-                        {...formik.getFieldProps("nama_lengkap")}
-                      />
-                    </div>
-
-                    <div className="mb-4">
-                      <label htmlFor="wali" className="block text-sm mb-1">
-                        Nama Orangtua / Wali{" "}
-                        <span className="text-red-600">*</span>
-                      </label>
-                      <Input
-                        disabled
-                        placeholder=""
-                        className="w-full border border-gray-300 rounded-md px-3 py-2"
-                        allowClear
-                        {...formik.getFieldProps("nama_ortu")}
-                      />
-                    </div>
-
-                    <div className="mb-4">
-                      <label htmlFor="wali" className="block text-sm mb-1">
-                        Semester
-                      </label>
-                      <Select
-                        disabled={disableForm}
-                        placeholder="Pilih tingkat pendidikan"
-                        defaultValue={formik.values.semester}
-                        value={formik.values.semester}
-                        onChange={(value) =>
-                          formik.setFieldValue("semester", value)
-                        }
-                        onBlur={formik.handleBlur("semester")}
-                        className="my-2 w-full"
-                      >
-                        {semesterOption?.map((e) => (
-                          <Option value={e.value} key={e.value}>
-                            {e.label}
-                          </Option>
-                        ))}
-                      </Select>
-                      {formik.touched.semester && formik.errors.semester ? (
-                        <div className="text-red-600 text-sm">
-                          {formik.errors.semester}
-                        </div>
-                      ) : null}
-                    </div>
-
-                    {/* <div className="flex justify-end mt-8">
-                        <ButtonAdd type="submit" text="Simpan" />
-                      </div> */}
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-24">
-                    <div>
-                      <h1 className="mb-6 text-xl font-semibold">
-                        A. Penilaian Akademis
+                  <div className={formPage !== 1 && `hidden`}>
+                    <div className="mb-8 w-[80%]">
+                      <h1 className="mb-2 text-xl font-semibold">
+                        Biodata Murid
                       </h1>
 
-                      {mapel.map((item, i) => (
-                        <div className="mb-4 flex flex-col gap-2" key={i}>
-                          <h1 className="text-xl font-semibold">
-                            {item.mapel}
+                      <div className="mb-4">
+                        <label htmlFor="nama" className="block text-sm mb-1">
+                          Nama Murid <span className="text-red-600">*</span>
+                        </label>
+                        <Input
+                          disabled
+                          placeholder=""
+                          className="w-full border border-gray-300 rounded-md px-3 py-2"
+                          allowClear
+                          {...formik.getFieldProps("nama_lengkap")}
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label htmlFor="wali" className="block text-sm mb-1">
+                          Nama Orangtua / Wali{" "}
+                          <span className="text-red-600">*</span>
+                        </label>
+                        <Input
+                          disabled
+                          placeholder=""
+                          className="w-full border border-gray-300 rounded-md px-3 py-2"
+                          allowClear
+                          {...formik.getFieldProps("nama_ortu")}
+                        />
+                      </div>
+
+                      <div className="mb-4">
+                        <label htmlFor="wali" className="block text-sm mb-1">
+                          Semester
+                        </label>
+                        <Select
+                          disabled={disableForm}
+                          placeholder="Pilih tingkat pendidikan"
+                          defaultValue={formik.values.semester}
+                          value={formik.values.semester}
+                          onChange={(value) =>
+                            formik.setFieldValue("semester", value)
+                          }
+                          onBlur={formik.handleBlur("semester")}
+                          className="my-2 w-full"
+                        >
+                          {semesterOption?.map((e) => (
+                            <Option value={e.value} key={e.value}>
+                              {e.label}
+                            </Option>
+                          ))}
+                        </Select>
+                        {formik.touched.semester && formik.errors.semester ? (
+                          <div className="text-red-600 text-sm">
+                            {formik.errors.semester}
+                          </div>
+                        ) : null}
+                      </div>
+
+                      {/* <div className="flex justify-end mt-8">
+                        <ButtonAdd type="submit" text="Simpan" />
+                      </div> */}
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-24">
+                      <div>
+                        <h1 className="mb-6 text-xl font-semibold">
+                          A. Penilaian Akademis
+                        </h1>
+
+                        {mapel.map((item, i) => (
+                          <div className="mb-4 flex flex-col gap-2" key={i}>
+                            <h1 className="text-xl font-semibold">
+                              {item.mapel}
+                            </h1>
+
+                            <div className="mb-4">
+                              <label
+                                htmlFor="uts"
+                                className="block text-sm mb-1"
+                              >
+                                Ujian Tengah Semester{" "}
+                                <span className="text-red-600">*</span>
+                              </label>
+                              <Input
+                                required
+                                disabled={disableForm}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                allowClear
+                                type="number"
+                                max={100}
+                                min={0}
+                                onChange={(e) =>
+                                  handleChangeNilai(
+                                    item.id_mapel,
+                                    "uts",
+                                    e.target.value
+                                  )
+                                }
+                                value={
+                                  nilai.find(
+                                    (n) => n.id_mapel === item.id_mapel
+                                  )?.uts || ""
+                                }
+                              />
+                            </div>
+
+                            <div className="mb-4">
+                              <label
+                                htmlFor="uas"
+                                className="block text-sm mb-1"
+                              >
+                                Ujian Akhir Semester{" "}
+                                <span className="text-red-600">*</span>
+                              </label>
+                              <Input
+                                required
+                                disabled={disableForm}
+                                className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                allowClear
+                                max={100}
+                                min={0}
+                                onChange={(e) =>
+                                  handleChangeNilai(
+                                    item.id_mapel,
+                                    "uas",
+                                    e.target.value
+                                  )
+                                }
+                                value={
+                                  nilai.find(
+                                    (n) => n.id_mapel === item.id_mapel
+                                  )?.uas || ""
+                                }
+                              />
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className={formPage !== 2 && `hidden`}>
+                    {/* Form tambah kegiatan */}
+                    <FieldArray
+                      name="kegiatan"
+                      render={(arrayHelpers) => (
+                        <div className="w-[80%]">
+                          <h1 className="mb-6 text-xl font-semibold">
+                            B. Keaktifan Mengikuti Kegiatan
                           </h1>
 
-                          <div className="mb-4">
-                            <label htmlFor="uts" className="block text-sm mb-1">
-                              Ujian Tengah Semester{" "}
-                              <span className="text-red-600">*</span>
-                            </label>
-                            <Input
-                              required
-                              disabled={disableForm}
-                              className="w-full border border-gray-300 rounded-md px-3 py-2"
-                              allowClear
-                              type="number"
-                              max={100}
-                              min={0}
-                              onChange={(e) =>
-                                handleChangeNilai(
-                                  item.id_mapel,
-                                  "uts",
-                                  e.target.value
-                                )
-                              }
-                              value={
-                                nilai.find((n) => n.id_mapel === item.id_mapel)
-                                  ?.uts || ""
-                              }
-                            />
-                          </div>
+                          {formik.values.kegiatan.map((kegiatan, index) => (
+                            <div key={index} className="flex gap-4 mb-6">
+                              <div className="flex-1">
+                                <div className="mb-4">
+                                  <label
+                                    htmlFor="name"
+                                    className="block text-sm mb-1"
+                                  >
+                                    Nama Kegiatan{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  <Input
+                                    required
+                                    name={`kegiatan[${index}].name`}
+                                    placeholder=""
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                    allowClear
+                                    {...formik.getFieldProps(
+                                      `kegiatan[${index}].name`
+                                    )}
+                                  />
+                                </div>
 
-                          <div className="mb-4">
-                            <label htmlFor="uas" className="block text-sm mb-1">
-                              Ujian Akhir Semester{" "}
-                              <span className="text-red-600">*</span>
-                            </label>
-                            <Input
-                              required
-                              disabled={disableForm}
-                              className="w-full border border-gray-300 rounded-md px-3 py-2"
-                              allowClear
-                              max={100}
-                              min={0}
-                              onChange={(e) =>
-                                handleChangeNilai(
-                                  item.id_mapel,
-                                  "uas",
-                                  e.target.value
-                                )
-                              }
-                              value={
-                                nilai.find((n) => n.id_mapel === item.id_mapel)
-                                  ?.uas || ""
-                              }
-                            />
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Form tambah kegiatan */}
-                  <FieldArray
-                    name="kegiatan"
-                    render={(arrayHelpers) => (
-                      <div className="w-[80%]">
-                        <h1 className="mb-6 text-xl font-semibold">
-                          B. Keaktifan Mengikuti Kegiatan
-                        </h1>
-
-                        {formik.values.kegiatan.map((kegiatan, index) => (
-                          <div key={index} className="flex gap-4 mb-6">
-                            <div className="flex-1">
-                              <div className="mb-4">
-                                <label
-                                  htmlFor="name"
-                                  className="block text-sm mb-1"
-                                >
-                                  Nama Kegiatan{" "}
-                                  <span className="text-red-600">*</span>
-                                </label>
-                                <Input
-                                  required
-                                  name={`kegiatan[${index}].name`}
-                                  placeholder=""
-                                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                                  allowClear
-                                  {...formik.getFieldProps(
-                                    `kegiatan[${index}].name`
-                                  )}
-                                />
-                              </div>
-
-                              <div className="mb-4">
-                                <label
-                                  htmlFor="desc"
-                                  className="block text-sm mb-1"
-                                >
-                                  Deskripsi Kegiatan{" "}
-                                  <span className="text-red-600">*</span>
-                                </label>
-                                {/* <Input
+                                <div className="mb-4">
+                                  <label
+                                    htmlFor="desc"
+                                    className="block text-sm mb-1"
+                                  >
+                                    Deskripsi Kegiatan{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  {/* <Input
                                   required
                                   name={`kegiatan.${index}.desc`}
                                   placeholder=""
@@ -361,228 +375,254 @@ const TambahRaporPage = () => {
                                     `kegiatan.${index}.desc`
                                   )}
                                 /> */}
-                                <TextArea
-                                  required
-                                  name={`kegiatan.${index}.desc`}
-                                  rows={2}
-                                  allowClear
-                                  {...formik.getFieldProps(
-                                    `kegiatan.${index}.desc`
-                                  )}
-                                />
+                                  <TextArea
+                                    required
+                                    name={`kegiatan.${index}.desc`}
+                                    rows={2}
+                                    allowClear
+                                    {...formik.getFieldProps(
+                                      `kegiatan.${index}.desc`
+                                    )}
+                                  />
+                                </div>
                               </div>
-                            </div>
 
-                            {formik.values.kegiatan.length > 1 && (
-                              <div>
-                                <label className="text-sm mb-1 invisible">
-                                  hapus
-                                </label>
-                                <button
-                                  className="h-min flex items-center gap-2 rounded-sm px-4 py-1 bg-[#ffafaf] border border-gray-400 font-medium"
-                                  type="button"
-                                  onClick={() => arrayHelpers.remove(index)}
-                                >
-                                  {/* <Image
+                              {formik.values.kegiatan.length > 1 && (
+                                <div>
+                                  <label className="text-sm mb-1 invisible">
+                                    hapus
+                                  </label>
+                                  <button
+                                    className="h-min flex items-center gap-2 rounded-sm px-4 py-1 bg-[#ffafaf] border border-gray-400 font-medium"
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                  >
+                                    {/* <Image
                                   src={IconPlus}
                                   alt="img-button"
                                   className="inline-block"
                                   width={16}
                                   height={16}
                                 /> */}
-                                  Hapus
-                                </button>
-                              </div>
-                            )}
-                          </div>
-                        ))}
-
-                        <div className="flex justify-end mt-8">
-                          <ButtonAdd
-                            type="button"
-                            onChange={() =>
-                              arrayHelpers.push({ name: "", desc: "" })
-                            }
-                            text="Tambah Kegiatan"
-                          />
-                        </div>
-                      </div>
-                    )}
-                  />
-
-                  {/* Form tambah lomab */}
-                  <FieldArray
-                    name="lomba"
-                    render={(arrayHelpers) => (
-                      <div className="w-[80%]">
-                        <h1 className="mb-6 text-xl font-semibold">
-                          C. Prestasi Membanggakan
-                        </h1>
-
-                        {formik.values.lomba.map((lomba, index) => (
-                          <div key={index} className="flex gap-4 mb-6">
-                            <div className="flex-1">
-                              <div className="mb-4">
-                                <label
-                                  htmlFor="name"
-                                  className="block text-sm mb-1"
-                                >
-                                  Nama Lomba{" "}
-                                  <span className="text-red-600">*</span>
-                                </label>
-                                <Input
-                                  required
-                                  name={`lomba[${index}].name`}
-                                  placeholder=""
-                                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                                  allowClear
-                                  {...formik.getFieldProps(
-                                    `lomba[${index}].name`
-                                  )}
-                                />
-                              </div>
-
-                              <div className="mb-4">
-                                <label
-                                  htmlFor="tingkat_prestasi"
-                                  className="block text-sm mb-1"
-                                >
-                                  Tingkatan Prestasi{" "}
-                                  <span className="text-red-600">*</span>
-                                </label>
-                                <Input
-                                  required
-                                  name={`lomba[${index}].name`}
-                                  placeholder=""
-                                  className="w-full border border-gray-300 rounded-md px-3 py-2"
-                                  allowClear
-                                  {...formik.getFieldProps(
-                                    `lomba[${index}].tingkat_prestasi`
-                                  )}
-                                />
-                              </div>
-
-                              <div className="mb-4">
-                                <label
-                                  htmlFor="desc"
-                                  className="block text-sm mb-1"
-                                >
-                                  Deskripsi Lomba{" "}
-                                  <span className="text-red-600">*</span>
-                                </label>
-                                <TextArea
-                                  required
-                                  name={`lomba.${index}.desc`}
-                                  rows={2}
-                                  allowClear
-                                  {...formik.getFieldProps(
-                                    `lomba.${index}.desc`
-                                  )}
-                                />
-                              </div>
+                                    Hapus
+                                  </button>
+                                </div>
+                              )}
                             </div>
+                          ))}
 
-                            {formik.values.lomba.length > 1 && (
-                              <div>
-                                <label className="text-sm mb-1 invisible">
-                                  hapus
-                                </label>
-                                <button
-                                  className="h-min flex items-center gap-2 rounded-sm px-4 py-1 bg-[#ffafaf] border border-gray-400 font-medium"
-                                  type="button"
-                                  onClick={() => arrayHelpers.remove(index)}
-                                >
-                                  {/* <Image
+                          <div className="flex justify-end mt-8">
+                            <ButtonAdd
+                              type="button"
+                              onChange={() =>
+                                arrayHelpers.push({ name: "", desc: "" })
+                              }
+                              text="Tambah Kegiatan"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    />
+
+                    {/* Form tambah lomab */}
+                    <FieldArray
+                      name="lomba"
+                      render={(arrayHelpers) => (
+                        <div className="w-[80%]">
+                          <h1 className="mb-6 text-xl font-semibold">
+                            C. Prestasi Membanggakan
+                          </h1>
+
+                          {formik.values.lomba.map((lomba, index) => (
+                            <div key={index} className="flex gap-4 mb-6">
+                              <div className="flex-1">
+                                <div className="mb-4">
+                                  <label
+                                    htmlFor="name"
+                                    className="block text-sm mb-1"
+                                  >
+                                    Nama Lomba{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  <Input
+                                    required
+                                    name={`lomba[${index}].name`}
+                                    placeholder=""
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                    allowClear
+                                    {...formik.getFieldProps(
+                                      `lomba[${index}].name`
+                                    )}
+                                  />
+                                </div>
+
+                                <div className="mb-4">
+                                  <label
+                                    htmlFor="tingkat_prestasi"
+                                    className="block text-sm mb-1"
+                                  >
+                                    Tingkatan Prestasi{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  <Input
+                                    required
+                                    name={`lomba[${index}].name`}
+                                    placeholder=""
+                                    className="w-full border border-gray-300 rounded-md px-3 py-2"
+                                    allowClear
+                                    {...formik.getFieldProps(
+                                      `lomba[${index}].tingkat_prestasi`
+                                    )}
+                                  />
+                                </div>
+
+                                <div className="mb-4">
+                                  <label
+                                    htmlFor="desc"
+                                    className="block text-sm mb-1"
+                                  >
+                                    Deskripsi Lomba{" "}
+                                    <span className="text-red-600">*</span>
+                                  </label>
+                                  <TextArea
+                                    required
+                                    name={`lomba.${index}.desc`}
+                                    rows={2}
+                                    allowClear
+                                    {...formik.getFieldProps(
+                                      `lomba.${index}.desc`
+                                    )}
+                                  />
+                                </div>
+                              </div>
+
+                              {formik.values.lomba.length > 1 && (
+                                <div>
+                                  <label className="text-sm mb-1 invisible">
+                                    hapus
+                                  </label>
+                                  <button
+                                    className="h-min flex items-center gap-2 rounded-sm px-4 py-1 bg-[#ffafaf] border border-gray-400 font-medium"
+                                    type="button"
+                                    onClick={() => arrayHelpers.remove(index)}
+                                  >
+                                    {/* <Image
                                   src={IconPlus}
                                   alt="img-button"
                                   className="inline-block"
                                   width={16}
                                   height={16}
                                 /> */}
-                                  Hapus
-                                </button>
-                              </div>
-                            )}
+                                    Hapus
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          ))}
+                          <div className="flex justify-end mt-8">
+                            <ButtonAdd
+                              type="button"
+                              onChange={() =>
+                                arrayHelpers.push({ name: "", desc: "" })
+                              }
+                              text="Tambah Lomba"
+                            />
                           </div>
-                        ))}
-                        <div className="flex justify-end mt-8">
-                          <ButtonAdd
-                            type="button"
-                            onChange={() =>
-                              arrayHelpers.push({ name: "", desc: "" })
-                            }
-                            text="Tambah Lomba"
-                          />
                         </div>
-                      </div>
-                    )}
-                  />
-
-                  {/* KetidakHadiran */}
-                  <div className="mb-8">
-                    <h1 className="mb-6 text-xl font-semibold">
-                      D. Ketidakhadiran
-                    </h1>
-
-                    <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
-                      <label htmlFor="alfa" className="block text-sm mb-1 w-20">
-                        Alfa <span className="text-red-600">*</span>
-                      </label>
-                      <Input
-                        placeholder=""
-                        className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                        allowClear
-                        {...formik.getFieldProps("alfa")}
-                      />
-                      <p>Hari</p>
-                    </div>
-
-                    <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
-                      <label htmlFor="izin" className="block text-sm mb-1 w-20">
-                        izin <span className="text-red-600">*</span>
-                      </label>
-                      <Input
-                        placeholder=""
-                        className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                        allowClear
-                        {...formik.getFieldProps("izin")}
-                      />
-                      <p>Hari</p>
-                    </div>
-
-                    <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
-                      <label
-                        htmlFor="sakit"
-                        className="block text-sm mb-1 w-20"
-                      >
-                        Sakit <span className="text-red-600">*</span>
-                      </label>
-                      <Input
-                        placeholder=""
-                        className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                        allowClear
-                        {...formik.getFieldProps("sakit")}
-                      />
-                      <p>Hari</p>
-                    </div>
-                  </div>
-
-                  <div className="mb-4 w-[80%]">
-                    <h1 className="mb-1 text-xl font-semibold">
-                      Catatan Wali Kelas
-                    </h1>
-
-                    <TextArea
-                      disabled={disableForm}
-                      rows={4}
-                      placeholder="catatan wali kelas.."
-                      allowClear
-                      {...formik.getFieldProps("catatan_wali_kelas")}
+                      )}
                     />
                   </div>
 
-                  <div className="flex justify-end mt-8 w-[80%]">
-                    <ButtonAdd type="submit" text="Simpan" />
+                  <div className={formPage !== 3 && `hidden`}>
+                    {/* KetidakHadiran */}
+                    <div className="mb-8">
+                      <h1 className="mb-6 text-xl font-semibold">
+                        D. Ketidakhadiran
+                      </h1>
+
+                      <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
+                        <label
+                          htmlFor="alfa"
+                          className="block text-sm mb-1 w-20"
+                        >
+                          Alfa <span className="text-red-600">*</span>
+                        </label>
+                        <Input
+                          placeholder=""
+                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
+                          allowClear
+                          {...formik.getFieldProps("alfa")}
+                        />
+                        <p>Hari</p>
+                      </div>
+
+                      <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
+                        <label
+                          htmlFor="izin"
+                          className="block text-sm mb-1 w-20"
+                        >
+                          izin <span className="text-red-600">*</span>
+                        </label>
+                        <Input
+                          placeholder=""
+                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
+                          allowClear
+                          {...formik.getFieldProps("izin")}
+                        />
+                        <p>Hari</p>
+                      </div>
+
+                      <div className="mb-4 flex items-center justify-center gap-4 w-[50%]">
+                        <label
+                          htmlFor="sakit"
+                          className="block text-sm mb-1 w-20"
+                        >
+                          Sakit <span className="text-red-600">*</span>
+                        </label>
+                        <Input
+                          placeholder=""
+                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
+                          allowClear
+                          {...formik.getFieldProps("sakit")}
+                        />
+                        <p>Hari</p>
+                      </div>
+                    </div>
+
+                    <div className="mb-4 w-[80%]">
+                      <h1 className="mb-1 text-xl font-semibold">
+                        Catatan Wali Kelas
+                      </h1>
+
+                      <TextArea
+                        disabled={disableForm}
+                        rows={4}
+                        placeholder="catatan wali kelas.."
+                        allowClear
+                        {...formik.getFieldProps("catatan_wali_kelas")}
+                      />
+                    </div>
+
+                    <div className="flex justify-end mt-8 w-[80%]">
+                      <ButtonAdd type="submit" text="Simpan" />
+                    </div>
+                  </div>
+
+                  <div className="flex gap-4 justify-center mt-8 w-full">
+                    <button
+                      type="button"
+                      onClick={() => setFormPage((prev) => prev - 1)}
+                      className={formPage == 1 && `hidden`}
+                    >
+                      Previous
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setFormPage((prev) => prev + 1)}
+                      className={formPage == 3 && `hidden`}
+                    >
+                      Next
+                    </button>
                   </div>
                 </form>
               </div>
