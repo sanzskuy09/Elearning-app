@@ -25,6 +25,9 @@ const TambahSilabusPage = () => {
   const [kelas, setKelas] = useState([]);
   const [mapel, setMapel] = useState([]);
 
+  const [mapelRoute, setMapelRoute] = useState([]);
+  const [kelasRoute, setKelasRoute] = useState([]);
+
   // console.log(kelas);
 
   const idKelas = searchParams.get("kelas");
@@ -61,8 +64,10 @@ const TambahSilabusPage = () => {
   const getDataKelas = async () => {
     try {
       const res = await API.get(`/kelas`);
+      const dataKelas = res.data.data;
 
-      setKelas(res.data.data);
+      setKelas(dataKelas);
+      setKelasRoute(dataKelas.filter((e) => e.id == idKelas)[0]);
     } catch (error) {
       console.error(error);
     }
@@ -71,8 +76,10 @@ const TambahSilabusPage = () => {
   const getDataMapel = async () => {
     try {
       const res = await API.get(`/mapel`);
+      const dataMapel = res.data.data;
 
-      setMapel(res.data.data);
+      setMapel(dataMapel);
+      setMapelRoute(dataMapel.filter((e) => e.id == idMapel)[0]);
     } catch (error) {
       console.error(error);
     }
@@ -82,6 +89,9 @@ const TambahSilabusPage = () => {
     getDataMapel();
     getDataKelas();
   }, []);
+
+  // console.log(mapelRoute, ">> mapel");
+  // console.log(kelasRoute, ">> kelas");
 
   return (
     <Formik
@@ -116,7 +126,13 @@ const TambahSilabusPage = () => {
             setSubmitting(false);
             resetForm();
             toastSuccess("Tambah Silabus Berhasil");
-            router.push("/silabus");
+            // router.push("/silabus");
+            router.push(
+              `/silabus?mapel=${[mapelRoute?.name, mapelRoute?.id]}&kelas=${[
+                kelasRoute?.name,
+                kelasRoute?.id,
+              ]}`
+            );
           }, 400);
         } catch (error) {
           toastFailed("Tambah Silabus Gagal");

@@ -11,6 +11,7 @@ const KelasDetailPage = ({ params: { id } }) => {
   const colors = ["bg-red-300", "bg-blue-300", "bg-green-300"];
 
   const [jadwal, setJadwal] = useState();
+  const [silabus, setSilabus] = useState([]);
 
   const getDataJadwal = async () => {
     try {
@@ -18,12 +19,30 @@ const KelasDetailPage = ({ params: { id } }) => {
 
       const data = res.data.data;
       setJadwal(data);
+
+      const responseSilabus = await fetch(
+        `/api/silabus?mapel=${data.id_mapel}&kelas=${data.id_kelas}&id=`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!responseSilabus.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const dataSilabus = await responseSilabus.json();
+
+      setSilabus(
+        dataSilabus.data.filter((e) => e.isChecked == false).slice(0)[0]
+      );
     } catch (error) {
       console.log(error);
     }
   };
 
   console.log(jadwal);
+  console.log(silabus, " >> silabus");
 
   useEffect(() => {
     getDataJadwal();
@@ -39,21 +58,26 @@ const KelasDetailPage = ({ params: { id } }) => {
       </div>
 
       <div className="py-6 px-10 flex flex-col gap-4">
-        {/* content */}
+        {/* Silabus */}
         <div className="">
           <div className="flex justify-between mb-3">
             <h4>Silabus Hari Ini</h4>
             <h2 className="text-title">
-              &lt;&lt; <Link href="/silabus">Lihat Silabus Lengkap</Link>{" "}
+              &lt;&lt;{" "}
+              <Link
+                href={`/silabus?mapel=${[
+                  jadwal?.mapel,
+                  jadwal?.id_mapel,
+                ]}&kelas=${[jadwal?.kelas, jadwal?.id_kelas]}`}
+              >
+                Lihat Silabus Lengkap
+              </Link>{" "}
               &gt;&gt;
             </h2>
           </div>
 
           <div className="bg-[#D9D9D9] p-4 flex justify-between items-center rounded-md">
-            <p>
-              Menjelaskan dan menentukan urutan bilangan bulat (negatif -
-              positif) dan pecahan
-            </p>
+            <p>{silabus?.name}</p>
 
             <div className="flex gap-4">
               <button className="w-8 h-8 rounded-md bg-white">a</button>

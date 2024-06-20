@@ -29,8 +29,8 @@ const TambahRaporPage = () => {
 
   const id = searchParams.get("id");
   const id_kelas = searchParams.get("id_kelas");
-  const update = searchParams.get("update");
-  const disableForm = update === "true" ? false : true;
+  // const update = searchParams.get("update");
+  // const disableForm = update === "true" ? false : true;
 
   const router = useRouter();
   const [formPage, setFormPage] = useState(1);
@@ -225,7 +225,6 @@ const TambahRaporPage = () => {
                           Semester
                         </label>
                         <Select
-                          disabled={disableForm}
                           placeholder="Pilih tingkat pendidikan"
                           defaultValue={formik.values.semester}
                           value={formik.values.semester}
@@ -275,7 +274,6 @@ const TambahRaporPage = () => {
                               </label>
                               <Input
                                 required
-                                disabled={disableForm}
                                 className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 allowClear
                                 type="number"
@@ -306,7 +304,6 @@ const TambahRaporPage = () => {
                               </label>
                               <Input
                                 required
-                                disabled={disableForm}
                                 className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 allowClear
                                 max={100}
@@ -602,7 +599,6 @@ const TambahRaporPage = () => {
                       </h1>
 
                       <TextArea
-                        disabled={disableForm}
                         rows={4}
                         placeholder="catatan wali kelas.."
                         allowClear

@@ -57,9 +57,7 @@ const KelasHariIniPage = () => {
 
           <button
             // onClick={() => navigate(`/kelashariini/detail/${record.kelas}`)}
-            onClick={() =>
-              router.push(`/kelashariini/detail/${record.id_jadwal}`)
-            }
+            onClick={() => router.push(`/kelashariini/detail/${record.id}`)}
             className="bg-blue-500 px-2 rounded-md font-medium text-white"
           >
             Mulai

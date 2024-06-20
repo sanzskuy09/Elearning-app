@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import {
   Button,
@@ -33,6 +33,12 @@ import { API, URL } from "@/config/api";
 const options = [];
 
 const SilabusPage = () => {
+  const searchParams = useSearchParams();
+  const id_mapel = searchParams.get("mapel");
+  const id_kelas = searchParams.get("kelas");
+
+  // console.log(id_kelas, id_mapel);
+
   const nama = localStorage.getItem("nama_panggilan");
   const role = localStorage.getItem("role");
 
@@ -47,7 +53,14 @@ const SilabusPage = () => {
   const [filters, setFilters] = useState(
     options.length > 0
       ? Object.fromEntries(options.map((option) => [option.name, [""]]))
-      : { kelas: [""], mapel: [""] }
+      : {
+          kelas: id_kelas
+            ? [id_kelas.split(",")[0], id_kelas.split(",")[1]]
+            : [""],
+          mapel: id_mapel
+            ? [id_mapel.split(",")[0], id_mapel.split(",")[1]]
+            : [""],
+        }
   );
 
   const handleSearchChange = (e) => {
@@ -215,6 +228,13 @@ const SilabusPage = () => {
   useEffect(() => {
     getData();
   }, [filters]);
+
+  useEffect(() => {
+    getData();
+  }, []);
+
+  console.log(filters, ">> filter");
+  // console.log(id_kelas, id_mapel);
 
   return (
     <div className="flex flex-col h-full">

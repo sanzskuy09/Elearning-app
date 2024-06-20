@@ -83,7 +83,6 @@ const columns = [
     ),
     width: 250,
   },
-
   {
     title: "Action",
     fixed: "right",
@@ -91,7 +90,9 @@ const columns = [
     width: 150,
     render: (_, record) => (
       <Space size="middle">
-        <Link href={`/rapor/cetak-rapor?id=${record.id}`}>
+        <Link
+          href={`/rapor/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
+        >
           <Image src={IconDetail} alt="" />
         </Link>
 
