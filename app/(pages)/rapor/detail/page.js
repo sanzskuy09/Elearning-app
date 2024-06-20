@@ -30,8 +30,8 @@ const semesterOption = [
 
 const DetailRaporPage = () => {
   const [nama, setNama] = useState("");
-  const searchParams = useSearchParams();
 
+  const searchParams = useSearchParams();
   const id = searchParams.get("id");
   const update = searchParams.get("update");
   const disableForm = update === "true" ? false : true;

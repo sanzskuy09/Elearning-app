@@ -18,6 +18,9 @@ import { API, URL } from "@/config/api";
 const options = [];
 
 const JadwalKelasPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+  const role = localStorage.getItem("role");
+
   const columns = [
     {
       title: "No.",
@@ -76,19 +79,21 @@ const JadwalKelasPage = () => {
             <Image src={IconDetail} alt="" />
           </Link>
 
-          <Link href={`/jadwalkelas/detail?id=${record.id}&update=true`}>
-            <Image src={IconEdit} alt="" />
-          </Link>
+          {role === "admin" && (
+            <>
+              <Link href={`/jadwalkelas/detail?id=${record.id}&update=true`}>
+                <Image src={IconEdit} alt="" />
+              </Link>
 
-          <button onClick={() => handleDelete(record.id)}>
-            <Image src={IconDelete} alt="" />
-          </button>
+              <button onClick={() => handleDelete(record.id)}>
+                <Image src={IconDelete} alt="" />
+              </button>
+            </>
+          )}
         </Space>
       ),
     },
   ];
-
-  const nama = localStorage.getItem("nama_panggilan");
 
   const router = useRouter();
   const [data, setData] = useState("");
@@ -188,7 +193,7 @@ const JadwalKelasPage = () => {
   };
 
   // console.log(dataKelas, " >> data kelas");
-  console.log(filters, " >> filters");
+  // console.log(filters, " >> filters");
 
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
@@ -205,9 +210,6 @@ const JadwalKelasPage = () => {
   useEffect(() => {
     getData();
   }, [filters]);
-
-  // console.log(options);
-  // console.log(filters);
 
   return (
     <div className="flex flex-col h-full">
@@ -231,7 +233,7 @@ const JadwalKelasPage = () => {
             // onSearch={getData}
             // onSearch={() => console.log(filters)}
             // handleSearch={handleSearchChange}
-            showButton={true}
+            showButton={role === "relawan" ? false : true}
             text={"Buat Jadwal"}
             onButtonClick={() => router.push("/jadwalkelas/tambahjadwal")}
           />

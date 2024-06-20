@@ -47,6 +47,9 @@ const TambahRaporPage = () => {
     catatan_wali_kelas: "",
     kegiatan: [{ name: "", desc: "" }],
     lomba: [{ name: "", tingkat_prestasi: "", desc: "" }],
+    sakit: 0,
+    izin: 0,
+    alfa: 0,
   };
 
   // handle input change nilai
@@ -114,7 +117,7 @@ const TambahRaporPage = () => {
     getDataMapel();
   }, []);
 
-  console.log(formPage, "page");
+  // console.log(formPage, "page");
 
   return (
     <Formik
@@ -131,33 +134,37 @@ const TambahRaporPage = () => {
       // })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          // const newValues = {
-          //   id_murid: id,
-          //   semester: values.semester,
-          //   catatan_wali_kelas: values.catatan_wali_kelas,
-          //   nilai: nilai.map((item) => ({
-          //     id_mapel: item.id_mapel,
-          //     uts: item.uts,
-          //     uas: item.uas,
-          //   })),
-          // };
-          // const response = await fetch(`/api/rapor`, {
-          //   method: "POST",
-          //   body: JSON.stringify(newValues),
-          // });
+          const newValues = {
+            id_murid: id,
+            semester: values.semester,
+            catatan_wali_kelas: values.catatan_wali_kelas,
+            sakit: values.sakit,
+            izin: values.izin,
+            alfa: values.alfa,
+            kegiatan: values.kegiatan,
+            lomba: values.lomba,
+            nilai: nilai.map((item) => ({
+              id_mapel: item.id_mapel,
+              uts: item.uts,
+              uas: item.uas,
+            })),
+          };
 
-          // if (!response.ok) {
-          //   throw new Error("Failed to Tambah Rapor Gagal");
-          // }
+          const response = await fetch(`/api/rapor`, {
+            method: "POST",
+            body: JSON.stringify(newValues),
+          });
 
-          console.log(values, ">> value");
+          if (!response.ok) {
+            throw new Error("Failed to Tambah Rapor Gagal");
+          }
 
           setTimeout(() => {
             setSubmitting(false);
             resetForm();
             resetNilai();
-            // toastSuccess("Tambah Rapor Berhasil");
-            // router.push("/rapor");
+            toastSuccess("Tambah Rapor Berhasil");
+            router.push("/rapor");
           }, 400);
         } catch (error) {
           toastFailed("Tambah Rapor Gagal");

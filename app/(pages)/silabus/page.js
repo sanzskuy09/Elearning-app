@@ -34,6 +34,7 @@ const options = [];
 
 const SilabusPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
+  const role = localStorage.getItem("role");
 
   const router = useRouter();
 
@@ -280,14 +281,20 @@ const SilabusPage = () => {
                           >
                             <Image src={IconDownload} alt="img" />
                           </a>
-                          <Link
-                            href={`/silabus/editsilabus?id=${item.id}&kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`}
-                          >
-                            <Image src={IconEdit} alt="img" />
-                          </Link>
-                          <button onClick={() => handleDelete(item.id)}>
-                            <Image src={IconDetele} alt="img" />
-                          </button>
+
+                          {role === "admin" && (
+                            <>
+                              <Link
+                                href={`/silabus/editsilabus?id=${item.id}&kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`}
+                              >
+                                <Image src={IconEdit} alt="img" />
+                              </Link>
+
+                              <button onClick={() => handleDelete(item.id)}>
+                                <Image src={IconDetele} alt="img" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}
