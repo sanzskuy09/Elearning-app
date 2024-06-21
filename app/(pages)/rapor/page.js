@@ -90,14 +90,13 @@ const columns = [
     width: 150,
     render: (_, record) => (
       <Space size="middle">
-        <Link
-          href={`/rapor/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
+        {/* <Link
+          href={`/rapor/detail?id=${record.id}&id_kelas=${record.kelas.id}`}
         >
           <Image src={IconDetail} alt="" />
-        </Link>
-
+        </Link> */}
         <Link
-          href={`/rapor/detail?id=${record.id}&id_kelas=${record.kelas.id}`}
+          href={`/rapor/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
         >
           <Image src={IconDetail} alt="" />
         </Link>

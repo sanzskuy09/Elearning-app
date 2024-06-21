@@ -1,8 +1,14 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
+
+import { ConfigProvider, Radio, Checkbox } from "antd";
 
 import Image from "next/image";
 import Link from "next/link";
+
+import IconToga from "@/public/Icons/icon-toga.svg";
+import IconDownload from "@/public/Icons/icon-download-2.svg";
+
 import { API, URL } from "@/config/api";
 
 const KelasDetailPage = ({ params: { id } }) => {
@@ -12,14 +18,45 @@ const KelasDetailPage = ({ params: { id } }) => {
 
   const [jadwal, setJadwal] = useState();
   const [silabus, setSilabus] = useState([]);
+  const [murid, setMurid] = useState([]);
+  const [value, setValue] = useState(1);
+
+  const [attendance, setAttendance] = useState(
+    murid.reduce((acc, student) => {
+      acc[student.id] = "";
+      return acc;
+    }, {})
+  );
+
+  const handleAttendanceChange = (studentId, value) => {
+    setAttendance((prev) => ({
+      ...prev,
+      [studentId]: value,
+    }));
+  };
+
+  const handleSubmit = () => {
+    console.log(attendance);
+    // Perform further actions like submitting to API or other processing
+  };
+
+  const onChange = (e) => {
+    console.log("radio checked", e.target.value);
+    setValue(e.target.value);
+  };
+
+  const onChangeCheckbox = (e) => {
+    console.log(`checked = ${e.target.checked}`);
+  };
 
   const getDataJadwal = async () => {
     try {
+      // get jadwal
       const res = await API.get(`${URL.GET_JADWAL}/${id}`);
-
       const data = res.data.data;
       setJadwal(data);
 
+      // get silabus
       const responseSilabus = await fetch(
         `/api/silabus?mapel=${data.id_mapel}&kelas=${data.id_kelas}&id=`,
         {
@@ -36,13 +73,31 @@ const KelasDetailPage = ({ params: { id } }) => {
       setSilabus(
         dataSilabus.data.filter((e) => e.isChecked == false).slice(0)[0]
       );
+
+      // get murid
+      const responseMurid = await fetch(
+        `/api/murid?kelas=${data.id_kelas}&kategori=`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!responseMurid.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const dataMurid = await responseMurid.json();
+
+      setMurid(dataMurid.data);
     } catch (error) {
       console.log(error);
     }
   };
 
-  console.log(jadwal);
-  console.log(silabus, " >> silabus");
+  // console.log(jadwal);
+  // console.log(silabus, " >> silabus");
+  console.log(murid, " >> murid");
+  console.log(attendance, " >> attendance");
 
   useEffect(() => {
     getDataJadwal();
@@ -80,8 +135,28 @@ const KelasDetailPage = ({ params: { id } }) => {
             <p>{silabus?.name}</p>
 
             <div className="flex gap-4">
-              <button className="w-8 h-8 rounded-md bg-white">a</button>
-              <button className="w-8 h-8 rounded-md bg-white">d</button>
+              <ConfigProvider
+                theme={{
+                  token: {
+                    borderRadiusSM: 4,
+                    controlInteractiveSize: 24,
+                    colorPrimary: "#0FA958",
+                    colorPrimaryBorder: "#0FA958",
+                  },
+                }}
+              >
+                <Checkbox onChange={onChange}></Checkbox>
+              </ConfigProvider>
+
+              <button>
+                <Image
+                  src={IconDownload}
+                  alt="img-button"
+                  className="inline-block"
+                  width={24}
+                  height={24}
+                />
+              </button>
             </div>
           </div>
         </div>
@@ -108,11 +183,130 @@ const KelasDetailPage = ({ params: { id } }) => {
           </div>
         </div>
 
-        <div className="bg-white w-full h-[400px] p-4">table absen siswa</div>
+        <div className="bg-white w-full min-h-[400px] shadow-xl rounded-lg">
+          <table className="w-full ">
+            <thead>
+              <tr className="text-left bg-[#F7F7F7]">
+                <th className="w-[80%] border-b border-slate-600 p-2 px-4">
+                  Nama
+                </th>
+                <th className="border-b border-slate-600">Hadir</th>
+                <th className="border-b border-slate-600">Alfa</th>
+                <th className="border-b border-slate-600">Sakit</th>
+                <th className="border-b border-slate-600">Izin</th>
+              </tr>
+            </thead>
+            <tbody>
+              {murid.map((student) => (
+                <tr key={student.id}>
+                  <td className="p-4  border-b border-gray-400">
+                    {student.nama_lengkap}
+                  </td>
+                  <td className="border-b border-gray-400">
+                    <Radio
+                      name={`absen-${student.id}`}
+                      value="hadir"
+                      defaultChecked={true}
+                      checked={attendance[student.id] === "hadir"}
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "hadir")
+                      }
+                    ></Radio>
+                  </td>
+                  <td className="border-b border-gray-400">
+                    <Radio
+                      name={`absen-${student.id}`}
+                      value="alfa"
+                      checked={attendance[student.id] === "alfa"}
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "alfa")
+                      }
+                    ></Radio>
+                  </td>
+                  <td className="border-b border-gray-400">
+                    <Radio
+                      name={`absen-${student.id}`}
+                      value="sakit"
+                      checked={attendance[student.id] === "sakit"}
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "sakit")
+                      }
+                    ></Radio>
+                  </td>
+                  <td className="border-b border-gray-400">
+                    <Radio
+                      name={`absen-${student.id}`}
+                      value="izin"
+                      checked={attendance[student.id] === "izin"}
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "izin")
+                      }
+                    ></Radio>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            {/* <tbody>
+              {murid.map((item, index) => (
+                <tr key={index}>
+                  <td>{item.name}</td>
+                  <td>
+                    <Radio
+                      name={`absen-${item.nama_lengkap}`}
+                      value="hadir"
+                      checked={attendance[item.nama_lengkap] === "hadir"}
+                      onChange={() =>
+                        handleAttendanceChange(item.nama_lengkap, "hadir")
+                      }
+                    >
+                      Hadir
+                    </Radio>
+                  </td>
+                  <td>
+                    <Radio
+                      name={`absen-${item.nama_lengkap}`}
+                      value="alfa"
+                      checked={attendance[item.nama_lengkap] === "alfa"}
+                      onChange={() =>
+                        handleAttendanceChange(item.nama_lengkap, "alfa")
+                      }
+                    >
+                      Alfa
+                    </Radio>
+                  </td>
+                  <td>
+                    <Radio
+                      name={`absen-${item.nama_lengkap}`}
+                      value="sakit"
+                      checked={attendance[item.nama_lengkap] === "sakit"}
+                      onChange={() =>
+                        handleAttendanceChange(item.nama_lengkap, "sakit")
+                      }
+                    >
+                      Sakit
+                    </Radio>
+                  </td>
+                  <td>
+                    <Radio
+                      name={`absen-${item.nama_lengkap}`}
+                      value="izin"
+                      checked={attendance[item.nama_lengkap] === "izin"}
+                      onChange={() =>
+                        handleAttendanceChange(item.nama_lengkap, "izin")
+                      }
+                    >
+                      Izin
+                    </Radio>
+                  </td>
+                </tr>
+              ))}
+            </tbody> */}
+          </table>
+        </div>
         <div className="flex gap-4 w-full justify-end">
-          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958]">
+          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
             <Image
-              src=""
+              src={IconToga}
               alt="img-button"
               className="inline-block"
               width={24}
@@ -120,9 +314,9 @@ const KelasDetailPage = ({ params: { id } }) => {
             />
             Beri Nilai
           </button>
-          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958]">
+          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
             <Image
-              src=""
+              src={IconToga}
               alt="img-button"
               className="inline-block"
               width={24}
@@ -136,4 +330,14 @@ const KelasDetailPage = ({ params: { id } }) => {
   );
 };
 
+// const Page = () => {
+//   return (
+//     // You could have a loading skeleton as the `fallback` too
+//     <Suspense>
+//       <KelasDetailPage />
+//     </Suspense>
+//   );
+// };
+
 export default KelasDetailPage;
+// export default Page;

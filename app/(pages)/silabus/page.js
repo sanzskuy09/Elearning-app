@@ -229,11 +229,40 @@ const SilabusPage = () => {
     getData();
   }, [filters]);
 
-  useEffect(() => {
-    getData();
-  }, []);
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch(
+  //         `/api/silabus?mapel=${id_mapel.split(",")[1]}&kelas=${
+  //           id_kelas.split(",")[1]
+  //         }&id=`,
+  //         {
+  //           method: "GET",
+  //         }
+  //       );
+
+  //       if (!res.ok) {
+  //         throw new Error("Failed to fetch data");
+  //       }
+
+  //       const data = await res.json();
+
+  //       // console.log(data.data);
+
+  //       setData(data.data);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   if (id_mapel && id_kelas) getData();
+  // }, []);
 
   console.log(filters, ">> filter");
+  console.log(value, ">> value");
   // console.log(id_kelas, id_mapel);
 
   return (
@@ -261,7 +290,9 @@ const SilabusPage = () => {
 
           <div className="py-4 px-6">
             {/* {filters?.kelas == "" || filters?.mapel == "" || data == null */}
-            {filters?.kelas[0] == "" || filters?.mapel[0] == "" ? (
+            {(filters?.kelas[0] == "" || filters?.mapel[0] == "") &&
+            !id_mapel &&
+            !id_kelas ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
