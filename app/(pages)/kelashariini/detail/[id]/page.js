@@ -246,84 +246,34 @@ const KelasDetailPage = ({ params: { id } }) => {
                 </tr>
               ))}
             </tbody>
-            {/* <tbody>
-              {murid.map((item, index) => (
-                <tr key={index}>
-                  <td>{item.name}</td>
-                  <td>
-                    <Radio
-                      name={`absen-${item.nama_lengkap}`}
-                      value="hadir"
-                      checked={attendance[item.nama_lengkap] === "hadir"}
-                      onChange={() =>
-                        handleAttendanceChange(item.nama_lengkap, "hadir")
-                      }
-                    >
-                      Hadir
-                    </Radio>
-                  </td>
-                  <td>
-                    <Radio
-                      name={`absen-${item.nama_lengkap}`}
-                      value="alfa"
-                      checked={attendance[item.nama_lengkap] === "alfa"}
-                      onChange={() =>
-                        handleAttendanceChange(item.nama_lengkap, "alfa")
-                      }
-                    >
-                      Alfa
-                    </Radio>
-                  </td>
-                  <td>
-                    <Radio
-                      name={`absen-${item.nama_lengkap}`}
-                      value="sakit"
-                      checked={attendance[item.nama_lengkap] === "sakit"}
-                      onChange={() =>
-                        handleAttendanceChange(item.nama_lengkap, "sakit")
-                      }
-                    >
-                      Sakit
-                    </Radio>
-                  </td>
-                  <td>
-                    <Radio
-                      name={`absen-${item.nama_lengkap}`}
-                      value="izin"
-                      checked={attendance[item.nama_lengkap] === "izin"}
-                      onChange={() =>
-                        handleAttendanceChange(item.nama_lengkap, "izin")
-                      }
-                    >
-                      Izin
-                    </Radio>
-                  </td>
-                </tr>
-              ))}
-            </tbody> */}
           </table>
         </div>
         <div className="flex gap-4 w-full justify-end">
-          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
-            <Image
-              src={IconToga}
-              alt="img-button"
-              className="inline-block"
-              width={24}
-              height={24}
-            />
-            Beri Nilai
-          </button>
-          <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
-            <Image
-              src={IconToga}
-              alt="img-button"
-              className="inline-block"
-              width={24}
-              height={24}
-            />
-            Simpan
-          </button>
+          <Link href={`/rapor`}>
+            <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
+              <Image
+                src={IconToga}
+                alt="img-button"
+                className="inline-block"
+                width={24}
+                height={24}
+              />
+              Beri Nilai
+            </button>
+          </Link>
+
+          <Link href={"/kelashariini"}>
+            <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
+              <Image
+                src={IconToga}
+                alt="img-button"
+                className="inline-block"
+                width={24}
+                height={24}
+              />
+              Simpan
+            </button>
+          </Link>
         </div>
       </div>
     </div>

@@ -96,7 +96,8 @@ const columns = [
           <Image src={IconDetail} alt="" />
         </Link> */}
         <Link
-          href={`/rapor/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
+          href={`/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
+          target="_blank"
         >
           <Image src={IconDetail} alt="" />
         </Link>
