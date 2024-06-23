@@ -1,160 +1,99 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import SearchBar from "@/components/SearchBar";
-import { ConfigProvider, Pagination, Space, Table } from "antd";
+
+import { ConfigProvider, Pagination, Space, Table, Modal } from "antd";
+const { confirm } = Modal;
 
 import IconDetail from "@/public/Icons/icon_detail.svg";
+import IconEdit from "@/public/Icons/icon_edit.svg";
+import IconDelete from "@/public/Icons/icon-delete.svg";
 
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "SD", label: "SD" },
-      { value: "SMP", label: "SMP" },
-      { value: "SMA", label: "SMA" },
-    ],
-  },
-  {
-    name: "mapel",
-    label: "Mata Pelajaran",
-    values: [
-      { value: "", label: "Pilih Mapel" },
-      { value: "IPA", label: "IPA" },
-      { value: "IPS", label: "IPS" },
-    ],
-  },
-];
+import { API, URL } from "@/config/api";
 
-const columns = [
-  {
-    title: "Full Name",
-    dataIndex: "name",
-    key: "name",
-  },
-  {
-    title: "Age",
-    dataIndex: "age",
-    key: "age",
-  },
-  {
-    title: "Column 1",
-    dataIndex: "address",
-    key: "1",
-  },
-  {
-    title: "Column 2",
-    dataIndex: "address",
-    key: "2",
-  },
-  {
-    title: "Column 3",
-    dataIndex: "address",
-    key: "3",
-  },
+import { toastSuccess } from "@/utils/toastify";
 
-  {
-    title: "Action",
-    fixed: "right",
-    align: "center",
-    width: 100,
-    render: (_, record) => (
-      <Space size="middle">
-        <Link href={`kelashariini/detail/SMP`}>
-          <Image src={IconDetail} alt="" />
-        </Link>
-        {/* <Link href={`/absensi/detail?id=${record.id_jadwalkelas}`}>
-          <Image src={IconDetail} alt="" />
-        </Link> */}
-      </Space>
-    ),
-  },
-];
+// const options = [
+//   {
+//     name: "kelas",
+//     label: "Kelas",
+//     values: [
+//       { value: "", label: "Pilih Kelas" },
+//       { value: "SD", label: "SD" },
+//       { value: "SMP", label: "SMP" },
+//       { value: "SMA", label: "SMA" },
+//     ],
+//   },
+//   {
+//     name: "mapel",
+//     label: "Mata Pelajaran",
+//     values: [
+//       { value: "", label: "Pilih Mapel" },
+//       { value: "IPA", label: "IPA" },
+//       { value: "IPS", label: "IPS" },
+//     ],
+//   },
+// ];
 
-const data = [
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-  {
-    key: "1",
-    name: "John Brown",
-    age: 32,
-    address: "New York Park",
-  },
-  {
-    key: "2",
-    name: "Jim Green",
-    age: 40,
-    address: "London Park",
-  },
-];
+const options = [];
 
 const DataAbsensiPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
 
-  // const router = useRouter()
+  const columns = [
+    {
+      title: "Full Name",
+      dataIndex: "name",
+      key: "name",
+    },
+    {
+      title: "Age",
+      dataIndex: "age",
+      key: "age",
+    },
+    {
+      title: "Column 1",
+      dataIndex: "address",
+      key: "1",
+    },
+    {
+      title: "Column 2",
+      dataIndex: "address",
+      key: "2",
+    },
+    {
+      title: "Column 3",
+      dataIndex: "address",
+      key: "3",
+    },
+
+    {
+      title: "Action",
+      fixed: "right",
+      align: "center",
+      width: 100,
+      render: (_, record) => (
+        <Space size="middle">
+          <Link href={`kelashariini/detail/SMP`}>
+            <Image src={IconDetail} alt="" />
+          </Link>
+          {/* <Link href={`/absensi/detail?id=${record.id_jadwalkelas}`}>
+            <Image src={IconDetail} alt="" />
+          </Link> */}
+        </Space>
+      ),
+    },
+  ];
+
+  const router = useRouter();
+  const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
+  const [dataMapel, setDataMapel] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -165,7 +104,9 @@ const DataAbsensiPage = () => {
   const end = currentPage * pageSize;
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, ""]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: ["", ""], mapel: ["", ""] }
   );
 
   const handleSearchChange = (e) => {
@@ -180,6 +121,80 @@ const DataAbsensiPage = () => {
     setCurrentPage(page);
   };
 
+  const getData = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `/api/relawan?mapel=${filters?.mapel[0]}&kelas=${
+          filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
+        }`,
+        {
+          method: "GET",
+        }
+      );
+
+      if (!res.ok) {
+        throw new Error("Failed to fetch data");
+      }
+
+      const data = await res.json();
+
+      // console.log(data.data);
+
+      setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataMapel = async () => {
+    try {
+      const res = await API.get(`/mapel`);
+      setDataMapel(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "mapel",
+          label: "Mata Pelajaran",
+          values: [{ value: "", label: "Pilih Mata Pelajaran" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -187,6 +202,15 @@ const DataAbsensiPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getDataKelas();
+    getDataMapel();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
 
   return (
     <div className="flex flex-col h-full">
@@ -207,8 +231,11 @@ const DataAbsensiPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            // onSearch={() => console.log(filters)}
-            handleSearch={handleSearchChange}
+            // onSearch={getData}
+            // handleSearch={handleSearchChange}
+            // showButton={true}
+            // text={"Tambah Relawan"}
+            // onButtonClick={() => router.push("/kelolarelawan/tambah")}
           />
 
           <div className="py-4 px-6">
