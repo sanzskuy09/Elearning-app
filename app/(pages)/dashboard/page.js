@@ -141,7 +141,7 @@ const DashboardPage = () => {
       console.error("Error fetching totals:", error);
     }
   };
-  console.log(totalMuridPerKategori);
+  // console.log(totalMuridPerKategori);
 
   useEffect(() => {
     getTotalData();

@@ -46,31 +46,36 @@ const DataAbsensiPage = () => {
 
   const columns = [
     {
-      title: "Full Name",
-      dataIndex: "name",
-      key: "name",
+      title: "Kelas",
+      dataIndex: "kelas",
+      key: "kelas",
+      width: 150,
     },
     {
-      title: "Age",
-      dataIndex: "age",
-      key: "age",
+      title: "Mata Pelajaran",
+      dataIndex: "mapel",
+      key: "mapel",
     },
     {
-      title: "Column 1",
-      dataIndex: "address",
-      key: "1",
+      title: "Hari",
+      dataIndex: "hari",
+      key: "hari",
+      width: 100,
     },
     {
-      title: "Column 2",
-      dataIndex: "address",
-      key: "2",
+      title: "Tanggal",
+      dataIndex: "tanggal",
+      key: "tangal",
     },
     {
-      title: "Column 3",
-      dataIndex: "address",
-      key: "3",
+      title: "PIC",
+      dataIndex: "pic",
+      key: "pic",
     },
-
+    // {
+    //   title: "Tanggal",
+    //   render: (_, record) => <p>{record.tanggal}</p>,
+    // },
     {
       title: "Action",
       fixed: "right",
@@ -78,7 +83,7 @@ const DataAbsensiPage = () => {
       width: 100,
       render: (_, record) => (
         <Space size="middle">
-          <Link href={`kelashariini/detail/SMP`}>
+          <Link href={`dataabsensi/detail/${record.id}`}>
             <Image src={IconDetail} alt="" />
           </Link>
           {/* <Link href={`/absensi/detail?id=${record.id_jadwalkelas}`}>
@@ -113,10 +118,6 @@ const DataAbsensiPage = () => {
     setValue(e.target.value);
   };
 
-  const handleLoadingChange = (enable) => {
-    setLoading(enable);
-  };
-
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
@@ -125,7 +126,7 @@ const DataAbsensiPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/relawan?mapel=${filters?.mapel[0]}&kelas=${
+        `/api/absen?mapel=${filters?.mapel[1]}&kelas=${
           filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
         }`,
         {
@@ -239,7 +240,7 @@ const DataAbsensiPage = () => {
           />
 
           <div className="py-4 px-6">
-            {filters.kelas == "" || filters.mapel == "" ? (
+            {filters.kelas[0] == "" || filters.mapel[0] == "" ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.

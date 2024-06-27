@@ -39,4 +39,8 @@ export const URL = {
   GET_RAPOR: "/rapor",
   GET_RAPOR_BY_ID_MURID: "/rapor/murid",
   ADD_RAPOR: "/rapor/add",
+
+  // ABSEN
+  GET_ABSEN: "/absen",
+  ADD_ABSEN: "/absen/add",
 };

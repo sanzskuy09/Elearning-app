@@ -261,8 +261,8 @@ const SilabusPage = () => {
   //   if (id_mapel && id_kelas) getData();
   // }, []);
 
-  console.log(filters, ">> filter");
-  console.log(value, ">> value");
+  // console.log(filters, ">> filter");
+  // console.log(value, ">> value");
   // console.log(id_kelas, id_mapel);
 
   return (

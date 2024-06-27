@@ -1,7 +1,11 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
-import { ConfigProvider, Radio, Checkbox } from "antd";
+import { ConfigProvider, Radio, Checkbox, Modal } from "antd";
+const { confirm } = Modal;
+
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -9,9 +13,14 @@ import Link from "next/link";
 import IconToga from "@/public/Icons/icon-toga.svg";
 import IconDownload from "@/public/Icons/icon-download-2.svg";
 
+import dayjs from "dayjs";
+
+import { toastFailed, toastSuccess } from "@/utils/toastify";
 import { API, URL } from "@/config/api";
 
 const KelasDetailPage = ({ params: { id } }) => {
+  const router = useRouter();
+
   const nama = localStorage.getItem("nama_panggilan");
 
   const colors = ["bg-red-300", "bg-blue-300", "bg-green-300"];
@@ -19,34 +28,102 @@ const KelasDetailPage = ({ params: { id } }) => {
   const [jadwal, setJadwal] = useState();
   const [silabus, setSilabus] = useState([]);
   const [murid, setMurid] = useState([]);
-  const [value, setValue] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const [checked, setChecked] = useState(false);
 
-  const [attendance, setAttendance] = useState(
-    murid.reduce((acc, student) => {
-      acc[student.id] = "";
-      return acc;
-    }, {})
-  );
+  // const [attendance, setAttendance] = useState(
+  //   murid.reduce((acc, student) => {
+  //     acc[student.id] = "";
+  //     return acc;
+  //   }, {})
+  // );
+
+  // const handleAttendanceChange = (studentId, value) => {
+  //   setAttendance((prev) => ({
+  //     ...prev,
+  //     [studentId]: value,
+  //   }));
+  // };
+
+  // const onChecked = (e) => {
+  //   console.log("radio checked", e.target.value);
+  //   setChecked(e.target.value);
+  // };
+
+  const [attendance, setAttendance] = useState([]);
 
   const handleAttendanceChange = (studentId, value) => {
-    setAttendance((prev) => ({
-      ...prev,
-      [studentId]: value,
-    }));
+    setAttendance((prev) =>
+      prev.map((entry) =>
+        entry.id === studentId ? { ...entry, status: value } : entry
+      )
+    );
   };
 
-  const handleSubmit = () => {
-    console.log(attendance);
-    // Perform further actions like submitting to API or other processing
-  };
+  const handleSubmit = async (e) => {
+    confirm({
+      title: "Anda yakin ingin menyelesaikan proses absen kelas hari ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          const date = new Date();
 
-  const onChange = (e) => {
-    console.log("radio checked", e.target.value);
-    setValue(e.target.value);
-  };
+          const values = {
+            id_jadwal: jadwal?.id,
+            id_silabus: silabus?.id,
+            id_kelas: jadwal?.id_kelas,
+            id_mapel: jadwal?.id_mapel,
+            tanggal: date,
+            relawan: jadwal?.relawan?.map((item) => ({
+              id_relawan: item.id,
+            })),
+            murid: attendance?.map((item) => ({
+              id_murid: item.id,
+              status: item.status,
+            })),
+          };
 
-  const onChangeCheckbox = (e) => {
-    console.log(`checked = ${e.target.checked}`);
+          const response = await fetch("/api/absen", {
+            method: "POST",
+            body: JSON.stringify(values),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to add absen");
+          }
+          const dataAbsen = await response.json();
+
+          // handle silabus
+          const formData = new FormData();
+          formData.append("name", silabus.name);
+          formData.append("isChecked", checked);
+
+          const config = {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          };
+
+          await API.put(`${URL.GET_SILABUS}/${silabus.id}`, formData, config);
+
+          toastSuccess(`Absen Berhasil dibuat`);
+
+          // console.log(checked);
+          router.push(`/dataabsensi/detail/${dataAbsen.data.id}`);
+          setLoading(false);
+        } catch (error) {
+          toastFailed(`Absen Gagal diselesaikan`);
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
   };
 
   const getDataJadwal = async () => {
@@ -89,6 +166,13 @@ const KelasDetailPage = ({ params: { id } }) => {
       const dataMurid = await responseMurid.json();
 
       setMurid(dataMurid.data);
+
+      setAttendance(
+        dataMurid.data.map((student) => ({
+          id: student.id,
+          status: "Hadir",
+        }))
+      );
     } catch (error) {
       console.log(error);
     }
@@ -96,8 +180,8 @@ const KelasDetailPage = ({ params: { id } }) => {
 
   // console.log(jadwal);
   // console.log(silabus, " >> silabus");
-  console.log(murid, " >> murid");
-  console.log(attendance, " >> attendance");
+  // console.log(murid, " >> murid");
+  // console.log(attendance, " >> attendance");
 
   useEffect(() => {
     getDataJadwal();
@@ -145,7 +229,7 @@ const KelasDetailPage = ({ params: { id } }) => {
                   },
                 }}
               >
-                <Checkbox onChange={onChange}></Checkbox>
+                <Checkbox onChange={() => setChecked(!checked)}></Checkbox>
               </ConfigProvider>
 
               <button>
@@ -174,12 +258,6 @@ const KelasDetailPage = ({ params: { id } }) => {
                 {item.nama_lengkap}
               </p>
             ))}
-            {/* <p className="p-1 px-3 bg-blue-300 font-medium rounded-md">
-              Wawan Setiawan
-            </p>
-            <p className="p-1 px-3 bg-green-300 font-medium rounded-md">
-              Wawan Setiawan
-            </p> */}
           </div>
         </div>
 
@@ -205,41 +283,52 @@ const KelasDetailPage = ({ params: { id } }) => {
                   <td className="border-b border-gray-400">
                     <Radio
                       name={`absen-${student.id}`}
-                      value="hadir"
-                      defaultChecked={true}
-                      checked={attendance[student.id] === "hadir"}
+                      value="Hadir"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Hadir"
+                      }
                       onChange={() =>
-                        handleAttendanceChange(student.id, "hadir")
+                        handleAttendanceChange(student.id, "Hadir")
                       }
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
                       name={`absen-${student.id}`}
-                      value="alfa"
-                      checked={attendance[student.id] === "alfa"}
+                      value="Alfa"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Alfa"
+                      }
                       onChange={() =>
-                        handleAttendanceChange(student.id, "alfa")
+                        handleAttendanceChange(student.id, "Alfa")
                       }
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
                       name={`absen-${student.id}`}
-                      value="sakit"
-                      checked={attendance[student.id] === "sakit"}
+                      value="Sakit"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Sakit"
+                      }
                       onChange={() =>
-                        handleAttendanceChange(student.id, "sakit")
+                        handleAttendanceChange(student.id, "Sakit")
                       }
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
                       name={`absen-${student.id}`}
-                      value="izin"
-                      checked={attendance[student.id] === "izin"}
+                      value="Izin"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Izin"
+                      }
                       onChange={() =>
-                        handleAttendanceChange(student.id, "izin")
+                        handleAttendanceChange(student.id, "Izin")
                       }
                     ></Radio>
                   </td>
@@ -262,18 +351,21 @@ const KelasDetailPage = ({ params: { id } }) => {
             </button>
           </Link>
 
-          <Link href={"/kelashariini"}>
-            <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
-              <Image
-                src={IconToga}
-                alt="img-button"
-                className="inline-block"
-                width={24}
-                height={24}
-              />
-              Simpan
-            </button>
-          </Link>
+          {/* <Link href={"/kelashariini"}> */}
+          <button
+            onClick={handleSubmit}
+            className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2"
+          >
+            <Image
+              src={IconToga}
+              alt="img-button"
+              className="inline-block"
+              width={24}
+              height={24}
+            />
+            Simpan
+          </button>
+          {/* </Link> */}
         </div>
       </div>
     </div>
