@@ -168,15 +168,15 @@ const PerformaReportPage = () => {
     ],
   };
 
-  // Chart Kategori
   function truncateLabel(label, maxLength) {
     if (label.length > maxLength) {
       return label.slice(0, maxLength) + "...";
     }
     return label;
   }
-
   const maxLength = 10;
+
+  // Chart Kategori
   const originalLabels = [
     "Umum",
     "Disabilitas",
@@ -200,6 +200,67 @@ const PerformaReportPage = () => {
         data: totalMuridPerKategori,
         backgroundColor: ["#3572EF", "#3ABEF9"],
         borderColor: ["#3572EF", "#3ABEF9"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+    ],
+  };
+
+  // Chart Tingkat Kehadiaran murid
+  const kelasLabels = ["1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD"];
+
+  const kelasLabel = kelasLabels.map((label) =>
+    truncateLabel(label, maxLength)
+  );
+
+  const dataKehadiranMurid = {
+    labels: kelasLabel,
+    datasets: [
+      {
+        label: "Matematika",
+        data: [40, 57],
+        backgroundColor: ["#3572EF"],
+        borderColor: ["#3572EF"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+      {
+        label: "Pend. Karakter",
+        data: [40, 57],
+        backgroundColor: ["#3ABEF9"],
+        borderColor: ["#3ABEF9"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+      {
+        label: "B. Indonesia",
+        data: [40, 57],
+        backgroundColor: ["#b6c154"],
+        borderColor: ["#b6c154"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+      {
+        label: "IPAS",
+        data: [40, 57],
+        backgroundColor: ["#fca034"],
+        borderColor: ["#fca034"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+      {
+        label: "B. Inggris",
+        data: [40, 57],
+        backgroundColor: ["#83B4FF"],
+        borderColor: ["#83B4FF"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+      {
+        label: "Kreasi",
+        data: [40, 57],
+        backgroundColor: ["#BC5A94"],
+        borderColor: ["#BC5A94"],
         borderWidth: 1,
         minBarLength: 2,
       },
@@ -309,14 +370,19 @@ const PerformaReportPage = () => {
           <h1 className="mb-4">Tingkat kehadiran</h1>
 
           {/* Chart */}
-          <div className="flex justify-center">
+          {/* <div className="flex justify-center">
             <div className="w-[50%] flex justify-center">
               <Pie options={options} data={data} />
+            </div>
+          </div> */}
+          <div className="flex justify-center h-full max-h-[28rem]">
+            <div className="w-[100%] flex justify-center">
+              <Bar options={options} data={dataKehadiranMurid} />
             </div>
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-10">
+        {/* <div className="grid grid-cols-3 gap-10">
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col justify-between">
             <p className="text-lg min-h-14 flex items-center ">
               Jumlah murid kehadiran rendah (&lt;50%)
@@ -341,7 +407,7 @@ const PerformaReportPage = () => {
               <h1 className="text-6xl font-bold">18</h1>
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Program Relawan */}
         <h1 className="font-bold text-2xl">Program Relawan</h1>
