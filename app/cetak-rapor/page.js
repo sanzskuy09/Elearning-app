@@ -79,7 +79,7 @@ const CetakRapor = () => {
                   <tr>
                     <td className="w-32">NAMA</td>
                     <td className="w-8">:</td>
-                    <td>{data?.nama_lengkap}</td>
+                    <td className="capitalize">{data?.nama_lengkap}</td>
                   </tr>
                   <tr>
                     <td className="w-32">KELAS</td>
@@ -89,12 +89,12 @@ const CetakRapor = () => {
                   <tr>
                     <td className="w-32">SEMESTER</td>
                     <td className="w-8">:</td>
-                    <td>{data?.kelas}</td>
+                    <td className="capitalize">{data?.semester}</td>
                   </tr>
                   <tr>
                     <td className="w-32">WALI KELAS</td>
                     <td className="w-8">:</td>
-                    <td>nanda</td>
+                    <td>{data?.walikelas}</td>
                   </tr>
                 </tbody>
               </table>
@@ -319,7 +319,9 @@ const CetakRapor = () => {
 
               <div className="h-40 flex flex-col justify-between items-center w-44 font-semibold">
                 <h1 className="uppercase text-sm">wali kelas</h1>
-                <h1 className="uppercase text-sm">{data?.nama_ortu}</h1>
+                <h1 className="uppercase text-sm text-center">
+                  {data?.walikelas}
+                </h1>
               </div>
             </div>
           </div>

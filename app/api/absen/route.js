@@ -5,8 +5,11 @@ export async function GET(request) {
     const searchParams = request.nextUrl.searchParams;
     const mapel = searchParams.get("mapel");
     const kelas = searchParams.get("kelas");
+    const accept = searchParams.get("accept");
 
-    const res = await API.get(`${URL.GET_ABSEN}?mapel=${mapel}&kelas=${kelas}`);
+    const res = await API.get(
+      `${URL.GET_ABSEN}?mapel=${mapel}&kelas=${kelas}&accept=${accept}`
+    );
 
     return new Response(JSON.stringify(res.data));
   } catch (error) {

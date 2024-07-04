@@ -18,42 +18,6 @@ import SearchBar from "@/components/SearchBar";
 
 import { toastSuccess } from "@/utils/toastify";
 
-// const options = [
-//   {
-//     name: "kategori",
-//     label: "Kategori Kelompok Rentan",
-//     values: [
-//       { value: "", label: "Semua" },
-//       { value: "Umum", label: "Umum" },
-//       {
-//         value: "Disabilitas (Fisik/Mental)",
-//         label: "Disabilitas (Fisik/Mental)",
-//       },
-//       { value: "Anak-anak", label: "Anak-anak" },
-//       { value: "Ibu Hamil/Menyusui", label: "Ibu Hamil/Menyusui" },
-//       { value: "Manula", label: "Manula" },
-//       { value: "Anak Yatim", label: "Anak Yatim" },
-//       { value: "Kelompok Marginal", label: "Kelompok Marginal" },
-//       { value: "Dhuafa", label: "Dhuafa" },
-//       {
-//         value: "Pengungsi/Penyintas Bencana",
-//         label: "Pengungsi/Penyintas Bencana",
-//       },
-//     ],
-//   },
-//   {
-//     name: "kelas",
-//     label: "Kelas",
-//     values: [
-//       { value: "", label: "Semua" },
-//       { value: "1 & 2 SD", label: "1 & 2 SD" },
-//       { value: "3 & 4 SD", label: "3 & 4 SD" },
-//       { value: "5 SD", label: "5 SD" },
-//       { value: "6 SD", label: "6 SD" },
-//     ],
-//   },
-// ];
-
 const options = [];
 
 const KelolaMuridPage = () => {

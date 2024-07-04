@@ -1,5 +1,6 @@
 "use client";
 import React, { Suspense, useEffect, useState } from "react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import { ConfigProvider, Radio, Checkbox } from "antd";
 
@@ -7,12 +8,20 @@ import Image from "next/image";
 import Link from "next/link";
 
 import IconToga from "@/public/Icons/icon-toga.svg";
+import IconTrash from "@/public/Icons/ic_trash.svg";
 import IconDownload from "@/public/Icons/icon-download-2.svg";
 
 import { API, URL } from "@/config/api";
 
+import { toastFailed, toastSuccess } from "@/utils/toastify";
+
 const DetailAbsenPage = ({ params: { id } }) => {
   const nama = localStorage.getItem("nama_panggilan");
+
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const waiting = searchParams.get("waiting");
 
   // const { id } = params;
   // console.log(id);
@@ -48,6 +57,34 @@ const DetailAbsenPage = ({ params: { id } }) => {
   useEffect(() => {
     getDataAbsen();
   }, []);
+
+  const handleAccept = async () => {
+    try {
+      const res = API.put(`${URL.GET_ABSEN}/${id}`, {
+        accept: 1,
+      });
+
+      toastSuccess("Absen telah diterima");
+      router.push("/dataabsensi");
+    } catch (error) {
+      console.log(error);
+      toastFailed("Operasi Gagal dilakukan");
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const res = API.put(`${URL.GET_ABSEN}/${id}`, {
+        accept: 0,
+      });
+
+      toastSuccess("Absen telah dittolak");
+      router.push("/dataabsensi");
+    } catch (error) {
+      console.log(error);
+      toastFailed("Operasi Gagal dilakukan");
+    }
+  };
 
   // console.log(data);
   // console.log(silabus);
@@ -169,18 +206,50 @@ const DetailAbsenPage = ({ params: { id } }) => {
           </table>
         </div>
         <div className="flex gap-4 w-full justify-end">
-          <Link href={`/rapor`}>
-            <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
-              <Image
-                src={IconToga}
-                alt="img-button"
-                className="inline-block"
-                width={24}
-                height={24}
-              />
-              Beri Nilai
-            </button>
-          </Link>
+          {waiting ? (
+            <>
+              <button
+                onClick={handleAccept}
+                className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2"
+              >
+                <Image
+                  src={IconToga}
+                  alt="img-button"
+                  className="inline-block"
+                  width={24}
+                  height={24}
+                />
+                Terima
+              </button>
+
+              <button
+                onClick={handleReject}
+                className="bg-white rounded-md px-4 py-2 uppercase text-[#FF3D3D] border-2 border-[#FF3D3D] flex items-center gap-2"
+              >
+                <Image
+                  src={IconTrash}
+                  alt="img-button"
+                  className="inline-block"
+                  width={24}
+                  height={24}
+                />
+                Tolak
+              </button>
+            </>
+          ) : (
+            <Link href={`/rapor`}>
+              <button className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2">
+                <Image
+                  src={IconToga}
+                  alt="img-button"
+                  className="inline-block"
+                  width={24}
+                  height={24}
+                />
+                Beri Nilai
+              </button>
+            </Link>
+          )}
         </div>
       </div>
     </div>

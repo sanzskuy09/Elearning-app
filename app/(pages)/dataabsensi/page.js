@@ -13,48 +13,29 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
+import dayjs from "dayjs";
+
 import { API, URL } from "@/config/api";
 
 import { toastSuccess } from "@/utils/toastify";
-
-// const options = [
-//   {
-//     name: "kelas",
-//     label: "Kelas",
-//     values: [
-//       { value: "", label: "Pilih Kelas" },
-//       { value: "SD", label: "SD" },
-//       { value: "SMP", label: "SMP" },
-//       { value: "SMA", label: "SMA" },
-//     ],
-//   },
-//   {
-//     name: "mapel",
-//     label: "Mata Pelajaran",
-//     values: [
-//       { value: "", label: "Pilih Mapel" },
-//       { value: "IPA", label: "IPA" },
-//       { value: "IPS", label: "IPS" },
-//     ],
-//   },
-// ];
 
 const options = [];
 
 const DataAbsensiPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
 
-  const columns = [
+  const columnsWaiting = [
     {
       title: "Kelas",
       dataIndex: "kelas",
       key: "kelas",
-      width: 150,
+      width: 50,
     },
     {
       title: "Mata Pelajaran",
       dataIndex: "mapel",
       key: "mapel",
+      width: 150,
     },
     {
       title: "Hari",
@@ -62,33 +43,92 @@ const DataAbsensiPage = () => {
       key: "hari",
       width: 100,
     },
+    // {
+    //   title: "Tanggal",
+    //   dataIndex: "tanggal",
+    //   key: "tangal",
+    // },
     {
       title: "Tanggal",
-      dataIndex: "tanggal",
-      key: "tangal",
+      width: 100,
+      render: (_, record) => (
+        <p>{dayjs(record.tanggal).format("DD-MM-YYYY")}</p>
+      ),
     },
     {
       title: "PIC",
       dataIndex: "pic",
       key: "pic",
+      width: 150,
     },
-    // {
-    //   title: "Tanggal",
-    //   render: (_, record) => <p>{record.tanggal}</p>,
-    // },
+
     {
       title: "Action",
       fixed: "right",
       align: "center",
+      width: 50,
+      render: (_, record) => (
+        <Space size="middle">
+          <Link href={`dataabsensi/detail/${record.id}?waiting=true`}>
+            <Image src={IconDetail} alt="" />
+          </Link>
+
+          <button onClick={() => handleDelete(record.id)}>
+            <Image src={IconDelete} alt="" />
+          </button>
+        </Space>
+      ),
+    },
+  ];
+
+  const columns = [
+    {
+      title: "Kelas",
+      dataIndex: "kelas",
+      key: "kelas",
+      width: 50,
+    },
+    {
+      title: "Mata Pelajaran",
+      dataIndex: "mapel",
+      key: "mapel",
+      width: 150,
+    },
+    {
+      title: "Hari",
+      dataIndex: "hari",
+      key: "hari",
       width: 100,
+    },
+    // {
+    //   title: "Tanggal",
+    //   dataIndex: "tanggal",
+    //   key: "tangal",
+    // },
+    {
+      title: "Tanggal",
+      width: 100,
+      render: (_, record) => (
+        <p>{dayjs(record.tanggal).format("DD-MM-YYYY")}</p>
+      ),
+    },
+    {
+      title: "PIC",
+      dataIndex: "pic",
+      key: "pic",
+      width: 150,
+    },
+
+    {
+      title: "Action",
+      fixed: "right",
+      align: "center",
+      width: 50,
       render: (_, record) => (
         <Space size="middle">
           <Link href={`dataabsensi/detail/${record.id}`}>
             <Image src={IconDetail} alt="" />
           </Link>
-          {/* <Link href={`/absensi/detail?id=${record.id_jadwalkelas}`}>
-            <Image src={IconDetail} alt="" />
-          </Link> */}
         </Space>
       ),
     },
@@ -96,6 +136,7 @@ const DataAbsensiPage = () => {
 
   const router = useRouter();
   const [data, setData] = useState("");
+  const [waitingList, setWaitingList] = useState([]);
   const [dataKelas, setDataKelas] = useState([]);
   const [dataMapel, setDataMapel] = useState([]);
 
@@ -128,7 +169,7 @@ const DataAbsensiPage = () => {
       const res = await fetch(
         `/api/absen?mapel=${filters?.mapel[1]}&kelas=${
           filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
-        }`,
+        }&accept=1`,
         {
           method: "GET",
         }
@@ -143,6 +184,22 @@ const DataAbsensiPage = () => {
       // console.log(data.data);
 
       setData(data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const getWaitingListAbsen = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(`${URL.GET_ABSEN}?accept=0`);
+
+      const data = res.data.data;
+
+      setWaitingList(data);
       setLoading(false);
     } catch (error) {
       console.log(error);
@@ -207,6 +264,7 @@ const DataAbsensiPage = () => {
   useEffect(() => {
     getDataKelas();
     getDataMapel();
+    getWaitingListAbsen();
   }, []);
 
   useEffect(() => {
@@ -220,10 +278,51 @@ const DataAbsensiPage = () => {
         <h1>Hallo, Kak {nama}</h1>
       </div>
 
-      <div className="py-6 px-10 flex flex-col gap-4">
+      <div className="py-6 px-10 flex flex-col gap-8">
         <div className="bg-white shadow-md col-span-2 rounded-lg">
           <h1 className="mb-0 font-bold text-2xl bg-[#D9D9D9] py-4 px-6 overflow-hidden rounded-t-lg">
             Menunggu Persetujuan
+          </h1>
+
+          <div className="py-4 px-6">
+            <div className="overflow-auto shadow-md rounded-md">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Table: {
+                      colorPrimary: "#000",
+                      headerColor: "#fff",
+                      headerBg: "#000",
+                      headerBorderRadius: 6,
+                      algorithm: true,
+                      // borderColor: "#000",
+                    },
+                    Pagination: {
+                      colorPrimary: "#000",
+                      colorPrimaryHover: "#000",
+                      colorPrimaryBorder: "#000",
+                      algorithm: true,
+                    },
+                  },
+                }}
+              >
+                <Table
+                  loading={loading}
+                  columns={columnsWaiting}
+                  dataSource={waitingList.slice(start, end)}
+                  pagination={false}
+                  scroll={{
+                    x: 1300,
+                  }}
+                />
+              </ConfigProvider>
+            </div>
+          </div>
+        </div>
+
+        <div className="bg-white shadow-md col-span-2 rounded-lg">
+          <h1 className="mb-0 font-bold text-2xl bg-[#D9D9D9] py-4 px-6 overflow-hidden rounded-t-lg">
+            Absensi
           </h1>
 
           <SearchBar

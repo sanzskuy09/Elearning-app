@@ -47,4 +47,5 @@ export const URL = {
   // REPORT
   GET_REPORT_MURID: "/report-murid",
   GET_REPORT_RELAWAN: "/report-relawan",
+  GET_REPORT_SILABUS: "/report-silabus",
 };

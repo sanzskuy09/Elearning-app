@@ -49,9 +49,11 @@ const TambahSilabusPage = () => {
   };
 
   const handleFileChange = (e, formik) => {
+    console.log(e.fileList[0].originFileObj);
     // e.preventDefault();
-    let reader = new FileReader();
+
     let file = e.fileList[0].originFileObj;
+    let reader = new FileReader();
     if (file) {
       reader.onloadend = () => {
         formik.setFieldValue("file", file);
@@ -236,7 +238,7 @@ const TambahSilabusPage = () => {
                       Dokumen Pendukung
                     </label>
                     <Upload
-                      // name="file"
+                      name="file"
                       accept=".pdf, image/*"
                       onChange={(e) => handleFileChange(e, formik)}
                       {...props}

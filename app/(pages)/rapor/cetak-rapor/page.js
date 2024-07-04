@@ -37,7 +37,7 @@ const CetakRapor = () => {
     getData();
   }, []);
 
-  // console.log(data, " >> data");
+  console.log(data, " >> data");
 
   return (
     <div className="py-6 w-full flex flex-col gap-8 items-center">
@@ -94,7 +94,7 @@ const CetakRapor = () => {
                   <tr>
                     <td className="w-32">WALI KELAS</td>
                     <td className="w-8">:</td>
-                    <td>nanda</td>
+                    <td>{data?.walikelas}</td>
                   </tr>
                 </tbody>
               </table>

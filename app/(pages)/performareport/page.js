@@ -13,6 +13,8 @@ import { API, URL } from "@/config/api";
 
 import TableDashboard from "@/components/TableDashboard";
 
+import { Flex, Progress, ConfigProvider } from "antd";
+
 import { dataUpcomingClass, dataRelawan } from "../dashboard/data";
 
 const data = {
@@ -62,10 +64,20 @@ const PerformaReportPage = () => {
 
   const [totalMurid, setTotalMurid] = useState([]);
   const [totalMuridPerKategori, setTotalMuridPerKategori] = useState([]);
+  const [dataSilabus, setDataSilabus] = useState([]);
 
   const [pointRelawan, setPointRelawan] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+  const colors = [
+    "#4ECB71",
+    "#0D99FF",
+    "#FFB930",
+    "#C14ECB",
+    "#0DFFA8",
+    "#FF30B9",
+  ];
 
   const getDataReportMurid = async () => {
     try {
@@ -131,13 +143,28 @@ const PerformaReportPage = () => {
     }
   };
 
+  const getDataSilabus = async () => {
+    try {
+      const res = await API.get(URL.GET_REPORT_SILABUS);
+
+      const data = res.data.data;
+
+      setDataSilabus(data);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+
   useEffect(() => {
     getDataReportMurid();
     getDataReportRelawan();
     getBanyakMuridPerKelas();
     getBanyakMuridPerKategori();
     getRelawanTeraktif();
+    getDataSilabus();
   }, []);
+
+  console.log(dataSilabus, ">> silabus");
 
   // Chart Murid
   const dataKelas = {
@@ -366,21 +393,59 @@ const PerformaReportPage = () => {
         {/* kegiatan belajar mengajar */}
         <h1 className="font-bold text-2xl">Kegiatan Belajar Mengajar</h1>
 
-        <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
-          <h1 className="mb-4">Tingkat kehadiran</h1>
+        {dataSilabus.length > 0
+          ? dataSilabus.map((e, i) => (
+              <div
+                className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56"
+                key={i}
+              >
+                <h1 className="mb-4 text-lg font-semibold">Kelas {e.kelas}</h1>
 
-          {/* Chart */}
-          {/* <div className="flex justify-center">
+                <div>
+                  {e.mapel.map((e, i) => (
+                    <>
+                      <div key={i} className="w-full flex justify-between">
+                        <p>{e.nama}</p>
+                        <p>
+                          {e.totalSelesai} / {e.totalSilabus}
+                        </p>
+                      </div>
+                      <ConfigProvider
+                        theme={{
+                          components: {
+                            Progress: {
+                              defaultColor: colors[i],
+                              /* here is your component tokens */
+                            },
+                          },
+                        }}
+                      >
+                        <Progress
+                          percent={(e.totalSelesai / e.totalSilabus) * 100}
+                          showInfo={false}
+                        />
+                      </ConfigProvider>
+                    </>
+                  ))}
+                </div>
+              </div>
+            ))
+          : ""}
+        {/* <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
+          <h1 className="mb-4">kelas 1</h1>
+
+          Chart
+          <div className="flex justify-center">
             <div className="w-[50%] flex justify-center">
               <Pie options={options} data={data} />
             </div>
-          </div> */}
+          </div>
           <div className="flex justify-center h-full max-h-[28rem]">
             <div className="w-[100%] flex justify-center">
               <Bar options={options} data={dataKehadiranMurid} />
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* <div className="grid grid-cols-3 gap-10">
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col justify-between">
