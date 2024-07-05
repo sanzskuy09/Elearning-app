@@ -2,7 +2,9 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { ConfigProvider, Radio, Checkbox } from "antd";
+import { ConfigProvider, Radio, Checkbox, Modal } from "antd";
+const { confirm } = Modal;
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import Image from "next/image";
 import Link from "next/link";
@@ -54,37 +56,65 @@ const DetailAbsenPage = ({ params: { id } }) => {
     }
   };
 
+  const handleAccept = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin terima data absen ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          const res = API.put(`${URL.GET_ABSEN}/${id}`, {
+            accept: 1,
+          });
+
+          toastSuccess("Absen telah diterima");
+          router.push("/dataabsensi");
+        } catch (error) {
+          console.log(error);
+          toastFailed("Operasi Gagal dilakukan");
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
+  const handleReject = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin tolak data absen ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          const res = API.put(`${URL.GET_ABSEN}/${id}`, {
+            accept: 0,
+          });
+
+          toastSuccess("Absen telah dittolak");
+          router.push("/dataabsensi");
+        } catch (error) {
+          console.log(error);
+          toastFailed("Operasi Gagal dilakukan");
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   useEffect(() => {
     getDataAbsen();
   }, []);
-
-  const handleAccept = async () => {
-    try {
-      const res = API.put(`${URL.GET_ABSEN}/${id}`, {
-        accept: 1,
-      });
-
-      toastSuccess("Absen telah diterima");
-      router.push("/dataabsensi");
-    } catch (error) {
-      console.log(error);
-      toastFailed("Operasi Gagal dilakukan");
-    }
-  };
-
-  const handleReject = async () => {
-    try {
-      const res = API.put(`${URL.GET_ABSEN}/${id}`, {
-        accept: 0,
-      });
-
-      toastSuccess("Absen telah dittolak");
-      router.push("/dataabsensi");
-    } catch (error) {
-      console.log(error);
-      toastFailed("Operasi Gagal dilakukan");
-    }
-  };
 
   // console.log(data);
   // console.log(silabus);

@@ -155,7 +155,7 @@ const CetakRapor = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.kegiatan?.length > 0 &&
+                  {data?.kegiatan?.length > 0 ? (
                     data?.kegiatan?.map((item, index) => (
                       <tr key={index} className="h-[65px]">
                         <td className="border border-black text-center">
@@ -168,13 +168,14 @@ const CetakRapor = () => {
                           {item.desc}
                         </td>
                       </tr>
-                    ))}
-
-                  <tr className="h-20">
-                    <td colSpan={4} className="text-center">
-                      Tidak Ada Kegiatan
-                    </td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr className="h-20">
+                      <td colSpan={4} className="text-center">
+                        Tidak Ada Kegiatan
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>

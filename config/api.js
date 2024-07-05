@@ -43,6 +43,7 @@ export const URL = {
   // ABSEN
   GET_ABSEN: "/absen",
   ADD_ABSEN: "/absen/add",
+  TOTAL_ABSEN_SISWA: "/total-absen",
 
   // REPORT
   GET_REPORT_MURID: "/report-murid",

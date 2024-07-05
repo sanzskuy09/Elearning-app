@@ -37,6 +37,8 @@ const TambahRaporPage = () => {
   const [data, setData] = useState([]);
   const [mapel, setMapel] = useState([]);
   const [nilai, setNilai] = useState([]);
+  const [totalAbsen, setTotalAbsen] = useState();
+
   const [loading, setLoading] = useState(false);
 
   // hook form
@@ -47,9 +49,9 @@ const TambahRaporPage = () => {
     catatan_wali_kelas: "",
     kegiatan: [{ name: "", desc: "" }],
     lomba: [{ name: "", tingkat_prestasi: "", desc: "" }],
-    sakit: 0,
-    izin: 0,
-    alfa: 0,
+    sakit: totalAbsen?.Sakit || 0,
+    izin: totalAbsen?.Izin || 0,
+    alfa: totalAbsen?.Alfa || 0,
   };
 
   // handle input change nilai
@@ -106,6 +108,23 @@ const TambahRaporPage = () => {
     }
   };
 
+  const getTotalAbsenMurid = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(`${URL.TOTAL_ABSEN_SISWA}/${id}`);
+
+      const data = res.data.data;
+
+      setTotalAbsen(data);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     const nameData =
       typeof window !== "undefined"
@@ -115,6 +134,7 @@ const TambahRaporPage = () => {
 
     getDataMurid();
     getDataMapel();
+    getTotalAbsenMurid();
   }, []);
 
   // console.log(formPage, "page");
@@ -553,8 +573,8 @@ const TambahRaporPage = () => {
                         </label>
                         <Input
                           placeholder=""
-                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                          allowClear
+                          className="border border-gray-300 rounded-md px-3 py-2 w-20 flex-1"
+                          readOnly
                           {...formik.getFieldProps("alfa")}
                         />
                         <p>Hari</p>
@@ -569,8 +589,8 @@ const TambahRaporPage = () => {
                         </label>
                         <Input
                           placeholder=""
-                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                          allowClear
+                          className="border border-gray-300 rounded-md px-3 py-2 w-20 flex-1"
+                          readOnly
                           {...formik.getFieldProps("izin")}
                         />
                         <p>Hari</p>
@@ -585,8 +605,8 @@ const TambahRaporPage = () => {
                         </label>
                         <Input
                           placeholder=""
-                          className="border border-gray-300 rounded-md px-3 py-2 w-40 flex-1"
-                          allowClear
+                          className="border border-gray-300 rounded-md px-3 py-2 w-20 flex-1"
+                          readOnly
                           {...formik.getFieldProps("sakit")}
                         />
                         <p>Hari</p>
