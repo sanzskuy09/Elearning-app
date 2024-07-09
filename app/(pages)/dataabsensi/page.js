@@ -4,6 +4,7 @@ import SearchBar from "@/components/SearchBar";
 
 import { ConfigProvider, Pagination, Space, Table, Modal } from "antd";
 const { confirm } = Modal;
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 import IconDetail from "@/public/Icons/icon_detail.svg";
 import IconEdit from "@/public/Icons/icon_edit.svg";
@@ -253,6 +254,34 @@ const DataAbsensiPage = () => {
     }
   };
 
+  const handleDelete = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin menghapus data ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          setLoading(true);
+          await API.delete(`${URL.GET_ABSEN}/${e}`);
+          await getWaitingListAbsen();
+
+          toastSuccess(`Absen Berhasil dihapus`);
+
+          setLoading(false);
+        } catch (error) {
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -309,7 +338,7 @@ const DataAbsensiPage = () => {
                 <Table
                   loading={loading}
                   columns={columnsWaiting}
-                  dataSource={waitingList.slice(start, end)}
+                  dataSource={waitingList?.slice(start, end)}
                   pagination={false}
                   scroll={{
                     x: 1300,
@@ -370,14 +399,14 @@ const DataAbsensiPage = () => {
                     <Table
                       loading={loading}
                       columns={columns}
-                      dataSource={data.slice(start, end)}
+                      dataSource={data?.slice(start, end)}
                       pagination={false}
                       scroll={{
                         x: 1300,
                       }}
                     />
                     <Pagination
-                      total={data.length}
+                      total={data?.length}
                       current={currentPage}
                       pageSize={pageSize}
                       showTotal={(total, range) =>

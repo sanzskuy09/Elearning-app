@@ -18,6 +18,7 @@ const CetakRapor = () => {
   const id_kelas = searchParams.get("id_kelas");
 
   const [data, setData] = useState([]);
+  const [totalAbsen, setTotalAbsen] = useState();
   const [loading, setLoading] = useState(false);
 
   const getData = async () => {
@@ -33,8 +34,26 @@ const CetakRapor = () => {
     }
   };
 
+  const getTotalAbsenMurid = async () => {
+    try {
+      setLoading(true);
+
+      const res = await API.get(`${URL.TOTAL_ABSEN_SISWA}/${id}`);
+
+      const data = res.data.data;
+
+      setTotalAbsen(data);
+
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
     getData();
+    getTotalAbsenMurid();
   }, []);
 
   // console.log(data, " >> data");
@@ -155,7 +174,7 @@ const CetakRapor = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.kegiatan?.length > 0 &&
+                  {data?.kegiatan?.length > 0 ? (
                     data?.kegiatan?.map((item, index) => (
                       <tr key={index} className="h-[65px]">
                         <td className="border border-black text-center">
@@ -168,13 +187,14 @@ const CetakRapor = () => {
                           {item.desc}
                         </td>
                       </tr>
-                    ))}
-
-                  <tr className="h-20">
-                    <td colSpan={4} className="text-center">
-                      Tidak Ada Kegiatan
-                    </td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr className="h-20">
+                      <td colSpan={4} className="text-center">
+                        Tidak Ada Kegiatan
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -216,7 +236,7 @@ const CetakRapor = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {data?.lomba?.length > 0 &&
+                  {data?.lomba?.length > 0 ? (
                     data?.lomba?.map((item, index) => (
                       <tr key={index} className="h-[65px]">
                         <td className="border border-black text-center">
@@ -232,13 +252,14 @@ const CetakRapor = () => {
                           {item.desc}
                         </td>
                       </tr>
-                    ))}
-
-                  <tr className="h-20">
-                    <td colSpan={4} className="text-center">
-                      Tidak Ada Lomba
-                    </td>
-                  </tr>
+                    ))
+                  ) : (
+                    <tr className="h-20">
+                      <td colSpan={4} className="text-center">
+                        Tidak Ada Lomba
+                      </td>
+                    </tr>
+                  )}
                 </tbody>
               </table>
             </div>
@@ -253,10 +274,22 @@ const CetakRapor = () => {
                 <tbody>
                   <tr>
                     <td className="border border-black w-[12.5rem] font-medium px-2">
+                      Hadir
+                    </td>
+                    <td className="border border-black text-center font-medium">
+                      {totalAbsen?.Hadir || 0}
+                    </td>
+                    <td className="border border-black font-medium px-2">
+                      Hari
+                    </td>
+                  </tr>
+
+                  <tr>
+                    <td className="border border-black w-[12.5rem] font-medium px-2">
                       Izin
                     </td>
                     <td className="border border-black text-center font-medium">
-                      {data?.izin || 0}
+                      {totalAbsen?.Izin || 0}
                     </td>
                     <td className="border border-black font-medium px-2">
                       Hari
@@ -268,7 +301,7 @@ const CetakRapor = () => {
                       Sakit
                     </td>
                     <td className="border border-black text-center font-medium">
-                      {data?.sakit || 0}
+                      {totalAbsen?.Sakit || 0}
                     </td>
                     <td className="border border-black font-medium px-2">
                       Hari
@@ -280,7 +313,7 @@ const CetakRapor = () => {
                       Alfa
                     </td>
                     <td className="border border-black text-center font-medium">
-                      {data?.alfa || 0}
+                      {totalAbsen?.Alfa || 0}
                     </td>
                     <td className="border border-black font-medium px-2">
                       Hari
