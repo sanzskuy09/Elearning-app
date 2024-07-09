@@ -415,7 +415,6 @@ const PerformaReportPage = () => {
                           components: {
                             Progress: {
                               defaultColor: colors[i],
-                              /* here is your component tokens */
                             },
                           },
                         }}

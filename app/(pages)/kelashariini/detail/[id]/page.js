@@ -170,7 +170,7 @@ const KelasDetailPage = ({ params: { id } }) => {
       setAttendance(
         dataMurid.data.map((student) => ({
           id: student.id,
-          status: "Hadir",
+          status: "Alfa",
         }))
       );
     } catch (error) {
