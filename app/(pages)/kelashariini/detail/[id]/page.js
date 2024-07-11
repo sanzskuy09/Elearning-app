@@ -28,6 +28,8 @@ const KelasDetailPage = ({ params: { id } }) => {
   const [jadwal, setJadwal] = useState();
   const [silabus, setSilabus] = useState([]);
   const [murid, setMurid] = useState([]);
+  const [relawan, setRelawan] = useState([]);
+
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -78,6 +80,7 @@ const KelasDetailPage = ({ params: { id } }) => {
             id_silabus: silabus?.id,
             id_kelas: jadwal?.id_kelas,
             id_mapel: jadwal?.id_mapel,
+            jml_relawan: relawan.length,
             tanggal: date,
             relawan: jadwal?.relawan?.map((item) => ({
               id_relawan: item.id,
@@ -132,6 +135,7 @@ const KelasDetailPage = ({ params: { id } }) => {
       const res = await API.get(`${URL.GET_JADWAL}/${id}`);
       const data = res.data.data;
       setJadwal(data);
+      setRelawan(data.relawan);
 
       // get silabus
       const responseSilabus = await fetch(
@@ -170,7 +174,7 @@ const KelasDetailPage = ({ params: { id } }) => {
       setAttendance(
         dataMurid.data.map((student) => ({
           id: student.id,
-          status: "Alfa",
+          status: "Hadir",
         }))
       );
     } catch (error) {
@@ -186,6 +190,8 @@ const KelasDetailPage = ({ params: { id } }) => {
   useEffect(() => {
     getDataJadwal();
   }, []);
+
+  console.log(relawan);
 
   return (
     <div>
