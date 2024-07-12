@@ -2,8 +2,9 @@
 import React, { Suspense, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
-import { ConfigProvider, Radio, Checkbox, Modal } from "antd";
+import { ConfigProvider, Radio, Checkbox, Modal, Select } from "antd";
 const { confirm } = Modal;
+const { Option } = Select;
 
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
@@ -29,9 +30,25 @@ const KelasDetailPage = ({ params: { id } }) => {
   const [silabus, setSilabus] = useState([]);
   const [murid, setMurid] = useState([]);
   const [relawan, setRelawan] = useState([]);
+  const [listRelawan, setListRelawan] = useState([]);
+  const [relawanAwal, setRelawanAwal] = useState();
+
+  console.log(relawanAwal);
+  // console.log(listRelawan);
+  // console.log(relawan);
 
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
+
+  const getListRelawan = async () => {
+    try {
+      const res = await API.get(`/list-relawan`);
+
+      setListRelawan(res.data.data);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   // const [attendance, setAttendance] = useState(
   //   murid.reduce((acc, student) => {
@@ -73,6 +90,10 @@ const KelasDetailPage = ({ params: { id } }) => {
       cancelText: "No",
       async onOk() {
         try {
+          if (relawanAwal?.length < 1) {
+            return toastFailed(`Relawan harus diisi!`);
+          }
+
           const date = new Date();
 
           const values = {
@@ -80,16 +101,19 @@ const KelasDetailPage = ({ params: { id } }) => {
             id_silabus: silabus?.id,
             id_kelas: jadwal?.id_kelas,
             id_mapel: jadwal?.id_mapel,
-            jml_relawan: relawan.length,
+            jml_relawan: relawanAwal.length,
             tanggal: date,
-            relawan: jadwal?.relawan?.map((item) => ({
-              id_relawan: item.id,
+            pengajar: JSON.stringify(relawanAwal),
+            relawan: relawanAwal?.map((item) => ({
+              id_relawan: item,
             })),
             murid: attendance?.map((item) => ({
               id_murid: item.id,
               status: item.status,
             })),
           };
+
+          console.log(values);
 
           const response = await fetch("/api/absen", {
             method: "POST",
@@ -135,7 +159,8 @@ const KelasDetailPage = ({ params: { id } }) => {
       const res = await API.get(`${URL.GET_JADWAL}/${id}`);
       const data = res.data.data;
       setJadwal(data);
-      setRelawan(data.relawan);
+      // setRelawan(data.relawan);
+      setRelawanAwal(data.relawan.map((item) => item.id));
 
       // get silabus
       const responseSilabus = await fetch(
@@ -189,9 +214,17 @@ const KelasDetailPage = ({ params: { id } }) => {
 
   useEffect(() => {
     getDataJadwal();
+    getListRelawan();
   }, []);
 
-  console.log(relawan);
+  const handleChange = (value) => {
+    console.log(`selected ${value}`);
+    setRelawanAwal((item) => {
+      return value;
+    });
+  };
+
+  // console.log(relawan);
 
   return (
     <div>
@@ -251,7 +284,7 @@ const KelasDetailPage = ({ params: { id } }) => {
           </div>
         </div>
 
-        <div className="flex justify-start items-center gap-24">
+        {/* <div className="flex justify-start items-center gap-24">
           <h4 className="">Pengajar Hari Ini</h4>
           <div className="flex gap-2 p-1 bg-white shadow-sm flex-1 w-full rounded-md">
             {jadwal?.relawan.map((item, i) => (
@@ -264,6 +297,29 @@ const KelasDetailPage = ({ params: { id } }) => {
                 {item.nama_lengkap}
               </p>
             ))}
+          </div>
+        </div> */}
+
+        <div className="flex justify-start items-center gap-24">
+          <h4 className="">Pengajar Hari Ini</h4>
+          <div className="flex gap-2  flex-1 w-full rounded-md">
+            <Select
+              mode="multiple"
+              defaultValue={relawanAwal}
+              value={relawanAwal}
+              placeholder="Pilih relawan pengajar"
+              style={{
+                width: "100%",
+              }}
+              onChange={handleChange}
+              tokenSeparators={[","]}
+            >
+              {listRelawan?.map((item, i) => (
+                <Option value={item.id} key={item.id}>
+                  {item.nama_lengkap}
+                </Option>
+              ))}
+            </Select>
           </div>
         </div>
 

@@ -47,12 +47,32 @@ const DetailAbsenPage = ({ params: { id } }) => {
       }
 
       const data = await res.json();
+
       setData(data.data);
       setSilabus(data.data.silabus);
       setMurid(data.data.murid);
-      setRelawan(data.data.relawan);
+
+      const dataRelawan = await API.get(`/list-relawan`);
+
+      const dataPengajar = JSON.parse(data.data.pengajar);
+
+      const relawanAwal = dataRelawan.data.data.filter((item) =>
+        dataPengajar.includes(item.id)
+      );
+
+      setRelawan(relawanAwal);
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  const getListRelawan = async () => {
+    try {
+      const res = await API.get(`/list-relawan`);
+
+      setListRelawan(res.data.data);
+    } catch (error) {
+      console.error(error);
     }
   };
 
