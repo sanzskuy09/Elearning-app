@@ -7,13 +7,13 @@ import { Chart as ChartJS, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
 ChartJS.register(...registerables);
 
-import { Pie, Bar } from "react-chartjs-2";
+import { Pie, Bar, Line } from "react-chartjs-2";
 
 import { API, URL } from "@/config/api";
 
 import TableDashboard from "@/components/TableDashboard";
 
-import { Flex, Progress, ConfigProvider } from "antd";
+import { Flex, Progress, Select, ConfigProvider } from "antd";
 
 import { dataUpcomingClass, dataRelawan } from "../dashboard/data";
 
@@ -65,7 +65,10 @@ const PerformaReportPage = () => {
   const [totalMurid, setTotalMurid] = useState([]);
   const [totalMuridPerKategori, setTotalMuridPerKategori] = useState([]);
   const [dataSilabus, setDataSilabus] = useState([]);
-
+  const [totalRelawan, setTotalRelawan] = useState({
+    jml_relawan: 0,
+    tanggal: [],
+  });
   const [pointRelawan, setPointRelawan] = useState([]);
 
   const [loading, setLoading] = useState(false);
@@ -78,6 +81,74 @@ const PerformaReportPage = () => {
     "#0DFFA8",
     "#FF30B9",
   ];
+
+  const bulanOptions = [
+    { value: "January", label: "January" },
+    { value: "February", label: "February" },
+    { value: "March", label: "March" },
+    { value: "April", label: "April" },
+    { value: "May", label: "May" },
+    { value: "June", label: "June" },
+    { value: "July", label: "July" },
+    { value: "August", label: "August" },
+    { value: "September", label: "September" },
+    { value: "October", label: "October" },
+    { value: "November", label: "November" },
+    { value: "December", label: "December" },
+  ];
+
+  const getMonthName = (monthIndex) => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ];
+    return months[monthIndex];
+  };
+
+  const currentMonthIndex = new Date().getMonth();
+  const currentMonthName = getMonthName(currentMonthIndex);
+
+  const [selectedMonth, setSelectedMonth] = useState(currentMonthName);
+
+  const handleChangeBulan = async (value) => {
+    setSelectedMonth(value);
+    try {
+      // const currentMonthIndex = new Date().getMonth();
+      // const currentMonthName = getMonthName(currentMonthIndex);
+
+      const res = await API.get(
+        `${URL.GET_TOTAL_RELAWAN}?bulan=${
+          value !== undefined ? value : currentMonthName
+        }`
+      );
+      const data = res.data.data;
+
+      const tanggal = data.map((item) => item.tanggal);
+      const jumlahRelawan = data.map((item) => item.jml_relawan);
+      // const jumlahRelawan = data.reduce(
+      //   (total, item) => total + item.jml_relawan,
+      //   0
+      // );
+
+      setTotalRelawan((item) => ({
+        ...item,
+        tanggal: tanggal,
+        jumlahRelawan: jumlahRelawan,
+      }));
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
 
   const getDataReportMurid = async () => {
     try {
@@ -146,7 +217,6 @@ const PerformaReportPage = () => {
   const getDataSilabus = async () => {
     try {
       const res = await API.get(URL.GET_REPORT_SILABUS);
-
       const data = res.data.data;
 
       setDataSilabus(data);
@@ -162,9 +232,8 @@ const PerformaReportPage = () => {
     getBanyakMuridPerKategori();
     getRelawanTeraktif();
     getDataSilabus();
+    handleChangeBulan();
   }, []);
-
-  console.log(dataSilabus, ">> silabus");
 
   // Chart Murid
   const dataKelas = {
@@ -309,6 +378,27 @@ const PerformaReportPage = () => {
         data: dataReportGenderRelawan,
         backgroundColor: ["#3572EF", "#3ABEF9"],
         borderColor: ["#3572EF", "#3ABEF9"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+    ],
+  };
+
+  // Chart Tingkat Kehadiaran relawan
+  const tangglaLabels = totalRelawan?.tanggal;
+
+  const tangglaLabel = tangglaLabels.map((label) =>
+    truncateLabel(label, maxLength)
+  );
+
+  const dataKehadiranRelawan = {
+    labels: tangglaLabel,
+    datasets: [
+      {
+        label: "Kehadiran",
+        data: totalRelawan?.jumlahRelawan,
+        backgroundColor: ["#3572EF"],
+        borderColor: ["#3572EF"],
         borderWidth: 1,
         minBarLength: 2,
       },
@@ -529,10 +619,20 @@ const PerformaReportPage = () => {
         <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
           <h1 className="mb-4">Tingkat kehadiran relawan</h1>
 
+          <Select
+            defaultValue={selectedMonth}
+            // value={selectedMonth}
+            style={{
+              width: 150,
+            }}
+            onChange={handleChangeBulan}
+            options={bulanOptions}
+          />
+
           {/* Chart */}
           <div className="flex justify-center">
-            <div className="w-[50%] flex justify-center">
-              <Pie options={options} data={data} />
+            <div className="w-[90%] flex justify-center">
+              <Line options={options} data={dataKehadiranRelawan} />
             </div>
           </div>
         </div>

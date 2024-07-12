@@ -1,22 +1,10 @@
 "use client";
-
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-import { Table } from "antd";
-import { dataUpcomingClass, dataRelawan } from "./data";
+import { Table, Tooltip } from "antd";
 import TableDashboard from "@/components/TableDashboard";
-
-// import {
-//   Chart as ChartJS,
-//   ArcElement,
-//   Tooltip,
-//   Legend,
-//   CategoryScale,
-//   LinearScale,
-// } from "chart.js";
-
-// ChartJS.register(ArcElement, Tooltip, Legend, CategoryScale, LinearScale);
 
 import { Chart as ChartJS, registerables } from "chart.js";
 import { Chart } from "react-chartjs-2";
@@ -25,6 +13,9 @@ ChartJS.register(...registerables);
 import { Pie, Bar } from "react-chartjs-2";
 
 import { API, URL } from "@/config/api";
+
+import IC_TOOLTIP from "/public/Icons/ic_tooltip.svg";
+import IC_TOGA from "/public/Icons/ic_toga_blue.svg";
 
 const columnsClass = [
   {
@@ -68,6 +59,22 @@ const DashboardPage = () => {
   const [dataJadwal, setDataJadwal] = useState([]);
 
   const [loading, setLoading] = useState(false);
+
+  const text = (
+    <span>
+      Jadwal pelajaran yang kamu ikuti, kamu boleh mengikuti pembelajaran di
+      luar jadwal wajib kamu dengan menekan tombol mulai mengajar hari ini dan
+      mengajukan pada PIC pengajar
+    </span>
+  );
+
+  const textPoint = (
+    <span>
+      Relawan teraktif didapatkan berdasarkan point terbanyak, kamu bisa
+      menambahkan point kamu dengan menghadiri kegiatan pembelajaran, akan ada
+      hadiah menarik untuk relawan teraktif!
+    </span>
+  );
 
   const getJadwal = async () => {
     setLoading(true);
@@ -196,11 +203,7 @@ const DashboardPage = () => {
     return label;
   }
 
-  // function splitLabel(label) {
-  //   return label.split(" ").join(" + <br/> +");
-  // }
-
-  const maxLength = 10; // Panjang maksimum label sebelum dipotong
+  const maxLength = 10;
   const originalLabels = [
     "Umum",
     "Disabilitas",
@@ -212,7 +215,6 @@ const DashboardPage = () => {
     // "Orang tua bercerai"
   ];
 
-  // const truncatedLabels = originalLabels.map((label) => splitLabel(label));
   const truncatedLabels = originalLabels.map((label) =>
     truncateLabel(label, maxLength)
   );
@@ -243,7 +245,14 @@ const DashboardPage = () => {
         {/* upcoming class & relawan */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
-            <h1 className="mb-4">Upcoming Class</h1>
+            <div className="mb-4 flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <h1 className="text-lg">Upcoming Class</h1>
+
+              <Tooltip title={text} placement="rightTop">
+                <Image src={IC_TOOLTIP} alt="" />
+              </Tooltip>
+            </div>
 
             {dataJadwal == "" ? (
               <h1 className="font-bold text-lg">Tidak Ada Jadwal Hari Ini!</h1>
@@ -257,9 +266,22 @@ const DashboardPage = () => {
           </div>
 
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
-            <h1 className="mb-4">Relawan Ter-aktif</h1>
+            <div className="mb-4 flex justify-between">
+              <div className="flex gap-4 items-center">
+                <Image src={IC_TOGA} alt="" />
+                <h1 className="text-lg">Relawan Ter-aktif</h1>
+              </div>
+              <div className="flex gap-2 items-center">
+                <h1 className="text-lg">Point</h1>
+                <Tooltip title={textPoint} placement="bottomRight">
+                  <Image src={IC_TOOLTIP} alt="" />
+                </Tooltip>
+              </div>
+            </div>
 
-            <TableDashboard columns={columnsRelawan} data={pointRelawan} />
+            <div className="pr-6">
+              <TableDashboard columns={columnsRelawan} data={pointRelawan} />
+            </div>
 
             {/* {pointRelawan.length > 5 && (
               <div className="absolute bottom-0 right-0 mb-4 mr-8">
@@ -303,15 +325,24 @@ const DashboardPage = () => {
         {/* jumlah mapel, murid, relawan */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Mata Pelajaran</p>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Mata Pelajaran</p>
+            </div>
             <h1 className="text-6xl font-medium mt-5">{totals?.mapel || 0}</h1>
           </div>
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Murid</p>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Murid</p>
+            </div>
             <h1 className="text-6xl font-medium mt-5">{totals?.murid || 0}</h1>
           </div>
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Relawan</p>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Relawan</p>
+            </div>
             <h1 className="text-6xl font-medium mt-5">
               {totals?.relawan || 0}
             </h1>
