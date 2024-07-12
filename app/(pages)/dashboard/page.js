@@ -79,20 +79,6 @@ const DashboardPage = () => {
   const getJadwal = async () => {
     setLoading(true);
     try {
-      const daysMap = {
-        0: "Minggu",
-        1: "Senin",
-        2: "Selasa",
-        3: "Rabu",
-        4: "Kamis",
-        5: "Jumat",
-        6: "Sabtu",
-      };
-
-      const currentDay = new Date().getDay();
-      const currentDayName = daysMap[currentDay];
-
-      // const res = await API.get(`${URL.GET_JADWAL}?hari=${currentDayName}`);
       const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
 
       setDataJadwal(res.data.data);

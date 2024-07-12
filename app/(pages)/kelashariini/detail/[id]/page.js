@@ -139,7 +139,6 @@ const KelasDetailPage = ({ params: { id } }) => {
 
           toastSuccess(`Absen Berhasil dibuat`);
 
-          // console.log(checked);
           router.push(`/dataabsensi/detail/${dataAbsen.data.id}`);
           setLoading(false);
         } catch (error) {
