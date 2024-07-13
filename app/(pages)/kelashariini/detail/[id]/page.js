@@ -33,7 +33,7 @@ const KelasDetailPage = ({ params: { id } }) => {
   const [listRelawan, setListRelawan] = useState([]);
   const [relawanAwal, setRelawanAwal] = useState();
 
-  console.log(relawanAwal);
+  // console.log(relawanAwal);
   // console.log(listRelawan);
   // console.log(relawan);
 
@@ -49,25 +49,6 @@ const KelasDetailPage = ({ params: { id } }) => {
       console.error(error);
     }
   };
-
-  // const [attendance, setAttendance] = useState(
-  //   murid.reduce((acc, student) => {
-  //     acc[student.id] = "";
-  //     return acc;
-  //   }, {})
-  // );
-
-  // const handleAttendanceChange = (studentId, value) => {
-  //   setAttendance((prev) => ({
-  //     ...prev,
-  //     [studentId]: value,
-  //   }));
-  // };
-
-  // const onChecked = (e) => {
-  //   console.log("radio checked", e.target.value);
-  //   setChecked(e.target.value);
-  // };
 
   const [attendance, setAttendance] = useState([]);
 
@@ -206,11 +187,6 @@ const KelasDetailPage = ({ params: { id } }) => {
     }
   };
 
-  // console.log(jadwal);
-  // console.log(silabus, " >> silabus");
-  // console.log(murid, " >> murid");
-  // console.log(attendance, " >> attendance");
-
   useEffect(() => {
     getDataJadwal();
     getListRelawan();
@@ -222,8 +198,6 @@ const KelasDetailPage = ({ params: { id } }) => {
       return value;
     });
   };
-
-  // console.log(relawan);
 
   return (
     <div>

@@ -49,18 +49,14 @@ const KelasHariIniPage = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          {/* <button
-            onClick={() => navigate(`/daftar-mapel/detail/${record.id_mapel}`)}
-          >
-            Detail
-          </button> */}
-
           <button
-            // onClick={() => navigate(`/kelashariini/detail/${record.kelas}`)}
             onClick={() => router.push(`/kelashariini/detail/${record.id}`)}
-            className="bg-blue-500 px-2 rounded-md font-medium text-white"
+            className={`${
+              record?.show_detail ? "bg-blue-500" : "bg-red-500"
+            }  px-2 rounded-md font-medium text-white`}
+            disabled={record?.show_detail ? false : true}
           >
-            Mulai
+            {record?.show_detail ? "Mulai" : "Selesai"}
           </button>
         </Space>
       ),
@@ -69,6 +65,8 @@ const KelasHariIniPage = () => {
 
   const [jadwal, setJadwal] = useState([]);
   const [loading, setLoading] = useState(false);
+
+  console.log(jadwal);
 
   const getDataJadwal = async () => {
     setLoading(true);
