@@ -60,7 +60,7 @@ const CetakRapor = () => {
 
   return (
     <div className="py-6 w-full flex flex-col gap-8 items-center">
-      <h1 className="text-3xl underline font-bold">Cetak Rapor Murid</h1>
+      {/* <h1 className="text-3xl underline font-bold">Cetak Rapor Murid</h1> */}
 
       {data == "" ? (
         <>

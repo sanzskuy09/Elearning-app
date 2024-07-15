@@ -100,8 +100,9 @@ const SilabusPage = () => {
 
   const handleChecked = async (e) => {
     confirm({
-      title:
-        "Anda yakin ingin menyelesaikan proses pengajaran silabus kepada siswa?",
+      title: e.isChecked
+        ? "Silabus ini telah diselesaikan. Yakin ingin mengubahnya?"
+        : "Anda yakin ingin menyelesaikan proses pengajaran silabus kepada siswa?",
       icon: <ExclamationCircleFilled />,
       centered: true,
       // content: "Some descriptions",
@@ -125,7 +126,9 @@ const SilabusPage = () => {
           await API.put(`${URL.GET_SILABUS}/${e.id}`, formData, config);
           await getData();
 
-          toastSuccess(`Silabus Berhasil diselesaikan`);
+          e.isChecked
+            ? toastSuccess(`Silabus Berhasil diupdate`)
+            : toastSuccess(`Silabus Berhasil diselesaikan`);
 
           setLoading(false);
         } catch (error) {
@@ -313,7 +316,7 @@ const SilabusPage = () => {
                         <Checkbox
                           checked={item.isChecked}
                           onChange={() => handleChecked(item)}
-                          disabled={item.isChecked}
+                          // disabled={item.isChecked}
                         />
 
                         <div className="flex-1 px-4 py-1 border border-black rounded-md">

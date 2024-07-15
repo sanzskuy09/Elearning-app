@@ -56,7 +56,7 @@ const SearchBar = ({
           </div>
         ))}
 
-        <div>
+        {/* <div>
           <button
             type="button"
             className="w-full my-2 border border-gray-400 bg-[#D8FFCB] text-black font-semibold px-4 py-1 rounded-md min-w-[8rem]"
@@ -65,12 +65,12 @@ const SearchBar = ({
             <SearchOutlined className="mr-2" />
             Cari
           </button>
-        </div>
+        </div> */}
       </div>
 
       <hr className="my-2 border-gray-400" />
 
-      <div className="py-4 px-6 flex justify-between">
+      {/* <div className="py-4 px-6 flex justify-between">
         <div className="flex gap-2 items-center">
           <label htmlFor="">Search :</label>
           <Input
@@ -87,7 +87,7 @@ const SearchBar = ({
             <ButtonAdd text={text} onChange={onButtonClick} />
           </div>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

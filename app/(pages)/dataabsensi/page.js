@@ -156,10 +156,6 @@ const DataAbsensiPage = () => {
       : { kelas: ["", ""], mapel: ["", ""] }
   );
 
-  const handleSearchChange = (e) => {
-    setValue(e.target.value);
-  };
-
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
@@ -168,7 +164,9 @@ const DataAbsensiPage = () => {
     setLoading(true);
     try {
       const res = await fetch(
-        `/api/absen?mapel=${filters?.mapel[1]}&kelas=${
+        `/api/absen?mapel=${
+          filters?.mapel[1] == undefined ? "" : filters?.mapel[1]
+        }&kelas=${
           filters?.kelas[1] == undefined ? "" : filters?.kelas[1]
         }&accept=1`,
         {
@@ -368,63 +366,54 @@ const DataAbsensiPage = () => {
           />
 
           <div className="py-4 px-6">
-            {filters.kelas[0] == "" || filters.mapel[0] == "" ? (
-              <p>
-                Harap pilih <strong>Kelas</strong> dan{" "}
-                <strong>Mata Pelajarannya</strong> terlebih dahulu.
-              </p>
-            ) : (
-              <>
-                <div className="overflow-auto shadow-md rounded-md">
-                  <ConfigProvider
-                    theme={{
-                      components: {
-                        Table: {
-                          colorPrimary: "#000",
-                          headerColor: "#fff",
-                          headerBg: "#000",
-                          headerBorderRadius: 6,
-                          algorithm: true,
-                          // borderColor: "#000",
-                        },
-                        Pagination: {
-                          colorPrimary: "#000",
-                          colorPrimaryHover: "#000",
-                          colorPrimaryBorder: "#000",
-                          algorithm: true,
-                        },
-                      },
-                    }}
-                  >
-                    <Table
-                      loading={loading}
-                      columns={columns}
-                      dataSource={data?.slice(start, end)}
-                      pagination={false}
-                      scroll={{
-                        x: 1300,
-                      }}
-                    />
-                    <Pagination
-                      total={data?.length}
-                      current={currentPage}
-                      pageSize={pageSize}
-                      showTotal={(total, range) =>
-                        `${range[0]}-${range[1]} of ${total} items`
-                      }
-                      onChange={handleChangePage}
-                      showSizeChanger={false}
-                      style={{
-                        marginTop: "20px",
-                        marginBottom: "20px",
-                        marginRight: "20px",
-                        textAlign: "right",
-                      }}
-                    />
-                  </ConfigProvider>
-                </div>
-              </>
-            )}
+            <div className="overflow-auto shadow-md rounded-md">
+              <ConfigProvider
+                theme={{
+                  components: {
+                    Table: {
+                      colorPrimary: "#000",
+                      headerColor: "#fff",
+                      headerBg: "#000",
+                      headerBorderRadius: 6,
+                      algorithm: true,
+                      // borderColor: "#000",
+                    },
+                    Pagination: {
+                      colorPrimary: "#000",
+                      colorPrimaryHover: "#000",
+                      colorPrimaryBorder: "#000",
+                      algorithm: true,
+                    },
+                  },
+                }}
+              >
+                <Table
+                  loading={loading}
+                  columns={columns}
+                  dataSource={data?.slice(start, end)}
+                  pagination={false}
+                  scroll={{
+                    x: 1300,
+                  }}
+                />
+                <Pagination
+                  total={data?.length}
+                  current={currentPage}
+                  pageSize={pageSize}
+                  showTotal={(total, range) =>
+                    `${range[0]}-${range[1]} of ${total} items`
+                  }
+                  onChange={handleChangePage}
+                  showSizeChanger={false}
+                  style={{
+                    marginTop: "20px",
+                    marginBottom: "20px",
+                    marginRight: "20px",
+                    textAlign: "right",
+                  }}
+                />
+              </ConfigProvider>
+            </div>
           </div>
         </div>
       </div>
