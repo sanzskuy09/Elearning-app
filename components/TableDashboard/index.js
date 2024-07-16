@@ -47,7 +47,7 @@ const TableDashboard = ({ columns, data, showHead }) => {
           </thead>
         )}
         <tbody>
-          {data.map((item, rowIndex) => (
+          {data?.map((item, rowIndex) => (
             <tr key={rowIndex} className="bg-transparent">
               {columns.map((column, colIndex) => (
                 <td

@@ -170,22 +170,24 @@ const TambahRaporPage = () => {
             })),
           };
 
-          const response = await fetch(`/api/rapor`, {
-            method: "POST",
-            body: JSON.stringify(newValues),
-          });
+          console.log(values);
 
-          if (!response.ok) {
-            throw new Error("Failed to Tambah Rapor Gagal");
-          }
+          // const response = await fetch(`/api/rapor`, {
+          //   method: "POST",
+          //   body: JSON.stringify(newValues),
+          // });
 
-          setTimeout(() => {
-            setSubmitting(false);
-            resetForm();
-            resetNilai();
-            toastSuccess("Tambah Rapor Berhasil");
-            router.push("/rapor");
-          }, 400);
+          // if (!response.ok) {
+          //   throw new Error("Failed to Tambah Rapor Gagal");
+          // }
+
+          // setTimeout(() => {
+          //   setSubmitting(false);
+          //   resetForm();
+          //   resetNilai();
+          //   toastSuccess("Tambah Rapor Berhasil");
+          //   router.push("/rapor");
+          // }, 400);
         } catch (error) {
           toastFailed("Tambah Rapor Gagal");
           console.log(error);

@@ -103,12 +103,21 @@ const columns = [
         </Link>
 
         <Link
-          href={`/rapor/tambah?id=${record.id}&id_kelas=${record.kelas.id}&update=true`}
+          href={`/rapor/edit?id=${record.id}&id_kelas=${record.kelas.id}&update=true`}
         >
           <Image src={IconEdit} alt="" />
         </Link>
 
-        <Link href="">
+        {/* <Link
+          href={`/rapor/tambah?id=${record.id}&id_kelas=${record.kelas.id}&update=true`}
+        >
+          <Image src={IconEdit} alt="" />
+        </Link> */}
+
+        <Link
+          href={`/cetak-rapor?id=${record.id}&id_kelas=${record.kelas.id}`}
+          target="_blank"
+        >
           <Image src={IconDownload} alt="" />
         </Link>
       </Space>

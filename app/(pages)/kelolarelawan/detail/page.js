@@ -55,7 +55,7 @@ const DetailKaryawanPage = () => {
     kelas: data?.kelas,
     mapel: data?.mapel,
     username: data?.username,
-    password: data?.password,
+    password: "",
   };
 
   const getData = async () => {
@@ -367,7 +367,6 @@ const DetailKaryawanPage = () => {
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("alamat")}
@@ -380,7 +379,6 @@ const DetailKaryawanPage = () => {
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kelurahan")}
@@ -393,7 +391,6 @@ const DetailKaryawanPage = () => {
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kecamatan")}
@@ -406,7 +403,6 @@ const DetailKaryawanPage = () => {
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kota")}
@@ -419,7 +415,6 @@ const DetailKaryawanPage = () => {
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("provinsi")}
@@ -451,9 +446,8 @@ const DetailKaryawanPage = () => {
                           Password <span className="text-red-600">*</span>
                         </label>
                         <Input
-                          disabled
                           required
-                          placeholder=""
+                          placeholder="Default : 12345678"
                           className="w-full border border-gray-300 rounded-md px-3 py-2"
                           type="password"
                           {...formik.getFieldProps("password")}
