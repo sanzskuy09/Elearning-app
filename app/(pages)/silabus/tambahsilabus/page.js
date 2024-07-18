@@ -46,6 +46,9 @@ const TambahSilabusPage = () => {
     name: "file",
     listType: "picture",
     multiple: false,
+    beforeUpload: () => {
+      return false;
+    },
   };
 
   const handleFileChange = (e, formik) => {

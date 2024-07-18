@@ -74,7 +74,7 @@ const DataAbsensiPage = () => {
             <Image src={IconDetail} alt="" />
           </Link>
 
-          <button onClick={() => handleDelete(record.id)}>
+          <button onClick={() => handleDelete(record)}>
             <Image src={IconDelete} alt="" />
           </button>
         </Space>
@@ -264,7 +264,7 @@ const DataAbsensiPage = () => {
       async onOk() {
         try {
           setLoading(true);
-          await API.delete(`${URL.GET_ABSEN}/${e}`);
+          await API.delete(`${URL.GET_ABSEN}/${e.id}?id_jadwal=${e.id_jadwal}`);
           await getWaitingListAbsen();
 
           toastSuccess(`Absen Berhasil dihapus`);

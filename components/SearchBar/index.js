@@ -38,23 +38,29 @@ const SearchBar = ({
 
   return (
     <div>
-      <div className="py-4 px-6 flex justify-start items-center gap-8">
-        {options?.map((option, index) => (
-          <div key={index} className="flex items-center gap-2">
-            <label htmlFor="">{option.label}</label>
-            <Select
-              value={filters[option.name]}
-              onChange={(value) => handleChange(option.name, value)}
-              style={{ width: widthSelect ? widthSelect : 150 }}
-            >
-              {option.values.map((value) => (
-                <Option key={value.value} value={value.value}>
-                  {value.label}
-                </Option>
-              ))}
-            </Select>
-          </div>
-        ))}
+      <div
+        className={`py-4 px-6 flex ${
+          showButton ? "justify-between" : "justify-start"
+        } items-center gap-8`}
+      >
+        <div className="flex gap-6">
+          {options?.map((option, index) => (
+            <div key={index} className="flex items-center gap-2">
+              <label htmlFor="">{option.label}</label>
+              <Select
+                value={filters[option.name]}
+                onChange={(value) => handleChange(option.name, value)}
+                style={{ width: widthSelect ? widthSelect : 150 }}
+              >
+                {option.values.map((value) => (
+                  <Option key={value.value} value={value.value}>
+                    {value.label}
+                  </Option>
+                ))}
+              </Select>
+            </div>
+          ))}
+        </div>
 
         {/* <div>
           <button
@@ -66,6 +72,11 @@ const SearchBar = ({
             Cari
           </button>
         </div> */}
+        {showButton && (
+          <div>
+            <ButtonAdd text={text} onChange={onButtonClick} />
+          </div>
+        )}
       </div>
 
       <hr className="my-2 border-gray-400" />

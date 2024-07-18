@@ -61,37 +61,6 @@ const CetakRapor = () => {
 
   // console.log(data, " >> data");
 
-  const downloadPDF = () => {
-    const capture = document.querySelector(".rapor");
-    const capture1 = document.querySelector(".rapor1");
-
-    const options = {
-      scale: 2, // Increase the scale for higher resolution
-    };
-
-    html2canvas(capture, options).then((canvas) => {
-      const imgData = canvas.toDataURL("image/png");
-      const pdf = new jsPDF("p", "px", "a4");
-
-      const imgProps = pdf.getImageProperties(imgData);
-      const pdfWidth = pdf.internal.pageSize.getWidth();
-      const pdfHeight = (imgProps.height * pdfWidth) / imgProps.width;
-
-      pdf.addImage(imgData, "PNG", 0, 0, pdfWidth, pdfHeight);
-
-      // Capture the second element and add to a new page
-      html2canvas(capture1, options).then((canvas2) => {
-        const imgData2 = canvas2.toDataURL("image/png");
-        pdf.addPage();
-        const imgProps2 = pdf.getImageProperties(imgData2);
-        const pdfHeight2 = (imgProps2.height * pdfWidth) / imgProps2.width;
-
-        pdf.addImage(imgData2, "PNG", 0, 0, pdfWidth, pdfHeight2);
-        pdf.save(`Rapor-${data?.nama_lengkap}.pdf`);
-      });
-    });
-  };
-
   return (
     <div className="py-6 w-full flex flex-col gap-8 items-center">
       {loading ? (
@@ -112,12 +81,6 @@ const CetakRapor = () => {
             </>
           ) : (
             <>
-              <button
-                onClick={downloadPDF}
-                className="bg-primary p-2 rounded-md text-white font-semibold"
-              >
-                Download PDF
-              </button>
               {/* lembar 1 */}
               <div className="w-[742px] h-[1070px] mx-auto bg-white px-[56px] py-[31px] rapor">
                 <div className="flex justify-between items-center">
@@ -172,33 +135,31 @@ const CetakRapor = () => {
                   <table className="w-full border-collapse border border-black text-sm">
                     <thead>
                       <tr>
-                        <th className="border border-black w-10 pb-4">No.</th>
-                        <th className="border border-black w-40 pb-4">
+                        <th className="border border-black w-10">No.</th>
+                        <th className="border border-black w-40">
                           Mata Pelajaran
                         </th>
-                        <th className="border border-black w-16 pb-4">Nilai</th>
-                        <th className="border border-black w-20 pb-4">
-                          Predikat
-                        </th>
-                        <th className="border border-black pb-4">Keterangan</th>
+                        <th className="border border-black w-16">Nilai</th>
+                        <th className="border border-black w-20">Predikat</th>
+                        <th className="border border-black">Keterangan</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data?.rapor_detail?.map((item, index) => (
                         <tr key={index} className="h-[65px]">
-                          <td className="border border-black text-center pb-4">
+                          <td className="border border-black text-center">
                             {index + 1}.
                           </td>
-                          <td className="border border-black text-center pb-4">
+                          <td className="border border-black text-center">
                             {item.mapel}
                           </td>
-                          <td className="border border-black text-center pb-4">
+                          <td className="border border-black text-center">
                             {item.predikat.nilai}
                           </td>
-                          <td className="border border-black text-center font-semibold pb-4">
+                          <td className="border border-black text-center font-semibold">
                             {item.predikat.grade}
                           </td>
-                          <td className="border border-black text-center pb-4">
+                          <td className="border border-black text-center">
                             {item.predikat.keterangan}
                           </td>
                         </tr>
@@ -216,24 +177,24 @@ const CetakRapor = () => {
                   <table className="w-full border-collapse border border-black text-sm">
                     <thead>
                       <tr>
-                        <th className="border border-black w-10 pb-4">No.</th>
-                        <th className="border border-black w-40 pb-4">
+                        <th className="border border-black w-10">No.</th>
+                        <th className="border border-black w-40">
                           Nama Kegiatan
                         </th>
-                        <th className="border border-black pb-4">Keterangan</th>
+                        <th className="border border-black">Keterangan</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data?.kegiatan?.length > 0 ? (
                         data?.kegiatan?.map((item, index) => (
                           <tr key={index} className="h-[65px]">
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {index + 1}.
                             </td>
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {item.name}
                             </td>
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {item.desc}
                             </td>
                           </tr>
@@ -277,30 +238,30 @@ const CetakRapor = () => {
                   <table className="w-full border-collapse border border-black text-sm">
                     <thead>
                       <tr>
-                        <th className="border border-black w-10 pb-4">No.</th>
-                        <th className="border border-black w-40 pb-4">
+                        <th className="border border-black w-10">No.</th>
+                        <th className="border border-black w-40">
                           Nama Kegiatan
                         </th>
-                        <th className="border border-black w-36 pb-4">
+                        <th className="border border-black w-36">
                           Tingkat Prestasi
                         </th>
-                        <th className="border border-black pb-4">Keterangan</th>
+                        <th className="border border-black">Keterangan</th>
                       </tr>
                     </thead>
                     <tbody>
                       {data?.lomba?.length > 0 ? (
                         data?.lomba?.map((item, index) => (
                           <tr key={index} className="h-[65px]">
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {index + 1}.
                             </td>
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {item.name}
                             </td>
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {item.tingkat_prestasi}
                             </td>
-                            <td className="border border-black text-center pb-4">
+                            <td className="border border-black text-center">
                               {item.desc}
                             </td>
                           </tr>
@@ -325,46 +286,46 @@ const CetakRapor = () => {
                   <table className="w-full border-collapse border border-black text-sm">
                     <tbody>
                       <tr>
-                        <td className="border border-black w-[12.5rem] font-medium px-2 pb-4">
+                        <td className="border border-black w-[12.5rem] font-medium px-2">
                           Hadir
                         </td>
-                        <td className="border border-black text-center font-medium pb-4">
+                        <td className="border border-black text-center font-medium">
                           {totalAbsen?.Hadir || 0}
                         </td>
-                        <td className="border border-black font-medium px-2 pb-4">
+                        <td className="border border-black font-medium px-2">
                           Hari
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-black w-[12.5rem] font-medium px-2 pb-4">
+                        <td className="border border-black w-[12.5rem] font-medium px-2">
                           Izin
                         </td>
-                        <td className="border border-black text-center font-medium pb-4">
+                        <td className="border border-black text-center font-medium">
                           {totalAbsen?.Izin || 0}
                         </td>
-                        <td className="border border-black font-medium px-2 pb-4">
+                        <td className="border border-black font-medium px-2">
                           Hari
                         </td>
                       </tr>
                       <tr>
-                        <td className="border border-black w-[12.5rem] font-medium px-2 pb-4">
+                        <td className="border border-black w-[12.5rem] font-medium px-2">
                           Sakit
                         </td>
-                        <td className="border border-black text-center font-medium pb-4">
+                        <td className="border border-black text-center font-medium">
                           {totalAbsen?.Sakit || 0}
                         </td>
-                        <td className="border border-black font-medium px-2 pb-4">
+                        <td className="border border-black font-medium px-2">
                           Hari
                         </td>
                       </tr>{" "}
                       <tr>
-                        <td className="border border-black w-[12.5rem] font-medium px-2 pb-4">
+                        <td className="border border-black w-[12.5rem] font-medium px-2">
                           Alfa
                         </td>
-                        <td className="border border-black text-center font-medium pb-4">
+                        <td className="border border-black text-center font-medium">
                           {totalAbsen?.Alfa || 0}
                         </td>
-                        <td className="border border-black font-medium px-2 pb-4">
+                        <td className="border border-black font-medium px-2">
                           Hari
                         </td>
                       </tr>
@@ -377,14 +338,14 @@ const CetakRapor = () => {
                   <table className="w-full border-collapse border border-black text-sm">
                     <thead>
                       <tr>
-                        <th className="border border-black w-10 uppercase text-start px-2 pb-4">
+                        <th className="border border-black w-10 uppercase text-start px-2">
                           Catatan wali kelas
                         </th>
                       </tr>
                     </thead>
                     <tbody>
                       <tr className="h-[100px]">
-                        <td className="border border-black p-2 pb-4">
+                        <td className="border border-black p-2">
                           {data?.catatan_wali_kelas}
                         </td>
                       </tr>
