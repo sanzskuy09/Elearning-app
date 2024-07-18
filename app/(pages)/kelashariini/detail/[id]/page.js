@@ -33,10 +33,6 @@ const KelasDetailPage = ({ params: { id } }) => {
   const [listRelawan, setListRelawan] = useState([]);
   const [relawanAwal, setRelawanAwal] = useState();
 
-  // console.log(relawanAwal);
-  // console.log(listRelawan);
-  // console.log(relawan);
-
   const [loading, setLoading] = useState(false);
   const [checked, setChecked] = useState(false);
 
@@ -84,6 +80,7 @@ const KelasDetailPage = ({ params: { id } }) => {
             id_mapel: jadwal?.id_mapel,
             jml_relawan: relawanAwal.length,
             tanggal: date,
+            accept: false,
             pengajar: JSON.stringify(relawanAwal),
             relawan: relawanAwal?.map((item) => ({
               id_relawan: item,
@@ -93,8 +90,6 @@ const KelasDetailPage = ({ params: { id } }) => {
               status: item.status,
             })),
           };
-
-          console.log(values);
 
           const response = await fetch("/api/absen", {
             method: "POST",

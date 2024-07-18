@@ -25,9 +25,6 @@ const DetailAbsenPage = ({ params: { id } }) => {
 
   const waiting = searchParams.get("waiting");
 
-  // const { id } = params;
-  // console.log(id);
-
   const colors = ["bg-red-300", "bg-blue-300", "bg-green-300"];
 
   const [data, setData] = useState();
@@ -35,6 +32,8 @@ const DetailAbsenPage = ({ params: { id } }) => {
   const [murid, setMurid] = useState([]);
   const [relawan, setRelawan] = useState([]);
   const [value, setValue] = useState(1);
+
+  const [loading, setLoading] = useState(false);
 
   const getDataAbsen = async () => {
     try {
@@ -58,6 +57,13 @@ const DetailAbsenPage = ({ params: { id } }) => {
 
       const relawanAwal = dataRelawan.data.data.filter((item) =>
         dataPengajar.includes(item.id)
+      );
+
+      setAttendance(
+        data.data.murid.map((student) => ({
+          id: student.id,
+          status: student.status,
+        }))
       );
 
       setRelawan(relawanAwal);
@@ -136,9 +142,93 @@ const DetailAbsenPage = ({ params: { id } }) => {
     getDataAbsen();
   }, []);
 
-  // console.log(data);
-  // console.log(silabus);
-  // console.log(murid);
+  const [attendance, setAttendance] = useState([]);
+  const [edit, setEdit] = useState(false);
+
+  const handleAttendanceChange = (studentId, value) => {
+    setAttendance((prev) =>
+      prev.map((entry) =>
+        entry.id === studentId ? { ...entry, status: value } : entry
+      )
+    );
+  };
+
+  console.log(data, "absen");
+  console.log(silabus, "silabus");
+
+  const handleSubmit = async (e) => {
+    confirm({
+      title: "Anda yakin ingin menyelesaikan proses absen kelas hari ini?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          const date = new Date();
+
+          const values = {
+            id_jadwal: data?.id_jadwal,
+            id_silabus: data?.id_silabus,
+            id_kelas: data?.id_kelas,
+            id_mapel: data?.id_mapel,
+            jml_relawan: JSON.parse(data?.pengajar).length,
+            tanggal: date,
+            accept: true,
+            pengajar: data?.pengajar,
+            relawan: JSON.parse(data?.pengajar)?.map((item) => ({
+              id_relawan: item,
+            })),
+            murid: attendance?.map((item) => ({
+              id_murid: item.id,
+              status: item.status,
+            })),
+          };
+
+          const response = await fetch("/api/absen", {
+            method: "POST",
+            body: JSON.stringify(values),
+          });
+          if (!response.ok) {
+            throw new Error("Failed to add absen");
+          }
+          const dataAbsen = await response.json();
+
+          // handle silabus
+          const formData = new FormData();
+          formData.append("name", silabus.name);
+          formData.append("isChecked", silabus.isChecked);
+
+          const config = {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
+          };
+
+          await API.put(
+            `${URL.GET_SILABUS}/${data?.id_silabus}`,
+            formData,
+            config
+          );
+
+          await API.delete(`${URL.GET_ABSEN}/${data.id}`);
+
+          toastSuccess(`Absen Telah di Selesaikan`);
+
+          router.push(`/dataabsensi`);
+          setLoading(false);
+        } catch (error) {
+          toastFailed(`Absen Gagal diselesaikan`);
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
   return (
     <div>
@@ -223,31 +313,59 @@ const DetailAbsenPage = ({ params: { id } }) => {
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
-                      disabled
-                      value="hadir"
+                      disabled={edit ? false : true}
+                      value="Hadir"
                       defaultChecked={true}
-                      checked={student?.status === "Hadir"}
+                      // checked={student?.status === "Hadir"}
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Hadir"
+                      }
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "Hadir")
+                      }
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
-                      disabled
-                      value="alfa"
-                      checked={student?.status === "Alfa"}
+                      disabled={edit ? false : true}
+                      // checked={student?.status === "Alfa"}
+                      value="Alfa"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Alfa"
+                      }
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "Alfa")
+                      }
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
-                      disabled
-                      value="sakit"
-                      checked={student?.status === "Sakit"}
+                      disabled={edit ? false : true}
+                      value="Sakit"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Sakit"
+                      }
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "Sakit")
+                      }
+                      // checked={student?.status === "Sakit"}
                     ></Radio>
                   </td>
                   <td className="border-b border-gray-400">
                     <Radio
-                      disabled
-                      value="izin"
-                      checked={student?.status === "Izin"}
+                      disabled={edit ? false : true}
+                      value="Izin"
+                      checked={
+                        attendance.find((entry) => entry.id === student.id)
+                          ?.status === "Izin"
+                      }
+                      onChange={() =>
+                        handleAttendanceChange(student.id, "Izin")
+                      }
+                      // checked={student?.status === "Izin"}
                     ></Radio>
                   </td>
                 </tr>
@@ -258,33 +376,51 @@ const DetailAbsenPage = ({ params: { id } }) => {
         <div className="flex gap-4 w-full justify-end">
           {waiting ? (
             <>
-              <button
-                onClick={handleAccept}
-                className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2"
-              >
-                <Image
-                  src={IconToga}
-                  alt="img-button"
-                  className="inline-block"
-                  width={24}
-                  height={24}
-                />
-                Terima
-              </button>
+              {!edit ? (
+                <>
+                  <button
+                    onClick={handleAccept}
+                    className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2"
+                  >
+                    <Image
+                      src={IconToga}
+                      alt="img-button"
+                      className="inline-block"
+                      width={24}
+                      height={24}
+                    />
+                    Terima
+                  </button>
 
-              <button
-                onClick={handleReject}
-                className="bg-white rounded-md px-4 py-2 uppercase text-[#FF3D3D] border-2 border-[#FF3D3D] flex items-center gap-2"
-              >
-                <Image
-                  src={IconTrash}
-                  alt="img-button"
-                  className="inline-block"
-                  width={24}
-                  height={24}
-                />
-                Tolak
-              </button>
+                  <button
+                    onClick={() => setEdit(true)}
+                    className="bg-white rounded-md px-4 py-2 uppercase text-[#FF3D3D] border-2 border-[#FF3D3D] flex items-center gap-2"
+                  >
+                    <Image
+                      src={IconTrash}
+                      alt="img-button"
+                      className="inline-block"
+                      width={24}
+                      height={24}
+                    />
+                    Edit
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={handleSubmit}
+                  className="bg-white rounded-md px-4 py-2 uppercase text-[#0FA958] flex items-center gap-2"
+                >
+                  <Image
+                    src={IconToga}
+                    alt="img-button"
+                    className="inline-block"
+                    width={24}
+                    height={24}
+                  />
+                  Terima
+                </button>
+              )}
             </>
           ) : (
             <Link href={`/rapor`}>
