@@ -10,6 +10,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import IconToga from "@/public/Icons/icon-toga.svg";
+import IconTogaYellow from "@/public/Icons/icon-toga-yellow.svg";
 import IconTrash from "@/public/Icons/ic_trash.svg";
 import IconDownload from "@/public/Icons/icon-download-2.svg";
 
@@ -110,34 +111,6 @@ const DetailAbsenPage = ({ params: { id } }) => {
     });
   };
 
-  const handleReject = async (e) => {
-    confirm({
-      title: "Kamu yakin ingin tolak data absen ini?",
-      icon: <ExclamationCircleFilled />,
-      centered: true,
-      // content: "Some descriptions",
-      okText: "Yes",
-      okType: "danger",
-      cancelText: "No",
-      async onOk() {
-        try {
-          const res = API.put(`${URL.GET_ABSEN}/${id}`, {
-            accept: 0,
-          });
-
-          toastSuccess("Absen telah dittolak");
-          router.push("/dataabsensi");
-        } catch (error) {
-          console.log(error);
-          toastFailed("Operasi Gagal dilakukan");
-        }
-      },
-      onCancel() {
-        console.log("Cancel");
-      },
-    });
-  };
-
   useEffect(() => {
     getDataAbsen();
   }, []);
@@ -152,9 +125,6 @@ const DetailAbsenPage = ({ params: { id } }) => {
       )
     );
   };
-
-  console.log(data, "absen");
-  console.log(silabus, "silabus");
 
   const handleSubmit = async (e) => {
     confirm({
@@ -175,7 +145,7 @@ const DetailAbsenPage = ({ params: { id } }) => {
             id_kelas: data?.id_kelas,
             id_mapel: data?.id_mapel,
             jml_relawan: JSON.parse(data?.pengajar).length,
-            tanggal: date,
+            tanggal: data?.tanggal,
             accept: true,
             pengajar: data?.pengajar,
             relawan: JSON.parse(data?.pengajar)?.map((item) => ({
@@ -394,10 +364,10 @@ const DetailAbsenPage = ({ params: { id } }) => {
 
                   <button
                     onClick={() => setEdit(true)}
-                    className="bg-white rounded-md px-4 py-2 uppercase text-[#FF3D3D] border-2 border-[#FF3D3D] flex items-center gap-2"
+                    className="bg-white rounded-md px-4 py-2 uppercase text-[#F4CE14] border-2 border-[#F4CE14] flex items-center gap-2"
                   >
                     <Image
-                      src={IconTrash}
+                      src={IconTogaYellow}
                       alt="img-button"
                       className="inline-block"
                       width={24}

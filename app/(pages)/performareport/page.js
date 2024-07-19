@@ -520,48 +520,6 @@ const PerformaReportPage = () => {
               </div>
             ))
           : ""}
-        {/* <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
-          <h1 className="mb-4">kelas 1</h1>
-
-          Chart
-          <div className="flex justify-center">
-            <div className="w-[50%] flex justify-center">
-              <Pie options={options} data={data} />
-            </div>
-          </div>
-          <div className="flex justify-center h-full max-h-[28rem]">
-            <div className="w-[100%] flex justify-center">
-              <Bar options={options} data={dataKehadiranMurid} />
-            </div>
-          </div>
-        </div> */}
-
-        {/* <div className="grid grid-cols-3 gap-10">
-          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col justify-between">
-            <p className="text-lg min-h-14 flex items-center ">
-              Jumlah murid kehadiran rendah (&lt;50%)
-            </p>
-            <div className="flex-1 flex items-center justify-center">
-              <h1 className="text-6xl font-bold">45</h1>
-            </div>
-          </div>
-          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col justify-between">
-            <p className="text-lg min-h-14 flex items-center ">
-              Rata rata kehadiran
-            </p>
-            <div className="flex-1 flex items-center justify-center">
-              <h1 className="text-6xl font-bold">18</h1>
-            </div>
-          </div>
-          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col justify-between">
-            <p className="text-lg min-h-14 flex items-center ">
-              Tingkat Capaian belajar
-            </p>
-            <div className="flex-1 flex items-center justify-center">
-              <h1 className="text-6xl font-bold">18</h1>
-            </div>
-          </div>
-        </div> */}
 
         {/* Program Relawan */}
         <h1 className="font-bold text-2xl">Program Relawan</h1>
@@ -581,19 +539,19 @@ const PerformaReportPage = () => {
           <div className="flex flex-col gap-8 col-span-2">
             <div className="flex gap-10">
               <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col w-full">
-                <p className="text-lg">Total Relawan</p>
+                <p className="text-lg text-center">Total Relawan</p>
                 <div className="flex-1 flex items-center justify-center">
                   <h1 className="text-6xl font-bold">
                     {dataReportRelawan?.relawan}
                   </h1>
                 </div>
               </div>
-              <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col w-full">
+              {/* <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-48 flex flex-col w-full">
                 <p className="text-lg">Tingkat Kehadiran tertinggi</p>
                 <div className="flex-1 flex items-center justify-center">
                   <h1 className="text-6xl font-bold">85%</h1>
                 </div>
-              </div>
+              </div> */}
             </div>
 
             <div className="flex gap-10">

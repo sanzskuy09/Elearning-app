@@ -342,10 +342,9 @@ const TambahRaporPage = () => {
                                     className="block text-sm mb-1"
                                   >
                                     Ujian Tengah Semester{" "}
-                                    <span className="text-red-600">*</span>
+                                    {/* <span className="text-red-600">*</span> */}
                                   </label>
                                   <Input
-                                    required
                                     className="w-full border border-gray-300 rounded-md px-3 py-2"
                                     allowClear
                                     type="number"
@@ -372,10 +371,9 @@ const TambahRaporPage = () => {
                                     className="block text-sm mb-1"
                                   >
                                     Ujian Akhir Semester{" "}
-                                    <span className="text-red-600">*</span>
+                                    {/* <span className="text-red-600">*</span> */}
                                   </label>
                                   <Input
-                                    required
                                     className="w-full border border-gray-300 rounded-md px-3 py-2"
                                     allowClear
                                     max={100}

@@ -45,10 +45,12 @@ const TambahRaporPage = () => {
   const initialValues = {
     nama_lengkap: data?.nama_lengkap,
     nama_ortu: data?.nama_ortu,
-    semester: "",
+    semester: "ganjil",
     catatan_wali_kelas: "",
-    kegiatan: [{ name: "", desc: "" }],
-    lomba: [{ name: "", tingkat_prestasi: "", desc: "" }],
+    // kegiatan: [{ name: "", desc: "" }],
+    // lomba: [{ name: "", tingkat_prestasi: "", desc: "" }],
+    kegiatan: [],
+    lomba: [],
     sakit: totalAbsen?.Sakit || 0,
     izin: totalAbsen?.Izin || 0,
     alfa: totalAbsen?.Alfa || 0,
@@ -143,15 +145,6 @@ const TambahRaporPage = () => {
     <Formik
       initialValues={initialValues}
       enableReinitialize={true}
-      // validationSchema={Yup.object({
-      //   nama_lengkap: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("Nama is Required"),
-      //   nama_ortu: Yup.string()
-      //     .min(3, "Must be 3 characters or then")
-      //     .required("Nama orang tua is Required"),
-      //   semester: Yup.string().required("Semester is Required"),
-      // })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
           const newValues = {
@@ -170,24 +163,22 @@ const TambahRaporPage = () => {
             })),
           };
 
-          console.log(values);
+          const response = await fetch(`/api/rapor`, {
+            method: "POST",
+            body: JSON.stringify(newValues),
+          });
 
-          // const response = await fetch(`/api/rapor`, {
-          //   method: "POST",
-          //   body: JSON.stringify(newValues),
-          // });
+          if (!response.ok) {
+            throw new Error("Failed to Tambah Rapor Gagal");
+          }
 
-          // if (!response.ok) {
-          //   throw new Error("Failed to Tambah Rapor Gagal");
-          // }
-
-          // setTimeout(() => {
-          //   setSubmitting(false);
-          //   resetForm();
-          //   resetNilai();
-          //   toastSuccess("Tambah Rapor Berhasil");
-          //   router.push("/rapor");
-          // }, 400);
+          setTimeout(() => {
+            setSubmitting(false);
+            resetForm();
+            resetNilai();
+            toastSuccess("Tambah Rapor Berhasil");
+            router.push("/rapor");
+          }, 400);
         } catch (error) {
           toastFailed("Tambah Rapor Gagal");
           console.log(error);
@@ -292,10 +283,10 @@ const TambahRaporPage = () => {
                                 className="block text-sm mb-1"
                               >
                                 Ujian Tengah Semester{" "}
-                                <span className="text-red-600">*</span>
+                                {/* <span className="text-red-600">*</span> */}
                               </label>
                               <Input
-                                required
+                                // required
                                 className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 allowClear
                                 type="number"
@@ -322,10 +313,10 @@ const TambahRaporPage = () => {
                                 className="block text-sm mb-1"
                               >
                                 Ujian Akhir Semester{" "}
-                                <span className="text-red-600">*</span>
+                                {/* <span className="text-red-600">*</span> */}
                               </label>
                               <Input
-                                required
+                                // required
                                 className="w-full border border-gray-300 rounded-md px-3 py-2"
                                 allowClear
                                 max={100}
@@ -413,7 +404,7 @@ const TambahRaporPage = () => {
                                 </div>
                               </div>
 
-                              {formik.values.kegiatan.length > 1 && (
+                              {formik.values.kegiatan.length > 0 && (
                                 <div>
                                   <label className="text-sm mb-1 invisible">
                                     hapus
@@ -423,13 +414,6 @@ const TambahRaporPage = () => {
                                     type="button"
                                     onClick={() => arrayHelpers.remove(index)}
                                   >
-                                    {/* <Image
-                                  src={IconPlus}
-                                  alt="img-button"
-                                  className="inline-block"
-                                  width={16}
-                                  height={16}
-                                /> */}
                                     Hapus
                                   </button>
                                 </div>
@@ -437,7 +421,13 @@ const TambahRaporPage = () => {
                             </div>
                           ))}
 
-                          <div className="flex justify-end mt-8">
+                          <div
+                            className={`flex ${
+                              formik.values.kegiatan?.length > 0
+                                ? "justify-end"
+                                : "justify-start"
+                            } mt-8 mb-8`}
+                          >
                             <ButtonAdd
                               type="button"
                               onChange={() =>
@@ -522,7 +512,7 @@ const TambahRaporPage = () => {
                                 </div>
                               </div>
 
-                              {formik.values.lomba.length > 1 && (
+                              {formik.values.lomba.length > 0 && (
                                 <div>
                                   <label className="text-sm mb-1 invisible">
                                     hapus
@@ -532,20 +522,19 @@ const TambahRaporPage = () => {
                                     type="button"
                                     onClick={() => arrayHelpers.remove(index)}
                                   >
-                                    {/* <Image
-                                  src={IconPlus}
-                                  alt="img-button"
-                                  className="inline-block"
-                                  width={16}
-                                  height={16}
-                                /> */}
                                     Hapus
                                   </button>
                                 </div>
                               )}
                             </div>
                           ))}
-                          <div className="flex justify-end mt-8">
+                          <div
+                            className={`flex ${
+                              formik.values.lomba?.length > 0
+                                ? "justify-end"
+                                : "justify-start"
+                            } mt-8`}
+                          >
                             <ButtonAdd
                               type="button"
                               onChange={() =>
