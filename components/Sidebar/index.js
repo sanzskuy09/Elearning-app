@@ -15,6 +15,7 @@ const { confirm } = Modal;
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
 export default function Sidebar() {
+  const namaPanggilan = localStorage.getItem("nama_panggilan");
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -36,6 +37,7 @@ export default function Sidebar() {
           localStorage.setItem("role", "");
           localStorage.setItem("token", "");
           localStorage.setItem("nama_panggilan", "");
+          localStorage.setItem("nama_lengkap", "");
           localStorage.setItem("email", "");
 
           setTimeout(() => {
@@ -110,8 +112,8 @@ export default function Sidebar() {
               }`}
             >
               <div className="leading-4">
-                <h4 className="font-semibold text-white">Admin User</h4>
-                <span className="text-xs text-gray-600">admin@gmail.com</span>
+                <h4 className="font-semibold text-white">{namaPanggilan}</h4>
+                <span className="text-xs text-gray-600">Relawan</span>
               </div>
             </div>
           </div>

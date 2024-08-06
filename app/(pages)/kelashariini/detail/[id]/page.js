@@ -193,6 +193,7 @@ const KelasDetailPage = ({ params: { id } }) => {
       return value;
     });
   };
+  console.log(silabus);
 
   return (
     <div>
@@ -239,7 +240,7 @@ const KelasDetailPage = ({ params: { id } }) => {
                 <Checkbox onChange={() => setChecked(!checked)}></Checkbox>
               </ConfigProvider>
 
-              <button>
+              <a href={silabus.file != "" && silabus.file_url} target="_blank">
                 <Image
                   src={IconDownload}
                   alt="img-button"
@@ -247,7 +248,7 @@ const KelasDetailPage = ({ params: { id } }) => {
                   width={24}
                   height={24}
                 />
-              </button>
+              </a>
             </div>
           </div>
         </div>

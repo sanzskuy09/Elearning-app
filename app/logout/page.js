@@ -26,6 +26,7 @@ const Logout = () => {
           localStorage.setItem("role", "");
           localStorage.setItem("token", "");
           localStorage.setItem("nama_panggilan", "");
+          localStorage.setItem("nama_lengkap", "");
           localStorage.setItem("email", "");
           setTimeout(() => {
             setLoading(false);

@@ -110,7 +110,7 @@ const JadwalKelasPage = () => {
   const [filters, setFilters] = useState(
     options.length > 0
       ? Object.fromEntries(options.map((option) => [option.name, [""]]))
-      : { kelas: [""] }
+      : { kelas: [""], hari: [""] }
   );
 
   const handleChangePage = (page) => {
@@ -152,9 +152,12 @@ const JadwalKelasPage = () => {
   const getData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/jadwal?hari=&kelas=${filters?.kelas[1]}`, {
-        method: "GET",
-      });
+      const res = await fetch(
+        `/api/jadwal?hari=${filters?.hari[0]}&kelas=${filters?.kelas[1]}`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch data");
@@ -187,6 +190,20 @@ const JadwalKelasPage = () => {
           values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
         });
       }
+
+      options.push({
+        name: "hari",
+        label: "Hari",
+        values: [
+          { value: "", label: "Pilih Hari" },
+          { value: "Senin" },
+          { value: "Selasa" },
+          { value: "Rabu" },
+          { value: "Kamis" },
+          { value: "Jumat" },
+          { value: "Sabtu" },
+        ],
+      });
     } catch (error) {
       console.error(error);
     }
