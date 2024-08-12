@@ -105,7 +105,7 @@ const KelolaMuridPage = () => {
       width: 150,
       render: (_, record) => (
         <Space size="middle">
-          {role == "admin" && record.isAccept && (
+          {role == "admin" && !record.isAccept && (
             <button onClick={() => handleAccept(record.id)}>
               <Image src={IconEdit} alt="" />
             </button>
