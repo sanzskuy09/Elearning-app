@@ -2,16 +2,18 @@
 
 import TableDashboard from "@/components/TableDashboard";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { dataUpcomingClass, dataRelawan, dataKelas } from "../dashboard/data";
 
 import { ConfigProvider, Space, Table, Modal } from "antd";
+import { API, URL } from "@/config/api";
 const { confirm } = Modal;
 
 const KelasHariIniPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
+  // const id_relawan = localStorage.getItem("id_relawan");
 
   const router = useRouter();
 
@@ -23,8 +25,8 @@ const KelasHariIniPage = () => {
     },
     {
       title: "Jam Pelajaran",
-      dataIndex: "jam_pelajaran",
-      key: "jam_pelajaran",
+      dataIndex: "jam_mapel",
+      key: "jam_mapel",
     },
     {
       title: "Kelas",
@@ -47,23 +49,58 @@ const KelasHariIniPage = () => {
       align: "center",
       render: (_, record) => (
         <Space size="middle">
-          {/* <button
-            onClick={() => navigate(`/daftar-mapel/detail/${record.id_mapel}`)}
-          >
-            Detail
-          </button> */}
-
           <button
-            // onClick={() => navigate(`/kelashariini/detail/${record.kelas}`)}
-            onClick={() => router.push(`/kelashariini/detail/${record.kelas}`)}
-            className="bg-blue-500 px-2 rounded-md font-medium text-white"
+            onClick={() => router.push(`/kelashariini/detail/${record.id}`)}
+            className={`${
+              record?.show_detail ? "bg-blue-500" : "bg-red-500"
+            }  px-2 rounded-md font-medium text-white`}
+            disabled={record?.show_detail ? false : true}
           >
-            Mulai
+            {record?.show_detail ? "Mulai" : "Selesai"}
           </button>
         </Space>
       ),
     },
   ];
+
+  const [jadwal, setJadwal] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  console.log(jadwal);
+
+  const getDataJadwal = async () => {
+    setLoading(true);
+
+    try {
+      const daysMap = {
+        0: "Minggu",
+        1: "Senin",
+        2: "Selasa",
+        3: "Rabu",
+        4: "Kamis",
+        5: "Jumat",
+        6: "Sabtu",
+      };
+
+      const currentDay = new Date().getDay();
+      const currentDayName = daysMap[currentDay];
+
+      const res = await API.get(`${URL.GET_JADWAL}?hari=${currentDayName}`);
+
+      const data = res.data.data;
+      setJadwal(data);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      console.log(error);
+    }
+  };
+
+  // console.log(jadwal);
+
+  useEffect(() => {
+    getDataJadwal();
+  }, []);
 
   return (
     <div>
@@ -97,7 +134,7 @@ const KelasHariIniPage = () => {
                 },
               }}
             >
-              <Table columns={columns} dataSource={dataKelas} />
+              <Table columns={columns} dataSource={jadwal} />
             </ConfigProvider>
           </div>
         </div>

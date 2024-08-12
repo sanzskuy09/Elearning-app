@@ -1,15 +1,21 @@
 "use client";
-
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
-import { Table } from "antd";
-import { dataUpcomingClass, dataRelawan } from "./data";
+import { Table, Tooltip } from "antd";
 import TableDashboard from "@/components/TableDashboard";
 
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
-ChartJS.register(ArcElement, Tooltip, Legend);
-import { Pie } from "react-chartjs-2";
+import { Chart as ChartJS, registerables } from "chart.js";
+import { Chart } from "react-chartjs-2";
+ChartJS.register(...registerables);
+
+import { Pie, Bar } from "react-chartjs-2";
+
+import { API, URL } from "@/config/api";
+
+import IC_TOOLTIP from "/public/Icons/ic_tooltip.svg";
+import IC_TOGA from "/public/Icons/ic_toga_blue.svg";
 
 const columnsClass = [
   {
@@ -18,7 +24,7 @@ const columnsClass = [
   },
   {
     title: "Jam",
-    dataIndex: "jam",
+    dataIndex: "jam_mapel",
   },
   {
     title: "Kelas",
@@ -33,7 +39,7 @@ const columnsClass = [
 const columnsRelawan = [
   {
     title: "Nama",
-    dataIndex: "name",
+    dataIndex: "nama_lengkap",
   },
   {
     title: "Point",
@@ -41,34 +47,177 @@ const columnsRelawan = [
   },
 ];
 
-const data = {
-  labels: [
-    "Matematika : 62",
-    "Pend. Karakter : 90",
-    "Bhs. Inggris : 30",
-    "Kreasi: 50",
-  ],
-  datasets: [
-    {
-      label: "# Nilai :",
-      data: [62, 90, 30, 50],
-      backgroundColor: ["#b6c154", "#fae477", "#fca034", "#d0671c"],
-      borderColor: ["#b6c154", "#fae477", "#fca034", "green"],
-      borderWidth: 1,
-    },
-  ],
-};
-
-const options = {
-  // Add options here
-};
-
 const DashboardPage = () => {
   const nama = localStorage.getItem("nama_panggilan");
-  // filter data relawan
-  const filterDataRelawan = dataRelawan
-    .sort((a, b) => b.point - a.point)
-    .slice(0, 5);
+  const id_relawan = localStorage.getItem("id_relawan");
+
+  const [totals, setTotals] = useState({ relawan: 0, murid: 0, mapel: 0 });
+  const [totalMurid, setTotalMurid] = useState([]);
+  const [totalMuridPerKategori, setTotalMuridPerKategori] = useState([]);
+
+  const [pointRelawan, setPointRelawan] = useState([]);
+  const [dataJadwal, setDataJadwal] = useState([]);
+
+  const [loading, setLoading] = useState(false);
+
+  const text = (
+    <span>
+      Jadwal pelajaran yang kamu ikuti, kamu boleh mengikuti pembelajaran di
+      luar jadwal wajib kamu dengan menekan tombol mulai mengajar hari ini dan
+      mengajukan pada PIC pengajar
+    </span>
+  );
+
+  const textPoint = (
+    <span>
+      Relawan teraktif didapatkan berdasarkan point terbanyak, kamu bisa
+      menambahkan point kamu dengan menghadiri kegiatan pembelajaran, akan ada
+      hadiah menarik untuk relawan teraktif!
+    </span>
+  );
+
+  const getJadwal = async () => {
+    setLoading(true);
+    try {
+      const res = await API.get(`${URL.JADWAL_RELAWAN}/${id_relawan}`);
+
+      setDataJadwal(res.data.data);
+      setLoading(false);
+    } catch (error) {
+      console.log(error);
+      setLoading(false);
+    }
+  };
+
+  const getTotalData = async () => {
+    try {
+      const res = await API.get(URL.TOTAL);
+      setTotals(res.data.data);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+
+  const getRelawanTeraktif = async () => {
+    try {
+      const res = await API.get(URL.RELAWAN_TERAKTIF);
+
+      const data = res.data.data.slice(0, 5);
+      setPointRelawan(data);
+    } catch (error) {
+      console.error("Error: ", error);
+    }
+  };
+
+  const getBanyakMuridPerKelas = async () => {
+    try {
+      const res = await API.get(URL.TOTAL_MURID);
+
+      const data = res.data.data;
+      const muridLenght = Object.values(data);
+
+      setTotalMurid(muridLenght);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+
+  const getBanyakMuridPerKategori = async () => {
+    try {
+      const res = await API.get(URL.TOTAL_KATEGORI);
+
+      const data = res.data.data;
+      const muridLenght = Object.values(data);
+
+      setTotalMuridPerKategori(muridLenght);
+    } catch (error) {
+      console.error("Error fetching totals:", error);
+    }
+  };
+  // console.log(totalMuridPerKategori);
+
+  useEffect(() => {
+    getTotalData();
+    getBanyakMuridPerKelas();
+    getBanyakMuridPerKategori();
+    getRelawanTeraktif();
+    getJadwal();
+  }, []);
+
+  // Chart data
+  const options = {
+    // Add options here
+    scales: {
+      y: {
+        beginAtZero: true,
+      },
+    },
+  };
+
+  const dataKelas = {
+    labels: ["1 SD", "2 SD", "3 SD", "4 SD", "5 SD", "6 SD"],
+    datasets: [
+      {
+        // label: "# Nilai :",
+        data: totalMurid,
+        backgroundColor: [
+          "#b6c154",
+          "#fae477",
+          "#fca034",
+          "#d0671c",
+          "#83B4FF",
+          "#BC5A94",
+        ],
+        borderColor: [
+          "#b6c154",
+          "#fae477",
+          "#fca034",
+          "#d0671c",
+          "#83B4FF",
+          "#BC5A94",
+        ],
+        borderWidth: 1,
+        hoverOffset: 4,
+      },
+    ],
+  };
+
+  function truncateLabel(label, maxLength) {
+    if (label.length > maxLength) {
+      return label.slice(0, maxLength) + "...";
+    }
+    return label;
+  }
+
+  const maxLength = 10;
+  const originalLabels = [
+    "Umum",
+    "Disabilitas",
+    "Yatim",
+    "Piatu",
+    "Kelompok Marginal",
+    "Dhuafa",
+    "Pengungsi",
+    // "Orang tua bercerai"
+  ];
+
+  const truncatedLabels = originalLabels.map((label) =>
+    truncateLabel(label, maxLength)
+  );
+
+  const dataKategori = {
+    labels: truncatedLabels,
+    datasets: [
+      {
+        label: "Kategori :",
+        data: totalMuridPerKategori,
+        backgroundColor: ["#3572EF", "#3ABEF9"],
+        borderColor: ["#3572EF", "#3ABEF9"],
+        borderWidth: 1,
+        minBarLength: 2,
+      },
+    ],
+  };
 
   return (
     <div>
@@ -82,27 +231,51 @@ const DashboardPage = () => {
         {/* upcoming class & relawan */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
-            <h1 className="mb-4">Upcoming Class</h1>
+            <div className="mb-4 flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <h1 className="text-lg">Upcoming Class</h1>
 
-            <TableDashboard
-              columns={columnsClass}
-              data={dataUpcomingClass}
-              showHead={true}
-            />
+              <Tooltip title={text} placement="rightTop">
+                <Image src={IC_TOOLTIP} alt="" />
+              </Tooltip>
+            </div>
+
+            {dataJadwal == "" ? (
+              <h1 className="font-bold text-lg">Tidak Ada Jadwal Hari Ini!</h1>
+            ) : (
+              <TableDashboard
+                columns={columnsClass}
+                data={dataJadwal}
+                showHead={true}
+              />
+            )}
           </div>
 
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
-            <h1 className="mb-4">Relawan Ter-aktif</h1>
+            <div className="mb-4 flex justify-between">
+              <div className="flex gap-4 items-center">
+                <Image src={IC_TOGA} alt="" />
+                <h1 className="text-lg">Relawan Ter-aktif</h1>
+              </div>
+              <div className="flex gap-2 items-center">
+                <h1 className="text-lg">Point</h1>
+                <Tooltip title={textPoint} placement="bottomRight">
+                  <Image src={IC_TOOLTIP} alt="" />
+                </Tooltip>
+              </div>
+            </div>
 
-            <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
+            <div className="pr-6">
+              <TableDashboard columns={columnsRelawan} data={pointRelawan} />
+            </div>
 
-            {dataRelawan.length > 5 && (
+            {/* {pointRelawan.length > 5 && (
               <div className="absolute bottom-0 right-0 mb-4 mr-8">
                 <button className=" text-title text-base font-light">
                   Lihat Lainnya
                 </button>
               </div>
-            )}
+            )} */}
           </div>
         </div>
 
@@ -112,47 +285,53 @@ const DashboardPage = () => {
           </div>
         </Link>
 
-        {/* rata-rata nilai & absensi */}
-        <div className="grid grid-cols-3 gap-4">
-          <div className="bg-white shadow-xl col-span-2 py-4 px-6 rounded-xl min-h-56">
-            <h1 className="mb-4">Rata-rata Nilai</h1>
+        {/* Chart */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56">
+            <h1 className="mb-4">Jumlah Murid</h1>
 
-            {/* Chart */}
             <div className="flex justify-center">
-              <div className="w-[50%] flex justify-center">
-                <Pie options={options} data={data} />
+              <div className="w-[60%] flex justify-center">
+                <Pie data={dataKelas} />
               </div>
             </div>
           </div>
 
-          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 relative">
-            <h1 className="mb-4">Murid dengan presensi &lt; 70%</h1>
+          <div className="bg-white shadow-xl py-4 px-6 rounded-xl min-h-56 flex flex-col justify-between pb-20">
+            <h1 className="mb-4">Kelompok Perhatian Khusus</h1>
 
-            <TableDashboard columns={columnsRelawan} data={filterDataRelawan} />
-
-            {dataRelawan.length > 5 && (
-              <div className="absolute bottom-0 right-0 mb-4 mr-8">
-                <button className=" text-title text-base font-light">
-                  Lihat Lainnya
-                </button>
+            <div className="flex justify-center">
+              <div className="w-[100%] flex justify-center">
+                <Bar options={options} data={dataKategori} />
               </div>
-            )}
+            </div>
           </div>
         </div>
 
         {/* jumlah mapel, murid, relawan */}
         <div className="grid grid-cols-3 gap-4">
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Mata Pelajaran</p>
-            <h1 className="text-6xl font-medium mt-5">45</h1>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Mata Pelajaran</p>
+            </div>
+            <h1 className="text-6xl font-medium mt-5">{totals?.mapel || 0}</h1>
           </div>
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Siswa</p>
-            <h1 className="text-6xl font-medium mt-5">45</h1>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Murid</p>
+            </div>
+            <h1 className="text-6xl font-medium mt-5">{totals?.murid || 0}</h1>
           </div>
           <div className="bg-white shadow-xl py-4 px-6 rounded-xl">
-            <p>Jumlah Relawan</p>
-            <h1 className="text-6xl font-medium mt-5">45</h1>
+            <div className="flex gap-4 items-center">
+              <Image src={IC_TOGA} alt="" />
+              <p>Jumlah Relawan</p>
+            </div>
+            <h1 className="text-6xl font-medium mt-5">
+              {totals?.relawan || 0}
+            </h1>
           </div>
         </div>
       </div>

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
+import { useSearchParams, useRouter } from "next/navigation";
 
 import {
   Button,
@@ -26,46 +26,41 @@ import SearchBar from "@/components/SearchBar";
 import IconDetele from "@/public/Icons/icon-delete.svg";
 import IconEdit from "@/public/Icons/icon_edit.svg";
 import IconDownload from "@/public/Icons/icon-download.svg";
-import { API, URL } from "@/config/api";
-import { toastFailed, toastSuccess } from "@/utils/toastify";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-      { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-      { value: "5 SD", label: "5 SD", id: "3" },
-      { value: "6 SD", label: "6 SD", id: "4" },
-    ],
-  },
-  {
-    name: "mapel",
-    label: "Mata Pelajaran",
-    values: [
-      { value: "", label: "Pilih Mata Pelajaran" },
-      { value: "Baca Tulis", label: "Baca Tulis", id: "1" },
-      { value: "Matematika", label: "Matematika", id: "2" },
-      { value: "Bahasa Inggris", label: "Bahasa Inggris", id: "3" },
-      { value: "Pendidikan Karakter", label: "Pendidikan Karakter", id: "4" },
-      { value: "Kreasi", label: "Kreasi", id: "5" },
-    ],
-  },
-];
+import { toastFailed, toastSuccess } from "@/utils/toastify";
+import { API, URL } from "@/config/api";
+
+const options = [];
 
 const SilabusPage = () => {
+  const searchParams = useSearchParams();
+  const id_mapel = searchParams.get("mapel");
+  const id_kelas = searchParams.get("kelas");
+
+  // console.log(id_kelas, id_mapel);
+
   const nama = localStorage.getItem("nama_panggilan");
+  const role = localStorage.getItem("role");
 
   const router = useRouter();
 
   const [data, setData] = useState(null);
+  const [dataKelas, setDataKelas] = useState([]);
+
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
 
   const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, [""]]))
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : {
+          kelas: id_kelas
+            ? [id_kelas.split(",")[0], id_kelas.split(",")[1]]
+            : [""],
+          mapel: id_mapel
+            ? [id_mapel.split(",")[0], id_mapel.split(",")[1]]
+            : [""],
+        }
   );
 
   const handleSearchChange = (e) => {
@@ -105,8 +100,9 @@ const SilabusPage = () => {
 
   const handleChecked = async (e) => {
     confirm({
-      title:
-        "Anda yakin ingin menyelesaikan proses pengajaran silabus kepada siswa?",
+      title: e.isChecked
+        ? "Silabus ini telah diselesaikan. Yakin ingin mengubahnya?"
+        : "Anda yakin ingin menyelesaikan proses pengajaran silabus kepada siswa?",
       icon: <ExclamationCircleFilled />,
       centered: true,
       // content: "Some descriptions",
@@ -130,7 +126,9 @@ const SilabusPage = () => {
           await API.put(`${URL.GET_SILABUS}/${e.id}`, formData, config);
           await getData();
 
-          toastSuccess(`Silabus Berhasil diselesaikan`);
+          e.isChecked
+            ? toastSuccess(`Silabus Berhasil diupdate`)
+            : toastSuccess(`Silabus Berhasil diselesaikan`);
 
           setLoading(false);
         } catch (error) {
@@ -171,6 +169,52 @@ const SilabusPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const getDataMapel = async () => {
+    try {
+      const res = await API.get(`/mapel`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length < 2) {
+        options.push({
+          name: "mapel",
+          label: "Mata Pelajaran",
+          values: [{ value: "", label: "Pilih Mata Pelajaran" }, ...newOptions],
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -178,6 +222,51 @@ const SilabusPage = () => {
 
     return () => clearTimeout(bounceTimer);
   }, [value]);
+
+  useEffect(() => {
+    getDataKelas();
+    getDataMapel();
+  }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
+
+  // useEffect(() => {
+  //   const getData = async () => {
+  //     setLoading(true);
+  //     try {
+  //       const res = await fetch(
+  //         `/api/silabus?mapel=${id_mapel.split(",")[1]}&kelas=${
+  //           id_kelas.split(",")[1]
+  //         }&id=`,
+  //         {
+  //           method: "GET",
+  //         }
+  //       );
+
+  //       if (!res.ok) {
+  //         throw new Error("Failed to fetch data");
+  //       }
+
+  //       const data = await res.json();
+
+  //       // console.log(data.data);
+
+  //       setData(data.data);
+  //       setLoading(false);
+  //     } catch (error) {
+  //       console.log(error);
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   if (id_mapel && id_kelas) getData();
+  // }, []);
+
+  // console.log(filters, ">> filter");
+  // console.log(value, ">> value");
+  // console.log(id_kelas, id_mapel);
 
   return (
     <div className="flex flex-col h-full">
@@ -198,14 +287,15 @@ const SilabusPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={getData}
+            // onSearch={getData}
             handleSearch={handleSearchChange}
           />
 
           <div className="py-4 px-6">
-            {filters.kelas[0] == "" ||
-            filters.mapel[0] == "" ||
-            data == null ? (
+            {/* {filters?.kelas == "" || filters?.mapel == "" || data == null */}
+            {(filters?.kelas[0] == "" || filters?.mapel[0] == "") &&
+            !id_mapel &&
+            !id_kelas ? (
               <p>
                 Harap pilih <strong>Kelas</strong> dan{" "}
                 <strong>Mata Pelajarannya</strong> terlebih dahulu.
@@ -213,18 +303,20 @@ const SilabusPage = () => {
             ) : (
               <>
                 <h1 className="font-bold text-2xl">
-                  {filters.mapel[0]} - {filters.kelas[0]}
+                  {filters?.kelas[0] !== "" && filters?.mapel[0] !== ""
+                    ? `${filters?.mapel[0]} - ${filters?.kelas[0]}`
+                    : ""}
                 </h1>
 
                 {/* silabus list */}
-                {data.length > 0 ? (
+                {data?.length > 0 ? (
                   <div className="mt-4 flex flex-col gap-4">
                     {data?.map((item, i) => (
                       <div className="flex gap-4 items-center" key={i}>
                         <Checkbox
                           checked={item.isChecked}
                           onChange={() => handleChecked(item)}
-                          disabled={item.isChecked}
+                          // disabled={item.isChecked}
                         />
 
                         <div className="flex-1 px-4 py-1 border border-black rounded-md">
@@ -243,14 +335,20 @@ const SilabusPage = () => {
                           >
                             <Image src={IconDownload} alt="img" />
                           </a>
-                          <Link
-                            href={`/silabus/editsilabus?id=${item.id}&kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`}
-                          >
-                            <Image src={IconEdit} alt="img" />
-                          </Link>
-                          <button onClick={() => handleDelete(item.id)}>
-                            <Image src={IconDetele} alt="img" />
-                          </button>
+
+                          {role === "admin" && (
+                            <>
+                              <Link
+                                href={`/silabus/editsilabus?id=${item.id}&kelas=${filters.kelas[1]}&mapel=${filters.mapel[1]}`}
+                              >
+                                <Image src={IconEdit} alt="img" />
+                              </Link>
+
+                              <button onClick={() => handleDelete(item.id)}>
+                                <Image src={IconDetele} alt="img" />
+                              </button>
+                            </>
+                          )}
                         </div>
                       </div>
                     ))}

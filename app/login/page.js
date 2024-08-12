@@ -51,8 +51,15 @@ const LoginPage = () => {
           const data = await response.json();
           dispatch(loginUser(data.data));
 
+          localStorage.setItem("id_relawan", data.data.user.id);
           localStorage.setItem("token", data.data.token);
           localStorage.setItem("nama_panggilan", data.data.user.nama_panggilan);
+          localStorage.setItem("nama_lengkap", data.data.user.nama_lengkap);
+          localStorage.setItem("email", data.data.user.email);
+          localStorage.setItem(
+            "role",
+            data.data.user.nama_panggilan === "Admin" ? "admin" : "relawan"
+          );
 
           setTimeout(() => {
             setSubmitting(false);

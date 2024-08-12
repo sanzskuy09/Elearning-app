@@ -8,9 +8,51 @@ import { MenuAlt2Icon, MenuIcon } from "@heroicons/react/outline";
 
 import IconLogout from "../../public/Icons/ic_logout.svg";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+
+import { Modal } from "antd";
+const { confirm } = Modal;
+import { ExclamationCircleFilled } from "@ant-design/icons";
 
 export default function Sidebar() {
+  const namaPanggilan = localStorage.getItem("nama_panggilan");
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
   const [expanded, setExpanded] = useState(true);
+
+  const handleLogout = async (e) => {
+    confirm({
+      title: "Kamu yakin ingin logout?",
+      icon: <ExclamationCircleFilled />,
+      centered: true,
+      // content: "Some descriptions",
+      okText: "Yes",
+      okType: "danger",
+      cancelText: "No",
+      async onOk() {
+        try {
+          setLoading(true);
+          localStorage.setItem("id_relawan", "");
+          localStorage.setItem("role", "");
+          localStorage.setItem("token", "");
+          localStorage.setItem("nama_panggilan", "");
+          localStorage.setItem("nama_lengkap", "");
+          localStorage.setItem("email", "");
+
+          setTimeout(() => {
+            setLoading(false);
+            router.push("/");
+          }, 1000);
+        } catch (error) {
+          setLoading(false);
+        }
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
   return (
     <aside className={`h-screen transition-all ${expanded ? "w-64" : "w-20"}`}>
@@ -49,7 +91,7 @@ export default function Sidebar() {
           <div className="px-3 absolute top-0 right-0 left-0 min-w-[2.5rem] flex h-12 overflow-hidden transition-all duration-300 group-hover:-top-[120%]">
             <button
               className="bg-secondary rounded-md flex items-center mb-2 px-3 w-full"
-              // onClick={handleLogout}
+              onClick={handleLogout}
             >
               <Image src={IconLogout} alt="" className="w-5 h-5" />
               <span
@@ -70,8 +112,8 @@ export default function Sidebar() {
               }`}
             >
               <div className="leading-4">
-                <h4 className="font-semibold text-white">Admin User</h4>
-                <span className="text-xs text-gray-600">admin@gmail.com</span>
+                <h4 className="font-semibold text-white">{namaPanggilan}</h4>
+                <span className="text-xs text-gray-600">Relawan</span>
               </div>
             </div>
           </div>

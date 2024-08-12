@@ -34,7 +34,12 @@ const TableDashboard = ({ columns, data, showHead }) => {
           <thead>
             <tr className="bg-transparent text-left">
               {columns.map((column, index) => (
-                <th key={index} className="py-2">
+                <th
+                  key={index}
+                  className={`py-2 md:w-1/4 ${
+                    column.dataIndex === "point" && "text-right"
+                  } `}
+                >
                   {column.title}
                 </th>
               ))}
@@ -42,7 +47,7 @@ const TableDashboard = ({ columns, data, showHead }) => {
           </thead>
         )}
         <tbody>
-          {data.map((item, rowIndex) => (
+          {data?.map((item, rowIndex) => (
             <tr key={rowIndex} className="bg-transparent">
               {columns.map((column, colIndex) => (
                 <td

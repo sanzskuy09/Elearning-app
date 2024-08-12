@@ -15,21 +15,12 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { API, URL } from "@/config/api";
 
-const options = [
-  {
-    name: "kelas",
-    label: "Kelas",
-    values: [
-      { value: "", label: "Pilih Kelas" },
-      { value: "1 & 2 SD", label: "1 & 2 SD", id: "1" },
-      { value: "3 & 4 SD", label: "3 & 4 SD", id: "2" },
-      { value: "5 SD", label: "5 SD", id: "3" },
-      { value: "6 SD", label: "6 SD", id: "4" },
-    ],
-  },
-];
+const options = [];
 
 const JadwalKelasPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+  const role = localStorage.getItem("role");
+
   const columns = [
     {
       title: "No.",
@@ -88,22 +79,25 @@ const JadwalKelasPage = () => {
             <Image src={IconDetail} alt="" />
           </Link>
 
-          <Link href={`/jadwalkelas/detail?id=${record.id}&update=true`}>
-            <Image src={IconEdit} alt="" />
-          </Link>
+          {role === "admin" && (
+            <>
+              <Link href={`/jadwalkelas/detail?id=${record.id}&update=true`}>
+                <Image src={IconEdit} alt="" />
+              </Link>
 
-          <button onClick={() => handleDelete(record.id)}>
-            <Image src={IconDelete} alt="" />
-          </button>
+              <button onClick={() => handleDelete(record.id)}>
+                <Image src={IconDelete} alt="" />
+              </button>
+            </>
+          )}
         </Space>
       ),
     },
   ];
 
-  const nama = localStorage.getItem("nama_panggilan");
-
   const router = useRouter();
   const [data, setData] = useState("");
+  const [dataKelas, setDataKelas] = useState([]);
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
@@ -113,15 +107,15 @@ const JadwalKelasPage = () => {
   const start = (currentPage - 1) * pageSize;
   const end = currentPage * pageSize;
 
+  const [filters, setFilters] = useState(
+    options.length > 0
+      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
+      : { kelas: [""], hari: [""] }
+  );
+
   const handleChangePage = (page) => {
     setCurrentPage(page);
   };
-
-  const [filters, setFilters] = useState(
-    Object.fromEntries(options.map((option) => [option.name, [""]]))
-  );
-
-  // console.log(filters.kelas[0]);
 
   const handleSearchChange = (e) => {
     setValue(e.target.value);
@@ -158,9 +152,12 @@ const JadwalKelasPage = () => {
   const getData = async () => {
     setLoading(true);
     try {
-      const res = await fetch(`/api/jadwal?hari=&kelas=${filters?.kelas[1]}`, {
-        method: "GET",
-      });
+      const res = await fetch(
+        `/api/jadwal?hari=${filters?.hari[0]}&kelas=${filters?.kelas[1]}`,
+        {
+          method: "GET",
+        }
+      );
 
       if (!res.ok) {
         throw new Error("Failed to fetch data");
@@ -175,6 +172,46 @@ const JadwalKelasPage = () => {
     }
   };
 
+  const getDataKelas = async () => {
+    try {
+      const res = await API.get(`/kelas`);
+      setDataKelas(res.data.data);
+
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      if (options.length === 0) {
+        options.push({
+          name: "kelas",
+          label: "Kelas",
+          values: [{ value: "", label: "Pilih Kelas" }, ...newOptions],
+        });
+      }
+
+      options.push({
+        name: "hari",
+        label: "Hari",
+        values: [
+          { value: "", label: "Pilih Hari" },
+          { value: "Senin" },
+          { value: "Selasa" },
+          { value: "Rabu" },
+          { value: "Kamis" },
+          { value: "Jumat" },
+          { value: "Sabtu" },
+        ],
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // console.log(dataKelas, " >> data kelas");
+  // console.log(filters, " >> filters");
+
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
       // console.log("Value changed:", value);
@@ -184,8 +221,12 @@ const JadwalKelasPage = () => {
   }, [value]);
 
   useEffect(() => {
-    getData();
+    getDataKelas();
   }, []);
+
+  useEffect(() => {
+    getData();
+  }, [filters]);
 
   return (
     <div className="flex flex-col h-full">
@@ -206,10 +247,10 @@ const JadwalKelasPage = () => {
             filters={filters}
             setFilters={setFilters}
             options={options}
-            onSearch={getData}
+            // onSearch={getData}
             // onSearch={() => console.log(filters)}
-            handleSearch={handleSearchChange}
-            showButton={true}
+            // handleSearch={handleSearchChange}
+            showButton={role === "relawan" ? false : true}
             text={"Buat Jadwal"}
             onButtonClick={() => router.push("/jadwalkelas/tambahjadwal")}
           />

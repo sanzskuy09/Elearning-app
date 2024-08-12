@@ -82,7 +82,8 @@ const DetailJadwalKelasPage = () => {
     id_kelas: data?.id_kelas,
     id_mapel: data?.id_mapel,
     id_jam_mapel: data?.id_jam_mapel,
-    jadwal: data?.relawan,
+    // jadwal: data?.relawan,
+    jadwal: data?.relawan?.map((relawan) => relawan.id),
   };
 
   const getDataJadwalById = async () => {
@@ -115,6 +116,8 @@ const DetailJadwalKelasPage = () => {
     }
   };
 
+  // console.log(listRelawan);
+
   useEffect(() => {
     getDataJamMapel();
     getListRelawan();
@@ -139,30 +142,36 @@ const DetailJadwalKelasPage = () => {
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
           const newValues = {
-            ...values,
+            pic: values.pic,
+            hari: values.hari,
+            id_kelas: values.id_kelas,
+            id_mapel: values.id_mapel,
+            id_jam_mapel: values.id_jam_mapel,
             jadwal: values.jadwal.map((id_relawan) => ({
               id_relawan,
             })),
           };
 
-          // const response = await fetch(`/api/jadwal`, {
-          //   method: "POST",
-          //   body: JSON.stringify(newValues),
-          // });
+          // console.log(newValues);
 
-          // if (!response.ok) {
-          //   throw new Error("Failed to Tambah Jadwal Gagal");
-          // }
+          const response = await fetch(`/api/jadwal?id=${id}`, {
+            method: "PUT",
+            body: JSON.stringify(newValues),
+          });
+
+          if (!response.ok) {
+            throw new Error("Failed to Tambah Jadwal Gagal");
+          }
 
           setTimeout(() => {
             setSubmitting(false);
             resetForm();
             toastSuccess("Update Jadwal Berhasil");
-            // router.push("/jadwalkelas");
+            router.push("/jadwalkelas");
           }, 400);
         } catch (error) {
           toastFailed("Update Jadwal Gagal");
-          // console.log(error);
+          console.log(error);
         }
       }}
     >
@@ -180,7 +189,7 @@ const DetailJadwalKelasPage = () => {
               </h1>
 
               <div className="py-8 px-12 max-w-[50%]">
-                <form action="">
+                <form onSubmit={formik.handleSubmit}>
                   <h1 className="mb-2 text-xl font-semibold">
                     Kelompok Jadwal
                   </h1>
@@ -190,7 +199,7 @@ const DetailJadwalKelasPage = () => {
                       Kelas
                     </label>
                     <Input
-                      readOnly={disableForm}
+                      readOnly={true}
                       required
                       placeholder=""
                       className="w-full border border-gray-300 rounded-md px-3 py-2"
@@ -203,7 +212,7 @@ const DetailJadwalKelasPage = () => {
                       Mata Pelajaran
                     </label>
                     <Input
-                      readOnly={disableForm}
+                      readOnly={true}
                       required
                       placeholder=""
                       className="w-full border border-gray-300 rounded-md px-3 py-2"
@@ -278,17 +287,16 @@ const DetailJadwalKelasPage = () => {
                       Pelawan Pengajar
                     </label>
                     <Select
-                      // defaultValue={["a10", "c12"]}
                       disabled={disableForm}
                       mode="multiple"
-                      allowClear
                       placeholder="Pilih relawan"
                       className="my-2 w-full"
-                      value={
-                        formik.values.jadwal
-                          ? formik.values.jadwal?.map((e) => e.nama_lengkap)
-                          : []
-                      }
+                      // value={
+                      //   formik.values.jadwal
+                      //     ? formik.values.jadwal?.map((e) => e.id)
+                      //     : []
+                      // }
+                      value={formik.values.jadwal}
                       onChange={(value) =>
                         formik.setFieldValue("jadwal", value)
                       }
@@ -304,7 +312,7 @@ const DetailJadwalKelasPage = () => {
 
                   {update === "true" && (
                     <div className="flex justify-end mt-8">
-                      <ButtonAdd text="Simpan" />
+                      <ButtonAdd type="submit" text="Simpan" />
                     </div>
                   )}
                 </form>

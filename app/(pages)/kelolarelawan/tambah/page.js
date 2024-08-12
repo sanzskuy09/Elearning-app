@@ -42,7 +42,8 @@ const TambahRelawanPage = () => {
     kelas: "",
     mapel: "",
     username: "",
-    password: "",
+    password: "12345678",
+    point: "0",
   };
 
   const getDataKelas = async () => {
@@ -94,21 +95,11 @@ const TambahRelawanPage = () => {
           .min(10, "Must be 10 characters or then")
           .max(13)
           .required("Required"),
-        alamat: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kelurahan: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kecamatan: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kota: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        provinsi: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
+        alamat: Yup.string(),
+        kelurahan: Yup.string(),
+        kecamatan: Yup.string(),
+        kota: Yup.string(),
+        provinsi: Yup.string(),
         kelas: Yup.string().required(),
         mapel: Yup.string().required(),
         username: Yup.string()
@@ -120,7 +111,7 @@ const TambahRelawanPage = () => {
       })}
       onSubmit={async (values, { setSubmitting, resetForm }) => {
         try {
-          // console.log(values);
+          console.log(values);
           const response = await fetch(`/api/relawan`, {
             method: "POST",
             body: JSON.stringify(values),
@@ -138,7 +129,7 @@ const TambahRelawanPage = () => {
           }, 400);
         } catch (error) {
           toastFailed("Tambah Relawan Gagal");
-          // console.log(error);
+          console.log(error);
         }
       }}
     >
@@ -157,7 +148,6 @@ const TambahRelawanPage = () => {
 
               <div className="py-8 px-12">
                 <form
-                  action=""
                   onSubmit={formik.handleSubmit}
                   className="grid grid-cols-2 gap-x-24 gap-y-8"
                 >
@@ -323,10 +313,9 @@ const TambahRelawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="alamat" className="block text-sm mb-1">
-                        Alamat <span className="text-red-600">*</span>
+                        Alamat
                       </label>
                       <Input
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("alamat")}
@@ -335,10 +324,9 @@ const TambahRelawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kelurahan" className="block text-sm mb-1">
-                        Kelurahan <span className="text-red-600">*</span>
+                        Kelurahan
                       </label>
                       <Input
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kelurahan")}
@@ -347,10 +335,9 @@ const TambahRelawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kecamatan" className="block text-sm mb-1">
-                        Kecamatan <span className="text-red-600">*</span>
+                        Kecamatan
                       </label>
                       <Input
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kecamatan")}
@@ -359,10 +346,9 @@ const TambahRelawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kota" className="block text-sm mb-1">
-                        Kabupaten/ Kota <span className="text-red-600">*</span>
+                        Kabupaten/ Kota
                       </label>
                       <Input
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kota")}
@@ -371,10 +357,9 @@ const TambahRelawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="provinsi" className="block text-sm mb-1">
-                        Provinsi <span className="text-red-600">*</span>
+                        Provinsi
                       </label>
                       <Input
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("provinsi")}
@@ -401,6 +386,7 @@ const TambahRelawanPage = () => {
                         Password <span className="text-red-600">*</span>
                       </label>
                       <Input
+                        disabled
                         type="password"
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"

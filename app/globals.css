@@ -52,6 +52,11 @@ body {
   outline: none;
 }
 
+.ant-checkbox-checked .ant-checkbox-inner {
+  background-color: #3350ac;
+  border-color: #3350ac;
+}
+
 @layer utilities {
   .text-balance {
     text-wrap: balance;

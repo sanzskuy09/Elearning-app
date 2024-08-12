@@ -25,6 +25,9 @@ const TambahSilabusPage = () => {
   const [kelas, setKelas] = useState([]);
   const [mapel, setMapel] = useState([]);
 
+  const [mapelRoute, setMapelRoute] = useState([]);
+  const [kelasRoute, setKelasRoute] = useState([]);
+
   // console.log(kelas);
 
   const idKelas = searchParams.get("kelas");
@@ -43,12 +46,17 @@ const TambahSilabusPage = () => {
     name: "file",
     listType: "picture",
     multiple: false,
+    beforeUpload: () => {
+      return false;
+    },
   };
 
   const handleFileChange = (e, formik) => {
+    console.log(e.fileList[0].originFileObj);
     // e.preventDefault();
-    let reader = new FileReader();
+
     let file = e.fileList[0].originFileObj;
+    let reader = new FileReader();
     if (file) {
       reader.onloadend = () => {
         formik.setFieldValue("file", file);
@@ -61,8 +69,10 @@ const TambahSilabusPage = () => {
   const getDataKelas = async () => {
     try {
       const res = await API.get(`/kelas`);
+      const dataKelas = res.data.data;
 
-      setKelas(res.data.data);
+      setKelas(dataKelas);
+      setKelasRoute(dataKelas.filter((e) => e.id == idKelas)[0]);
     } catch (error) {
       console.error(error);
     }
@@ -71,8 +81,10 @@ const TambahSilabusPage = () => {
   const getDataMapel = async () => {
     try {
       const res = await API.get(`/mapel`);
+      const dataMapel = res.data.data;
 
-      setMapel(res.data.data);
+      setMapel(dataMapel);
+      setMapelRoute(dataMapel.filter((e) => e.id == idMapel)[0]);
     } catch (error) {
       console.error(error);
     }
@@ -82,6 +94,9 @@ const TambahSilabusPage = () => {
     getDataMapel();
     getDataKelas();
   }, []);
+
+  // console.log(mapelRoute, ">> mapel");
+  // console.log(kelasRoute, ">> kelas");
 
   return (
     <Formik
@@ -116,7 +131,13 @@ const TambahSilabusPage = () => {
             setSubmitting(false);
             resetForm();
             toastSuccess("Tambah Silabus Berhasil");
-            router.push("/silabus");
+            // router.push("/silabus");
+            router.push(
+              `/silabus?mapel=${[mapelRoute?.name, mapelRoute?.id]}&kelas=${[
+                kelasRoute?.name,
+                kelasRoute?.id,
+              ]}`
+            );
           }, 400);
         } catch (error) {
           toastFailed("Tambah Silabus Gagal");
@@ -220,7 +241,7 @@ const TambahSilabusPage = () => {
                       Dokumen Pendukung
                     </label>
                     <Upload
-                      // name="file"
+                      name="file"
                       accept=".pdf, image/*"
                       onChange={(e) => handleFileChange(e, formik)}
                       {...props}

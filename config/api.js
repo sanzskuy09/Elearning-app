@@ -13,6 +13,10 @@ export const API = axios.create({
 export const URL = {
   AUTH_LOGIN: "/auth/login",
 
+  TOTAL: "/total",
+  TOTAL_MURID: "/total-murid",
+  TOTAL_KATEGORI: "/total-kategori",
+
   // MURID
   GET_MURID: "/murid",
   ADD_MURID: "/murid/add",
@@ -20,6 +24,7 @@ export const URL = {
   // RELAWAN
   GET_RELAWAN: "/relawan",
   ADD_RELAWAN: "/relawan/add",
+  RELAWAN_TERAKTIF: "/point-relawan",
 
   // Silabus
   GET_SILABUS: "/silabus",
@@ -28,4 +33,30 @@ export const URL = {
   // jadwal
   GET_JADWAL: "/jadwal",
   ADD_JADWAL: "/jadwal/add",
+  JADWAL_RELAWAN: "/jadwal-relawan",
+
+  // RAPOR
+  GET_RAPOR: "/rapor",
+  GET_RAPOR_BY_ID_MURID: "/rapor/murid",
+  ADD_RAPOR: "/rapor/add",
+
+  // ABSEN
+  GET_ABSEN: "/absen",
+  ADD_ABSEN: "/absen/add",
+  TOTAL_ABSEN_SISWA: "/total-absen",
+
+  // REPORT
+  GET_REPORT_MURID: "/report-murid",
+  GET_REPORT_RELAWAN: "/report-relawan",
+  GET_TOTAL_RELAWAN: "/total-absen-relawan",
+  GET_REPORT_SILABUS: "/report-silabus",
+
+  // LOGS
+  GET_LOGS: "/logs",
+  ADD_LOGS: "/logs/add",
+
+  // FORM IZIN
+  GET_FORM_IZIN: "/form-izin",
+  ADD_FORM_IZIN: "/form-izin/add",
+  ACC_FORM_IZIN: "/form-izin/accept",
 };

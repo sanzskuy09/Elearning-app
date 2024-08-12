@@ -16,7 +16,14 @@ import { API, URL } from "@/config/api";
 import { toastFailed, toastSuccess } from "@/utils/toastify";
 
 const DetailKaryawanPage = () => {
-  const nama = localStorage.getItem("nama_panggilan");
+  const [nama, setNama] = useState();
+
+  useEffect(() => {
+    const nama = localStorage.getItem("nama_panggilan");
+    // Retrieve role from localStorage
+    // const storedRole = localStorage.getItem("role");
+    setNama(nama);
+  }, []);
 
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -48,7 +55,7 @@ const DetailKaryawanPage = () => {
     kelas: data?.kelas,
     mapel: data?.mapel,
     username: data?.username,
-    password: data?.password,
+    password: "",
   };
 
   const getData = async () => {
@@ -119,21 +126,11 @@ const DetailKaryawanPage = () => {
           .min(10, "Must be 10 characters or then")
           .max(13)
           .required("Required"),
-        alamat: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kelurahan: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kecamatan: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        kota: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
-        provinsi: Yup.string()
-          .min(3, "Must be 3 characters or then")
-          .required("Required"),
+        alamat: Yup.string(),
+        kelurahan: Yup.string(),
+        kecamatan: Yup.string(),
+        kota: Yup.string(),
+        provinsi: Yup.string(),
         kelas: Yup.string().required(),
         mapel: Yup.string().required(),
         username: Yup.string()
@@ -366,11 +363,10 @@ const DetailKaryawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="alamat" className="block text-sm mb-1">
-                        Alamat <span className="text-red-600">*</span>
+                        Alamat
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("alamat")}
@@ -379,11 +375,10 @@ const DetailKaryawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kelurahan" className="block text-sm mb-1">
-                        Kelurahan <span className="text-red-600">*</span>
+                        Kelurahan
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kelurahan")}
@@ -392,11 +387,10 @@ const DetailKaryawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kecamatan" className="block text-sm mb-1">
-                        Kecamatan <span className="text-red-600">*</span>
+                        Kecamatan
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kecamatan")}
@@ -405,11 +399,10 @@ const DetailKaryawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="kota" className="block text-sm mb-1">
-                        Kabupaten/ Kota <span className="text-red-600">*</span>
+                        Kabupaten/ Kota
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("kota")}
@@ -418,11 +411,10 @@ const DetailKaryawanPage = () => {
 
                     <div className="mb-4">
                       <label htmlFor="provinsi" className="block text-sm mb-1">
-                        Provinsi <span className="text-red-600">*</span>
+                        Provinsi
                       </label>
                       <Input
                         readOnly={disableForm}
-                        required
                         placeholder=""
                         className="w-full border border-gray-300 rounded-md px-3 py-2"
                         {...formik.getFieldProps("provinsi")}
@@ -454,9 +446,8 @@ const DetailKaryawanPage = () => {
                           Password <span className="text-red-600">*</span>
                         </label>
                         <Input
-                          disabled
                           required
-                          placeholder=""
+                          placeholder="Default : 12345678"
                           className="w-full border border-gray-300 rounded-md px-3 py-2"
                           type="password"
                           {...formik.getFieldProps("password")}
