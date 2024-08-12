@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-import { Input, Button, message, Upload, Select, DatePicker } from "antd";
+import { Input, Button, Select, DatePicker } from "antd";
 const { TextArea } = Input;
 const { Option } = Select;
 
@@ -28,7 +28,6 @@ const TambahFormIzin = () => {
   const searchParams = useSearchParams();
 
   const [jadwal, setJadwal] = useState([]);
-  const [mapel, setMapel] = useState([]);
 
   const initialValues = {
     nama_lengkap: nama_lengkap,
@@ -54,9 +53,6 @@ const TambahFormIzin = () => {
   useEffect(() => {
     getDataJadwal();
   }, []);
-
-  // console.log(jadwal, ">> jadwal");
-  // console.log(kelasRoute, ">> kelas");
 
   return (
     <Formik
@@ -86,7 +82,6 @@ const TambahFormIzin = () => {
           };
 
           const res = await API.post(URL.ADD_FORM_IZIN, newValues);
-          console.log(res);
 
           setTimeout(() => {
             setSubmitting(false);

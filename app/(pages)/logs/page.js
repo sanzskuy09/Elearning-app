@@ -1,7 +1,5 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
 
 import {
@@ -15,22 +13,10 @@ import {
 } from "antd";
 const { Option } = Select;
 const { confirm } = Modal;
-import { ExclamationCircleFilled } from "@ant-design/icons";
-
-import IconDetail from "@/public/Icons/icon_detail.svg";
-import IconEdit from "@/public/Icons/icon_edit.svg";
-import IconDelete from "@/public/Icons/icon-delete.svg";
 
 import { API, URL } from "@/config/api";
 
 import dayjs from "dayjs";
-
-import SearchBar from "@/components/SearchBar";
-
-import { toastSuccess, toastFailed } from "@/utils/toastify";
-import ButtonAdd from "@/components/Button/ButtonAdd";
-
-const options = [];
 
 const KelolaMuridPage = () => {
   const columns = [
@@ -208,7 +194,6 @@ const KelolaMuridPage = () => {
               <div className="flex items-center gap-2">
                 <label htmlFor="">Mata Pelajaran</label>
                 <Select
-                  // value={f}
                   onChange={handleMapelChange}
                   defaultValue=""
                   style={{ width: 200 }}
