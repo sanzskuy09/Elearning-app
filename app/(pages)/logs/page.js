@@ -4,7 +4,16 @@ import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 
-import { ConfigProvider, Pagination, Space, Table, Modal } from "antd";
+import {
+  ConfigProvider,
+  Pagination,
+  Space,
+  Table,
+  Modal,
+  Select,
+  DatePicker,
+} from "antd";
+const { Option } = Select;
 const { confirm } = Modal;
 import { ExclamationCircleFilled } from "@ant-design/icons";
 
@@ -18,7 +27,8 @@ import dayjs from "dayjs";
 
 import SearchBar from "@/components/SearchBar";
 
-import { toastSuccess } from "@/utils/toastify";
+import { toastSuccess, toastFailed } from "@/utils/toastify";
+import ButtonAdd from "@/components/Button/ButtonAdd";
 
 const options = [];
 
@@ -74,12 +84,15 @@ const KelolaMuridPage = () => {
     },
   ];
 
+  const dateFormat = "DD-MM-YYYY";
+
   const nama = localStorage.getItem("nama_panggilan");
 
   const router = useRouter();
   const [data, setData] = useState("");
-  const [dataKelas, setDataKelas] = useState([]);
-  const [dataKategori, setDataKategori] = useState([]);
+  const [mapel, setMapel] = useState([]);
+  const [selectedMapel, setSelectedMapel] = useState("");
+  const [selectedDate, setSelectedDate] = useState("");
 
   const [value, setValue] = useState("");
   const [loading, setLoading] = useState(false);
@@ -92,17 +105,6 @@ const KelolaMuridPage = () => {
 
   const handleChangePage = (page) => {
     setCurrentPage(page);
-  };
-
-  // filter data
-  const [filters, setFilters] = useState(
-    options.length > 0
-      ? Object.fromEntries(options.map((option) => [option.name, [""]]))
-      : { kelas: ["", ""], kategori: ["", ""] }
-  );
-
-  const handleSearchChange = (e) => {
-    setValue(e.target.value);
   };
 
   const getData = async () => {
@@ -118,7 +120,51 @@ const KelolaMuridPage = () => {
     }
   };
 
-  console.log(data);
+  const handleChange = async (mapelValue, dateValue) => {
+    try {
+      if (mapelValue || dateValue) {
+        const res = await API.get(
+          `${URL.GET_LOGS}?id_mapel=${mapelValue}&tgl_izin=${dateValue}`
+        );
+        setData(res.data.data);
+      } else {
+        const res = await API.get(URL.GET_LOGS);
+        setData(res.data.data);
+      }
+    } catch (error) {
+      console.error("Error fetching filtered data: ", error);
+    }
+  };
+
+  const handleMapelChange = (value) => {
+    setSelectedMapel(value);
+    handleChange(value, selectedDate);
+  };
+
+  const handleDateChange = (date, dateString) => {
+    setSelectedDate(dateString);
+    handleChange(selectedMapel, dateString);
+  };
+
+  const getDataMapel = async () => {
+    try {
+      const res = await API.get(`/mapel`);
+      const newOptions = res?.data?.data?.map((subject) => ({
+        value: subject.name,
+        label: subject.name,
+        id: subject.id.toString(),
+      }));
+
+      setMapel((e) => {
+        return [
+          { value: "", label: "Pilih Mata Pelajaran", id: "" },
+          ...newOptions,
+        ];
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   useEffect(() => {
     const bounceTimer = setTimeout(() => {
@@ -130,6 +176,7 @@ const KelolaMuridPage = () => {
 
   useEffect(() => {
     getData();
+    getDataMapel();
   }, []);
 
   return (
@@ -145,19 +192,40 @@ const KelolaMuridPage = () => {
             Data Logs Relawan
           </h1>
 
-          {/* <SearchBar
-            value={value}
-            setValue={setValue}
-            filters={filters}
-            setFilters={setFilters}
-            options={options}
-            // onSearch={getData}
-            handleSearch={handleSearchChange}
-            showButton={true}
-            text={"Tambah Murid"}
-            onButtonClick={() => router.push("/kelolamurid/tambah")}
-            widthSelect={200}
-          /> */}
+          <div className={`py-4 px-6 flex justify-between items-center gap-8`}>
+            <div className="flex gap-6">
+              <div className="flex items-center gap-2">
+                <label htmlFor="">Tanggal</label>
+                <DatePicker
+                  required
+                  format={dateFormat}
+                  className="my-2 w-full"
+                  placeholder="Pilih Tanggal"
+                  onChange={handleDateChange}
+                />
+              </div>
+
+              <div className="flex items-center gap-2">
+                <label htmlFor="">Mata Pelajaran</label>
+                <Select
+                  // value={f}
+                  onChange={handleMapelChange}
+                  defaultValue=""
+                  style={{ width: 200 }}
+                  allowClear
+                  placeholder="Pilih Mata Pelajaran"
+                >
+                  {mapel.map((e, i) => (
+                    <Option key={e.id} value={e.id}>
+                      {e.label}
+                    </Option>
+                  ))}
+                </Select>
+              </div>
+            </div>
+          </div>
+
+          <hr className="my-2 border-gray-400" />
 
           <div className="py-4 px-6">
             <div className="overflow-auto shadow-md rounded-md">

@@ -313,7 +313,7 @@ const KelolaMuridPage = () => {
             <div>
               <ButtonAdd
                 text={"Tambah Form"}
-                onChange={() => console.log("heelo")}
+                onChange={() => router.push("/formizin/tambah")}
               />
             </div>
           </div>
