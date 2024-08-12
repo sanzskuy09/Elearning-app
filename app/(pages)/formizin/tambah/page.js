@@ -18,6 +18,7 @@ import { API, URL } from "@/config/api";
 import dayjs from "dayjs";
 
 const TambahFormIzin = () => {
+  const role = localStorage.getItem("role");
   const nama = localStorage.getItem("nama_panggilan");
   const nama_lengkap = localStorage.getItem("nama_lengkap");
   const id_relawan = localStorage.getItem("id_relawan");

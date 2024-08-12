@@ -105,7 +105,7 @@ const KelolaMuridPage = () => {
       width: 150,
       render: (_, record) => (
         <Space size="middle">
-          {role == "admin" && (
+          {role == "admin" && record.isAccept && (
             <button onClick={() => handleAccept(record.id)}>
               <Image src={IconEdit} alt="" />
             </button>
@@ -318,12 +318,14 @@ const KelolaMuridPage = () => {
               </div>
             </div>
 
-            <div>
-              <ButtonAdd
-                text={"Tambah Form"}
-                onChange={() => router.push("/formizin/tambah")}
-              />
-            </div>
+            {role !== "admin" && (
+              <div>
+                <ButtonAdd
+                  text={"Tambah Form"}
+                  onChange={() => router.push("/formizin/tambah")}
+                />
+              </div>
+            )}
           </div>
 
           <hr className="my-2 border-gray-400" />
