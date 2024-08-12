@@ -32,6 +32,10 @@ import ButtonAdd from "@/components/Button/ButtonAdd";
 const options = [];
 
 const KelolaMuridPage = () => {
+  const nama = localStorage.getItem("nama_panggilan");
+  const role = localStorage.getItem("role");
+  const id_relawan = localStorage.getItem("id_relawan");
+
   const columns = [
     {
       title: "No.",
@@ -101,9 +105,11 @@ const KelolaMuridPage = () => {
       width: 150,
       render: (_, record) => (
         <Space size="middle">
-          <button onClick={() => handleAccept(record.id)}>
-            <Image src={IconEdit} alt="" />
-          </button>
+          {role == "admin" && (
+            <button onClick={() => handleAccept(record.id)}>
+              <Image src={IconEdit} alt="" />
+            </button>
+          )}
 
           <button onClick={() => handleDelete(record.id)}>
             <Image src={IconDelete} alt="" />
@@ -114,8 +120,6 @@ const KelolaMuridPage = () => {
   ];
 
   const dateFormat = "DD-MM-YYYY";
-
-  const nama = localStorage.getItem("nama_panggilan");
 
   const router = useRouter();
   const [data, setData] = useState("");
@@ -139,7 +143,9 @@ const KelolaMuridPage = () => {
   const getData = async () => {
     setLoading(true);
     try {
-      const res = await API.get(URL.GET_FORM_IZIN);
+      const res = await API.get(
+        `${URL.GET_FORM_IZIN}?id_relawan=${role == "admin" ? "" : id_relawan}`
+      );
       const data = res.data.data;
       setData(data);
       setLoading(false);
@@ -157,7 +163,9 @@ const KelolaMuridPage = () => {
         );
         setData(res.data.data);
       } else {
-        const res = await API.get(URL.GET_FORM_IZIN);
+        const res = await API.get(
+          `${URL.GET_FORM_IZIN}?id_relawan=${role == "admin" ? "" : id_relawan}`
+        );
         setData(res.data.data);
       }
     } catch (error) {
