@@ -159,7 +159,11 @@ const KelolaMuridPage = () => {
     try {
       if (mapelValue || dateValue) {
         const res = await API.get(
-          `${URL.GET_FORM_IZIN}?id_mapel=${mapelValue}&tgl_izin=${dateValue}`
+          `${URL.GET_FORM_IZIN}?id_mapel=${
+            mapelValue == undefined ? "" : mapelValue
+          }&tgl_izin=${dateValue}&id_relawan=${
+            role == "admin" ? "" : id_relawan
+          }`
         );
         setData(res.data.data);
       } else {
