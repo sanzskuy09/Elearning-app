@@ -88,6 +88,17 @@ export default function ListMenu({ sidebar }) {
       link: "/performareport",
       role: "admin",
     },
+    {
+      title: "Log",
+      icon: "report",
+      link: "/logs",
+      role: "admin",
+    },
+    {
+      title: "Form Izin",
+      icon: "report",
+      link: "/formizin",
+    },
   ];
 
   // Filter list based on role

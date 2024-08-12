@@ -113,6 +113,18 @@ const KelasDetailPage = ({ params: { id } }) => {
 
           await API.put(`${URL.GET_SILABUS}/${silabus.id}`, formData, config);
 
+          // handle logs
+          const dataLogs = {
+            relawan: relawanAwal?.map((item) => ({
+              id_relawan: item,
+            })),
+            status: "Hadir",
+            keterangan: "",
+            jadwal_kelas_id: jadwal?.id,
+          };
+
+          await API.post(URL.ADD_LOGS, dataLogs);
+
           toastSuccess(`Absen Berhasil dibuat`);
 
           router.push(`/dataabsensi/detail/${dataAbsen.data.id}`);
@@ -193,7 +205,7 @@ const KelasDetailPage = ({ params: { id } }) => {
       return value;
     });
   };
-  console.log(silabus);
+  console.log(relawanAwal);
 
   return (
     <div>

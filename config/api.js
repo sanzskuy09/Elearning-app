@@ -50,4 +50,13 @@ export const URL = {
   GET_REPORT_RELAWAN: "/report-relawan",
   GET_TOTAL_RELAWAN: "/total-absen-relawan",
   GET_REPORT_SILABUS: "/report-silabus",
+
+  // LOGS
+  GET_LOGS: "/logs",
+  ADD_LOGS: "/logs/add",
+
+  // FORM IZIN
+  GET_FORM_IZIN: "/form-izin",
+  ADD_FORM_IZIN: "/form-izin/add",
+  ACC_FORM_IZIN: "/form-izin/accept",
 };
